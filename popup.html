@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Playback Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- ── Header ──────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <img src="icons/icon48.png" class="logo" alt="logo" />
+      <span class="app-name">Playback Tracker</span>
+    </div>
+    <button id="clearAllBtn" class="btn-ghost" title="Clear all history">🗑 Clear</button>
+  </header>
+
+  <!-- ── Resume Banner ────────────────────────────────────────── -->
+  <section id="resumeBanner" class="resume-banner hidden">
+    <div class="resume-label">▶ RESUME WHERE YOU LEFT OFF</div>
+    <div class="resume-title" id="resumeTitle">—</div>
+    <div class="resume-meta">
+      <span class="resume-time" id="resumeTime">—</span>
+      <span class="resume-site" id="resumeSite">—</span>
+    </div>
+    <button id="resumeBtn" class="btn-primary">Open & Resume</button>
+  </section>
+
+  <!-- ── No history placeholder ───────────────────────────────── -->
+  <div id="emptyState" class="empty-state hidden">
+    <div class="empty-icon">🎬</div>
+    <p>No videos tracked yet.</p>
+    <p class="empty-sub">Play and pause any video to start tracking automatically.</p>
+  </div>
+
+  <!-- ── History List ─────────────────────────────────────────── -->
+  <section id="historySection" class="history-section hidden">
+    <div class="section-header">
+      <span class="section-title">Watch History</span>
+      <span class="section-count" id="entryCount">0</span>
+    </div>
+    <ul id="historyList" class="history-list"></ul>
+  </section>
+
+  <!-- ── Manual Entry Form ────────────────────────────────────── -->
+  <section class="manual-section">
+    <button id="toggleManual" class="btn-toggle">
+      <span>✎ Add Entry Manually</span>
+      <span class="chevron" id="chevron">▾</span>
+    </button>
+
+    <div id="manualForm" class="manual-form hidden">
+      <div class="form-group">
+        <label for="manualTitle">Movie / Show Name</label>
+        <input type="text" id="manualTitle" placeholder="e.g. Avengers: Endgame" maxlength="100" />
+      </div>
+      <div class="form-group">
+        <label for="manualUrl">Page URL <span class="optional">(optional)</span></label>
+        <input type="url" id="manualUrl" placeholder="https://..." />
+      </div>
+      <div class="form-group">
+        <label for="manualTime">Timestamp</label>
+        <input type="text" id="manualTime" placeholder="1:24:55 or 84:55" maxlength="10" />
+      </div>
+      <div id="formError" class="form-error hidden"></div>
+      <button id="saveManualBtn" class="btn-primary full-width">Save Entry</button>
+    </div>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>
