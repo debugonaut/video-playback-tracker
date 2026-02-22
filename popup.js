@@ -1,131 +1,273 @@
-// popup.js – Video Playback Tracker
+// popup.js – Video Playback Tracker v2
 
 (function () {
   'use strict';
 
-  // ─── DOM References ────────────────────────────────────────────────
-  const resumeBanner    = document.getElementById('resumeBanner');
-  const resumeTitle     = document.getElementById('resumeTitle');
-  const resumeTime      = document.getElementById('resumeTime');
-  const resumeSite      = document.getElementById('resumeSite');
-  const resumeBtn       = document.getElementById('resumeBtn');
-  const emptyState      = document.getElementById('emptyState');
-  const historySection  = document.getElementById('historySection');
-  const historyList     = document.getElementById('historyList');
-  const entryCount      = document.getElementById('entryCount');
-  const clearAllBtn     = document.getElementById('clearAllBtn');
-  const toggleManual    = document.getElementById('toggleManual');
-  const manualForm      = document.getElementById('manualForm');
-  const chevron         = document.getElementById('chevron');
-  const manualTitle     = document.getElementById('manualTitle');
-  const manualUrl       = document.getElementById('manualUrl');
-  const manualTime      = document.getElementById('manualTime');
-  const formError       = document.getElementById('formError');
-  const saveManualBtn   = document.getElementById('saveManualBtn');
+  // ─── State ────────────────────────────────────────────────────────
+  let allEntries   = [];
+  let searchQuery  = '';
+  let isCompact    = false;
 
-  // ─── Helpers ───────────────────────────────────────────────────────
+  // ─── DOM ──────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
 
-  function parseTimestamp(str) {
-    // Accepts: "1:24:55", "84:55", "5025", "5025s"
+  const resumeBanner      = $('resumeBanner');
+  const resumeTitle       = $('resumeTitle');
+  const resumeTime        = $('resumeTime');
+  const resumeSite        = $('resumeSite');
+  const resumeBtn         = $('resumeBtn');
+  const resumeThumb       = $('resumeThumb');
+  const resumeThumbWrap   = $('resumeThumbWrap');
+  const resumeProgressFill= $('resumeProgressFill');
+  const resumePct         = $('resumePct');
+  const resumeProgressWrap= $('resumeProgressWrap');
+  const emptyState        = $('emptyState');
+  const noResults         = $('noResults');
+  const historyToolbar    = $('historyToolbar');
+  const historyList       = $('historyList');
+  const entryCount        = $('entryCount');
+  const clearAllBtn       = $('clearAllBtn');
+  const compactToggle     = $('compactToggle');
+  const searchInput       = $('searchInput');
+  const searchClear       = $('searchClear');
+
+  const statTotal         = $('statTotal');
+  const statTime          = $('statTime');
+  const statSites         = $('statSites');
+  const statPinned        = $('statPinned');
+  const topSitesList      = $('topSitesList');
+  const statsEmpty        = $('statsEmpty');
+
+  const manualTitle       = $('manualTitle');
+  const manualUrl         = $('manualUrl');
+  const manualTime        = $('manualTime');
+  const formError         = $('formError');
+  const saveManualBtn     = $('saveManualBtn');
+  const exportBtn         = $('exportBtn');
+  const importBtn         = $('importBtn');
+  const importFile        = $('importFile');
+  const notifyToggle      = $('notifyToggle');
+  const notifyDelay       = $('notifyDelay');
+  const notifyDelayRow    = $('notifyDelayRow');
+  const saveSettingsBtn   = $('saveSettingsBtn');
+  const settingsSaved     = $('settingsSaved');
+
+  // ─── Helpers ──────────────────────────────────────────────────────
+
+  function fmt(s) {
+    if (isNaN(s) || s < 0) return '0:00';
+    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = Math.floor(s % 60);
+    return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
+  }
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function fmtTotal(s) {
+    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+  }
+
+  function ago(iso) {
+    const d = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(d / 60000), h = Math.floor(d / 3600000), dy = Math.floor(d / 86400000);
+    if (m < 1)  return 'just now';
+    if (m < 60) return `${m}m ago`;
+    if (h < 24) return `${h}h ago`;
+    return `${dy}d ago`;
+  }
+
+  function host(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ''); }
+    catch { return url || 'Unknown'; }
+  }
+
+  function parseTs(str) {
     str = str.trim().replace(/s$/i, '');
-    const parts = str.split(':').map(Number);
-    if (parts.some(isNaN)) return null;
-    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-    if (parts.length === 2) return parts[0] * 60 + parts[1];
-    if (parts.length === 1) return parts[0];
+    const p = str.split(':').map(Number);
+    if (p.some(isNaN)) return null;
+    if (p.length === 3) return p[0] * 3600 + p[1] * 60 + p[2];
+    if (p.length === 2) return p[0] * 60 + p[1];
+    if (p.length === 1) return p[0];
     return null;
   }
 
-  function formatTime(seconds) {
-    if (isNaN(seconds) || seconds < 0) return '0:00';
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    return `${m}:${String(s).padStart(2, '0')}`;
-  }
-
-  function relativeTime(isoString) {
-    const diff = Date.now() - new Date(isoString).getTime();
-    const mins  = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days  = Math.floor(diff / 86400000);
-    if (mins < 1)   return 'just now';
-    if (mins < 60)  return `${mins}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
-  }
-
-  function hostname(url) {
-    try { return new URL(url).hostname.replace(/^www\./, ''); }
-    catch { return url; }
-  }
-
-  function showError(msg) {
+  function showErr(msg) {
     formError.textContent = msg;
     formError.classList.remove('hidden');
-    setTimeout(() => formError.classList.add('hidden'), 3000);
+    setTimeout(() => formError.classList.add('hidden'), 3500);
   }
 
-  // ─── Render ────────────────────────────────────────────────────────
+  function esc(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  function render(entries) {
+  // ─── Tabs ─────────────────────────────────────────────────────────
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+      btn.classList.add('active');
+      document.getElementById(`tab-${btn.dataset.tab}`).classList.remove('hidden');
+      if (btn.dataset.tab === 'stats') renderStats();
+    });
+  });
+
+  // ─── Render History ───────────────────────────────────────────────
+
+  function filteredEntries() {
+    if (!searchQuery) return allEntries;
+    const q = searchQuery.toLowerCase();
+    return allEntries.filter(e => e.title.toLowerCase().includes(q));
+  }
+
+  function renderHistory() {
+    const entries = filteredEntries();
     historyList.innerHTML = '';
 
-    if (!entries || entries.length === 0) {
-      resumeBanner.classList.add('hidden');
-      emptyState.classList.remove('hidden');
-      historySection.classList.add('hidden');
-      return;
+    const hasAll   = allEntries.length > 0;
+    const hasFiltered = entries.length > 0;
+    const searching = !!searchQuery;
+
+    resumeBanner.classList.toggle('hidden', !hasAll || searching);
+    emptyState.classList.toggle('hidden', hasAll);
+    noResults.classList.toggle('hidden', !searching || hasFiltered);
+    historyToolbar.classList.toggle('hidden', !hasAll);
+
+    // Resume banner
+    if (hasAll && !searching) {
+      const top = allEntries[0];
+      resumeTitle.textContent = top.title;
+      resumeTime.textContent  = top.formattedTime || fmt(top.timestamp);
+      resumeSite.textContent  = top.url ? host(top.url) : 'manual';
+
+      // Thumbnail in banner
+      if (top.thumbnail) {
+        resumeThumb.src = top.thumbnail;
+        resumeThumb.classList.remove('hidden');
+        resumeThumb.onerror = () => {
+          resumeThumb.classList.add('hidden');
+          resumeThumbWrap.innerHTML = `<span title="${esc(top.title)}">${esc((top.title[0] || '?').toUpperCase())}</span>`;
+        };
+      } else {
+        resumeThumb.classList.add('hidden');
+        resumeThumbWrap.innerHTML = `<span style="font-size:24px;color:var(--accent)">${esc((top.title[0] || '?').toUpperCase())}</span>`;
+      }
+
+      // Progress bar in banner
+      if (top.progress != null) {
+        resumeProgressWrap.classList.remove('hidden');
+        resumeProgressFill.style.width = `${top.progress}%`;
+        resumePct.textContent = `${top.progress}%`;
+      } else {
+        resumeProgressWrap.classList.add('hidden');
+      }
+
+      resumeBtn.onclick = () => {
+        if (top.url) chrome.tabs.create({ url: top.url });
+        chrome.action.setBadgeText({ text: '' });
+      };
     }
 
-    emptyState.classList.add('hidden');
+    // Count
+    entryCount.textContent = allEntries.length;
 
-    // Resume banner – show the most recent entry
-    const latest = entries[0];
-    resumeTitle.textContent  = latest.title;
-    resumeTime.textContent   = latest.formattedTime || formatTime(latest.timestamp);
-    resumeSite.textContent   = latest.url ? hostname(latest.url) : 'Unknown site';
-    resumeBanner.classList.remove('hidden');
+    // Sort: pinned first, then by savedAt desc
+    const sorted = [...entries].sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return 0;
+    });
 
-    resumeBtn.onclick = () => {
-      if (latest.url) chrome.tabs.create({ url: latest.url });
-    };
-
-    // Clear badge on popup open
-    chrome.action.setBadgeText({ text: '' });
-
-    // History list
-    historySection.classList.remove('hidden');
-    entryCount.textContent = entries.length;
-
-    entries.forEach(entry => {
+    sorted.forEach(entry => {
       const li = document.createElement('li');
-      li.className = 'history-item';
+      li.className = `history-item${entry.pinned ? ' pinned' : ''}`;
+      li.dataset.id = entry.id;
+
+      const thumbHtml = entry.thumbnail
+        ? `<img class="item-thumb" src="${esc(entry.thumbnail)}" alt=""
+             onerror="this.parentElement.innerHTML=\`<div class='thumb-placeholder'>${esc((entry.title[0]||'?').toUpperCase())}</div>\`" />`
+        : `<div class="thumb-placeholder">${esc((entry.title[0]||'?').toUpperCase())}</div>`;
+
+      const pinHtml  = entry.pinned ? `<span class="pin-badge">📌</span>` : '';
+      const h = entry.url ? host(entry.url) : 'manual';
+      const favSrc = entry.favicon || `https://www.google.com/s2/favicons?sz=16&domain=${h}`;
+
+      const progressHtml = entry.progress != null ? `
+        <div class="item-progress-wrap">
+          <div class="item-progress-track">
+            <div class="item-progress-fill" style="width:${entry.progress}%"></div>
+          </div>
+          <span class="item-pct">${entry.progress}%</span>
+        </div>` : '';
+
+      const noteDisplay = entry.note
+        ? `<div class="item-note-display">"${esc(entry.note)}"</div>` : '';
 
       li.innerHTML = `
-        <img class="item-favicon"
-             src="${entry.favicon || `https://www.google.com/s2/favicons?sz=32&domain=${entry.url ? hostname(entry.url) : 'example.com'}`}"
-             alt=""
-             onerror="this.src='icons/icon16.png'" />
-        <div class="item-info">
-          <div class="item-title" title="${entry.title}">${entry.title}</div>
+        <div class="item-thumb-wrap">
+          ${thumbHtml}
+          ${pinHtml}
+        </div>
+        <div class="item-body">
+          <div class="item-title" title="${esc(entry.title)}">${esc(entry.title)}</div>
+          ${progressHtml}
           <div class="item-meta">
-            <span class="item-time">${entry.formattedTime || formatTime(entry.timestamp)}</span>
-            <span class="item-date">${relativeTime(entry.savedAt)}</span>
+            <img class="item-favicon" src="${favSrc}" alt="" onerror="this.style.display='none'" />
+            <span class="item-time">${entry.formattedTime || fmt(entry.timestamp)}</span>
+            <span class="item-dot">·</span>
+            <span class="item-site">${esc(h)}</span>
+            <span class="item-date">${ago(entry.savedAt)}</span>
+          </div>
+          ${noteDisplay}
+          <div class="item-note-row hidden">
+            <input class="note-input" placeholder="Add a quick note... (Enter to save)" value="${esc(entry.note || '')}" />
           </div>
         </div>
-        <button class="item-delete" data-id="${entry.id}" title="Remove entry">✕</button>
-      `;
+        <div class="item-actions">
+          <button class="action-btn btn-pin${entry.pinned ? ' active' : ''}" title="${entry.pinned ? 'Unpin' : 'Pin'}">📌</button>
+          <button class="action-btn btn-note" title="Add note">✏️</button>
+          <button class="action-btn btn-done" title="Mark as done">✓</button>
+          <button class="action-btn btn-delete" title="Remove">✕</button>
+        </div>`;
 
-      // Click row → open URL
-      li.addEventListener('click', (e) => {
-        if (e.target.closest('.item-delete')) return;
+      // Open URL on row click (not on buttons)
+      li.addEventListener('click', e => {
+        if (e.target.closest('.item-actions') || e.target.closest('.item-note-row') || e.target.closest('.note-input')) return;
         if (entry.url) chrome.tabs.create({ url: entry.url });
       });
 
-      // Delete button
-      li.querySelector('.item-delete').addEventListener('click', (e) => {
+      // Pin
+      li.querySelector('.btn-pin').addEventListener('click', e => {
+        e.stopPropagation();
+        updateEntry(entry.id, { pinned: !entry.pinned });
+      });
+
+      // Note toggle
+      const noteRow  = li.querySelector('.item-note-row');
+      const noteInput = li.querySelector('.note-input');
+      li.querySelector('.btn-note').addEventListener('click', e => {
+        e.stopPropagation();
+        noteRow.classList.toggle('hidden');
+        if (!noteRow.classList.contains('hidden')) noteInput.focus();
+      });
+      noteInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          updateEntry(entry.id, { note: noteInput.value.trim() });
+          noteRow.classList.add('hidden');
+        }
+        if (e.key === 'Escape') noteRow.classList.add('hidden');
+      });
+      noteInput.addEventListener('click', e => e.stopPropagation());
+
+      // Mark done
+      li.querySelector('.btn-done').addEventListener('click', e => {
+        e.stopPropagation();
+        li.style.transform = 'scale(0.95)';
+        li.style.opacity = '0';
+        li.style.transition = 'all 0.3s ease';
+        setTimeout(() => deleteEntry(entry.id), 280);
+      });
+
+      // Delete
+      li.querySelector('.btn-delete').addEventListener('click', e => {
         e.stopPropagation();
         deleteEntry(entry.id);
       });
@@ -134,88 +276,184 @@
     });
   }
 
-  // ─── Storage Operations ────────────────────────────────────────────
+  // ─── Stats ────────────────────────────────────────────────────────
 
-  function loadEntries() {
-    chrome.storage.local.get({ entries: [] }, (data) => {
-      render(data.entries || []);
+  function renderStats() {
+    if (allEntries.length === 0) {
+      statsEmpty.classList.remove('hidden');
+      statTotal.textContent  = '0';
+      statTime.textContent   = '0m';
+      statSites.textContent  = '0';
+      statPinned.textContent = '0';
+      topSitesList.innerHTML = '';
+      return;
+    }
+    statsEmpty.classList.add('hidden');
+
+    const totalSecs = allEntries.reduce((s, e) => s + (e.timestamp || 0), 0);
+    const sites     = {};
+    allEntries.forEach(e => {
+      const s = e.url ? host(e.url) : 'manual';
+      sites[s] = (sites[s] || 0) + 1;
     });
+    const topSites  = Object.entries(sites).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxCount  = topSites[0]?.[1] || 1;
+
+    statTotal.textContent  = allEntries.length;
+    statTime.textContent   = fmtTotal(totalSecs);
+    statSites.textContent  = Object.keys(sites).length;
+    statPinned.textContent = allEntries.filter(e => e.pinned).length;
+
+    topSitesList.innerHTML = topSites.map(([name, count]) => `
+      <li class="top-site-item">
+        <img class="top-site-favicon" src="https://www.google.com/s2/favicons?sz=16&domain=${esc(name)}" onerror="this.style.display='none'" alt="" />
+        <span class="top-site-name">${esc(name)}</span>
+        <div class="top-site-bar-wrap">
+          <div class="top-site-bar" style="width:${Math.round((count/maxCount)*100)}%"></div>
+        </div>
+        <span class="top-site-count">${count}</span>
+      </li>`).join('');
+  }
+
+  // ─── Storage helpers ──────────────────────────────────────────────
+
+  function load() {
+    chrome.storage.local.get({ entries: [] }, data => {
+      allEntries = data.entries || [];
+      renderHistory();
+      chrome.action.setBadgeText({ text: '' });
+    });
+  }
+
+  function save(entries, cb) {
+    const lastEntry = entries[0] || null;
+    chrome.storage.local.set({ entries, lastEntry }, cb);
+  }
+
+  function updateEntry(id, patch) {
+    allEntries = allEntries.map(e => e.id === id ? { ...e, ...patch } : e);
+    save(allEntries, () => renderHistory());
   }
 
   function deleteEntry(id) {
-    chrome.storage.local.get({ entries: [] }, (data) => {
-      const entries = (data.entries || []).filter(e => e.id !== id);
-      const lastEntry = entries.length > 0 ? entries[0] : null;
-      chrome.storage.local.set({ entries, lastEntry }, loadEntries);
-    });
+    allEntries = allEntries.filter(e => e.id !== id);
+    save(allEntries, () => renderHistory());
   }
 
-  function clearAll() {
+  // ─── Actions ──────────────────────────────────────────────────────
+
+  clearAllBtn.addEventListener('click', () => {
     if (!confirm('Clear all watch history?')) return;
-    chrome.storage.local.set({ entries: [], lastEntry: null }, loadEntries);
-  }
+    allEntries = [];
+    save([], () => renderHistory());
+  });
 
-  function saveManualEntry() {
+  compactToggle.addEventListener('click', () => {
+    isCompact = !isCompact;
+    document.body.classList.toggle('compact', isCompact);
+    compactToggle.title = isCompact ? 'Card view' : 'Compact view';
+    compactToggle.textContent = isCompact ? '⊞' : '⊟';
+  });
+
+  // Search
+  searchInput.addEventListener('input', () => {
+    searchQuery = searchInput.value.trim();
+    searchClear.classList.toggle('hidden', !searchQuery);
+    renderHistory();
+  });
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchQuery = '';
+    searchClear.classList.add('hidden');
+    renderHistory();
+    searchInput.focus();
+  });
+
+  // Manual entry
+  saveManualBtn.addEventListener('click', () => {
     const title = manualTitle.value.trim();
     const url   = manualUrl.value.trim();
-    const timeStr = manualTime.value.trim();
+    const ts    = manualTime.value.trim();
+    if (!title)  { showErr('Please enter a movie or show name.'); return; }
+    if (!ts)     { showErr('Please enter a timestamp (e.g. 1:24:55).'); return; }
+    const secs = parseTs(ts);
+    if (secs === null || secs < 0) { showErr('Invalid timestamp. Use format like 1:24:55 or 84:55.'); return; }
 
-    if (!title) { showError('Please enter a movie or show name.'); return; }
-    if (!timeStr) { showError('Please enter a timestamp (e.g. 1:24:55).'); return; }
-
-    const seconds = parseTimestamp(timeStr);
-    if (seconds === null || seconds < 0) {
-      showError('Invalid timestamp. Use format like 1:24:55 or 84:55.');
-      return;
-    }
-
-    let faviconUrl = 'icons/icon48.png';
-    if (url) {
-      try { faviconUrl = `https://www.google.com/s2/favicons?sz=32&domain=${new URL(url).hostname}`; }
-      catch {}
-    }
+    let favicon = 'icons/icon48.png';
+    if (url) { try { favicon = `https://www.google.com/s2/favicons?sz=32&domain=${new URL(url).hostname}`; } catch {} }
 
     const entry = {
-      id: Date.now(),
-      title,
-      url: url || null,
-      timestamp: seconds,
-      formattedTime: formatTime(seconds),
-      favicon: faviconUrl,
-      savedAt: new Date().toISOString(),
-      manual: true,
+      id: Date.now(), title, url: url || null,
+      timestamp: secs, formattedTime: fmt(secs), duration: null, progress: null,
+      favicon, thumbnail: null, savedAt: new Date().toISOString(),
+      pinned: false, note: '', manual: true,
     };
 
-    chrome.storage.local.get({ entries: [] }, (data) => {
-      const entries = [entry, ...(data.entries || [])].slice(0, 20);
-      chrome.storage.local.set({ entries, lastEntry: entry }, () => {
-        manualTitle.value = '';
-        manualUrl.value   = '';
-        manualTime.value  = '';
-        loadEntries();
-        // Collapse form
-        manualForm.classList.add('hidden');
-        chevron.classList.remove('rotated');
-      });
+    allEntries = [entry, ...allEntries].slice(0, 20);
+    save(allEntries, () => {
+      manualTitle.value = manualUrl.value = manualTime.value = '';
+      renderHistory();
+      // Switch to history tab
+      document.querySelector('[data-tab="history"]').click();
+    });
+  });
+  manualTime.addEventListener('keydown', e => { if (e.key === 'Enter') saveManualBtn.click(); });
+
+  // Export
+  exportBtn.addEventListener('click', () => {
+    const json = JSON.stringify({ version: 2, exported: new Date().toISOString(), entries: allEntries }, null, 2);
+    const a = document.createElement('a');
+    a.href = 'data:application/json,' + encodeURIComponent(json);
+    a.download = `playback-tracker-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+  });
+
+  // Import
+  importBtn.addEventListener('click', () => importFile.click());
+  importFile.addEventListener('change', () => {
+    const file = importFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        const imported = Array.isArray(data) ? data : (data.entries || []);
+        if (!imported.length) { alert('No entries found in file.'); return; }
+        // Merge: keep unique IDs, imported entries take priority
+        const existingIds = new Set(allEntries.map(x => x.id));
+        const merged = [...imported, ...allEntries.filter(x => !imported.find(i => i.id === x.id))].slice(0, 20);
+        allEntries = merged;
+        save(allEntries, () => { renderHistory(); alert(`Imported ${imported.length} entries.`); });
+      } catch { alert('Invalid JSON file.'); }
+      importFile.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  // Settings
+  notifyToggle.addEventListener('change', () => {
+    notifyDelayRow.classList.toggle('hidden', !notifyToggle.checked);
+  });
+
+  saveSettingsBtn.addEventListener('click', () => {
+    const notifyEnabled     = notifyToggle.checked;
+    const notifyAfterHours  = Number(notifyDelay.value);
+    chrome.storage.local.set({ notifyEnabled, notifyAfterHours }, () => {
+      settingsSaved.classList.remove('hidden');
+      setTimeout(() => settingsSaved.classList.add('hidden'), 3000);
+    });
+  });
+
+  // Load settings
+  function loadSettings() {
+    chrome.storage.local.get({ notifyEnabled: false, notifyAfterHours: 3 }, data => {
+      notifyToggle.checked = data.notifyEnabled;
+      notifyDelay.value    = data.notifyAfterHours;
+      notifyDelayRow.classList.toggle('hidden', !data.notifyEnabled);
     });
   }
 
-  // ─── Event Listeners ───────────────────────────────────────────────
-
-  clearAllBtn.addEventListener('click', clearAll);
-
-  toggleManual.addEventListener('click', () => {
-    const isHidden = manualForm.classList.toggle('hidden');
-    chevron.classList.toggle('rotated', !isHidden);
-  });
-
-  saveManualBtn.addEventListener('click', saveManualEntry);
-
-  // Allow pressing Enter in timestamp field to save
-  manualTime.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') saveManualEntry();
-  });
-
-  // ─── Init ──────────────────────────────────────────────────────────
-  loadEntries();
+  // ─── Init ─────────────────────────────────────────────────────────
+  load();
+  loadSettings();
 })();

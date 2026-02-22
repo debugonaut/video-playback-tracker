@@ -1,35 +1,43 @@
-// content.js – Video Playback Tracker
-// Runs on every page. Detects <video> elements and saves timestamp + title on pause/unload.
+// content.js – Video Playback Tracker v2
+// Runs on every page + all iframes. Detects <video> elements and saves
+// timestamp, title, thumbnail and progress on pause/unload.
 
 (function () {
   'use strict';
 
   const MAX_ENTRIES = 20;
-  const SAVE_DEBOUNCE_MS = 2000;
 
-  let saveTimer = null;
+  // ─── Extractors ───────────────────────────────────────────────────────────
 
-  // ─── Title Extraction ────────────────────────────────────────────────────────
+  function getMeta(selectors) {
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      const val = el && (el.getAttribute('content') || el.content);
+      if (val && val.trim()) return val.trim();
+    }
+    return null;
+  }
 
   function getTitle() {
-    // 1. Try Open Graph title
-    const og = document.querySelector('meta[property="og:title"]');
-    if (og && og.content && og.content.trim()) return og.content.trim();
-
-    // 2. Try Twitter title
-    const tw = document.querySelector('meta[name="twitter:title"]');
-    if (tw && tw.content && tw.content.trim()) return tw.content.trim();
-
-    // 3. Try document.title (clean it up a bit)
+    const og    = getMeta(['meta[property="og:title"]', 'meta[name="twitter:title"]']);
+    if (og) return og;
     if (document.title && document.title.trim()) {
-      let title = document.title.trim();
-      // Remove common suffixes like "| Netflix", "- YouTube", "| Amazon Prime Video"
-      title = title.replace(/\s*[\|\-–—]\s*(Netflix|YouTube|Amazon|Prime Video|Hotstar|Disney|Hulu|HBO|Crunchyroll|Twitch).*$/i, '');
-      return title.trim() || document.title.trim();
+      return document.title.trim()
+        .replace(/\s*[\|\-–—]\s*(Netflix|YouTube|Amazon|Prime Video|Hotstar|Disney\+?|Hulu|HBO|Crunchyroll|Twitch|Funimation|Aniwatch|Anikai).*$/i, '')
+        .trim() || document.title.trim();
     }
-
-    // 4. Fallback to hostname
     return window.location.hostname.replace(/^www\./, '');
+  }
+
+  function getThumbnail() {
+    const raw = getMeta([
+      'meta[property="og:image"]',
+      'meta[name="twitter:image"]',
+      'meta[name="twitter:image:src"]',
+    ]);
+    if (!raw) return null;
+    try { return new URL(raw, window.location.href).href; }
+    catch { return null; }
   }
 
   function formatTime(seconds) {
@@ -37,111 +45,97 @@
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = Math.floor(seconds % 60);
-    if (h > 0) {
-      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    }
-    return `${m}:${String(s).padStart(2, '0')}`;
+    return h > 0
+      ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+      : `${m}:${String(s).padStart(2, '0')}`;
   }
 
-  // ─── Storage ─────────────────────────────────────────────────────────────────
+  // ─── Storage ──────────────────────────────────────────────────────────────
 
   function saveEntry(video) {
     const timestamp = video.currentTime;
-    if (!timestamp || timestamp < 5) return; // Don't save if barely started
+    if (!timestamp || timestamp < 5) return;
+
+    const duration = video.duration && isFinite(video.duration) ? video.duration : null;
+    const progress = duration ? Math.min(100, Math.round((timestamp / duration) * 100)) : null;
 
     const entry = {
       id: Date.now(),
-      title: getTitle(),
-      url: window.location.href,
-      timestamp: timestamp,
+      title:         getTitle(),
+      url:           window.location.href,
+      timestamp,
       formattedTime: formatTime(timestamp),
-      duration: video.duration || null,
-      favicon: `https://www.google.com/s2/favicons?sz=32&domain=${window.location.hostname}`,
-      savedAt: new Date().toISOString(),
+      duration,
+      progress,
+      thumbnail:     getThumbnail(),
+      favicon:       `https://www.google.com/s2/favicons?sz=32&domain=${window.location.hostname}`,
+      savedAt:       new Date().toISOString(),
+      pinned:        false,
+      note:          '',
     };
 
     chrome.storage.local.get({ entries: [] }, (data) => {
       let entries = data.entries || [];
-
-      // Remove existing entry for same URL (update it)
-      entries = entries.filter(e => e.url !== entry.url);
-
-      // Add new entry at the front
-      entries.unshift(entry);
-
-      // Trim to max
-      if (entries.length > MAX_ENTRIES) {
-        entries = entries.slice(0, MAX_ENTRIES);
+      // Preserve pinned state and note from existing entry for same URL
+      const existing = entries.find(e => e.url === entry.url);
+      if (existing) {
+        entry.pinned = existing.pinned || false;
+        entry.note   = existing.note   || '';
       }
-
+      entries = entries.filter(e => e.url !== entry.url);
+      entries.unshift(entry);
+      if (entries.length > MAX_ENTRIES) entries = entries.slice(0, MAX_ENTRIES);
       chrome.storage.local.set({ entries, lastEntry: entry });
     });
   }
 
-  function debouncedSave(video) {
-    if (saveTimer) clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => saveEntry(video), SAVE_DEBOUNCE_MS);
-  }
+  // ─── Video Tracking ───────────────────────────────────────────────────────
 
-  // ─── Video Tracking ───────────────────────────────────────────────────────────
+  const attached = new WeakSet();
 
-  const attachedVideos = new WeakSet();
+  function attach(video) {
+    if (attached.has(video)) return;
+    attached.add(video);
 
-  function attachToVideo(video) {
-    if (attachedVideos.has(video)) return;
-    attachedVideos.add(video);
-
-    // Save on pause
     video.addEventListener('pause', () => {
       if (!video.ended) saveEntry(video);
     });
 
-    // Save periodically while playing (every 30s)
-    video.addEventListener('timeupdate', () => {
-      debouncedSave(video);
+    // Periodic save every 30s while playing (backup for tab-close without pause)
+    let periodicTimer = null;
+    video.addEventListener('play', () => {
+      periodicTimer = setInterval(() => {
+        if (!video.paused) saveEntry(video);
+      }, 30000);
     });
-
-    // Save on video end
+    video.addEventListener('pause', () => clearInterval(periodicTimer));
     video.addEventListener('ended', () => {
-      // Mark as completed
+      clearInterval(periodicTimer);
+      // Remove entry when video finishes — user has seen it all
       chrome.storage.local.get({ entries: [] }, (data) => {
         const entries = (data.entries || []).filter(e => e.url !== window.location.href);
-        chrome.storage.local.set({ entries });
+        const lastEntry = entries[0] || null;
+        chrome.storage.local.set({ entries, lastEntry });
       });
     });
   }
 
-  function scanForVideos() {
-    const videos = document.querySelectorAll('video');
-    videos.forEach(attachToVideo);
+  function scan() {
+    document.querySelectorAll('video').forEach(attach);
   }
 
-  // ─── MutationObserver – Watch for dynamically added videos ───────────────────
-
-  const observer = new MutationObserver(() => {
-    scanForVideos();
+  // MutationObserver for SPAs / dynamically injected players
+  new MutationObserver(scan).observe(document.documentElement, {
+    childList: true, subtree: true,
   });
-
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-  });
-
-  // ─── Save before page unloads ─────────────────────────────────────────────────
 
   window.addEventListener('beforeunload', () => {
-    const videos = document.querySelectorAll('video');
-    videos.forEach(video => {
-      if (!video.paused && !video.ended && video.currentTime > 5) {
-        saveEntry(video);
-      }
+    document.querySelectorAll('video').forEach(video => {
+      if (!video.paused && !video.ended && video.currentTime > 5) saveEntry(video);
     });
   });
 
-  // Initial scan
-  scanForVideos();
-
-  // Also scan after a short delay (for SPAs that load content after DOM ready)
-  setTimeout(scanForVideos, 2000);
-  setTimeout(scanForVideos, 5000);
+  scan();
+  setTimeout(scan, 2000);
+  setTimeout(scan, 5000);
 })();

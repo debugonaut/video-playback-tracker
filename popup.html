@@ -5,58 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Video Playback Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
 
-  <!-- ── Header ──────────────────────────────────────────────── -->
+  <!-- ── Header ─────────────────────────────────────────────────── -->
   <header class="header">
     <div class="header-left">
       <img src="icons/icon48.png" class="logo" alt="logo" />
       <span class="app-name">Playback Tracker</span>
     </div>
-    <button id="clearAllBtn" class="btn-ghost" title="Clear all history">🗑 Clear</button>
+    <div class="header-actions">
+      <button id="compactToggle" class="icon-btn" title="Toggle compact/card view">⊟</button>
+      <button id="clearAllBtn" class="icon-btn danger" title="Clear all history">🗑</button>
+    </div>
   </header>
 
-  <!-- ── Resume Banner ────────────────────────────────────────── -->
-  <section id="resumeBanner" class="resume-banner hidden">
-    <div class="resume-label">▶ RESUME WHERE YOU LEFT OFF</div>
-    <div class="resume-title" id="resumeTitle">—</div>
-    <div class="resume-meta">
-      <span class="resume-time" id="resumeTime">—</span>
-      <span class="resume-site" id="resumeSite">—</span>
+  <!-- ── Tabs ───────────────────────────────────────────────────── -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="history">🎬 History</button>
+    <button class="tab-btn" data-tab="stats">📊 Stats</button>
+    <button class="tab-btn" data-tab="add">✎ Add</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TAB: History
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="tab-history" class="tab-content active">
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search history..." autocomplete="off" />
+      <button id="searchClear" class="search-clear hidden">✕</button>
     </div>
-    <button id="resumeBtn" class="btn-primary">Open & Resume</button>
-  </section>
 
-  <!-- ── No history placeholder ───────────────────────────────── -->
-  <div id="emptyState" class="empty-state hidden">
-    <div class="empty-icon">🎬</div>
-    <p>No videos tracked yet.</p>
-    <p class="empty-sub">Play and pause any video to start tracking automatically.</p>
-  </div>
+    <!-- Resume Banner -->
+    <section id="resumeBanner" class="resume-banner hidden">
+      <div class="resume-label">▶ RESUME WHERE YOU LEFT OFF</div>
+      <div class="resume-row">
+        <div id="resumeThumbWrap" class="resume-thumb-wrap">
+          <img id="resumeThumb" class="resume-thumb" src="" alt="" />
+        </div>
+        <div class="resume-info">
+          <div class="resume-title" id="resumeTitle">—</div>
+          <div class="resume-progress-wrap" id="resumeProgressWrap">
+            <div class="progress-track">
+              <div class="progress-fill" id="resumeProgressFill" style="width:0%"></div>
+            </div>
+            <span class="progress-pct" id="resumePct"></span>
+          </div>
+          <div class="resume-meta">
+            <span class="resume-time" id="resumeTime">—</span>
+            <span class="resume-dot">·</span>
+            <span class="resume-site" id="resumeSite">—</span>
+          </div>
+        </div>
+      </div>
+      <button id="resumeBtn" class="btn-primary">Open &amp; Resume →</button>
+    </section>
 
-  <!-- ── History List ─────────────────────────────────────────── -->
-  <section id="historySection" class="history-section hidden">
-    <div class="section-header">
-      <span class="section-title">Watch History</span>
+    <!-- Empty / No-results states -->
+    <div id="emptyState" class="empty-state hidden">
+      <div class="empty-icon">🎬</div>
+      <p>No videos tracked yet</p>
+      <p class="empty-sub">Play and pause any video on any site to start tracking automatically.</p>
+    </div>
+    <div id="noResults" class="empty-state hidden">
+      <div class="empty-icon">🔍</div>
+      <p>No results found</p>
+    </div>
+
+    <!-- History toolbar -->
+    <div id="historyToolbar" class="history-toolbar hidden">
+      <span class="section-title">WATCH HISTORY</span>
       <span class="section-count" id="entryCount">0</span>
     </div>
+
+    <!-- History list -->
     <ul id="historyList" class="history-list"></ul>
-  </section>
 
-  <!-- ── Manual Entry Form ────────────────────────────────────── -->
-  <section class="manual-section">
-    <button id="toggleManual" class="btn-toggle">
-      <span>✎ Add Entry Manually</span>
-      <span class="chevron" id="chevron">▾</span>
-    </button>
+  </div><!-- /tab-history -->
 
-    <div id="manualForm" class="manual-form hidden">
+  <!-- ══════════════════════════════════════════════════════════════
+       TAB: Stats
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="tab-stats" class="tab-content hidden">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Tracked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statTime">0m</div>
+        <div class="stat-label">Watch Time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statSites">0</div>
+        <div class="stat-label">Sites</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statPinned">0</div>
+        <div class="stat-label">Pinned</div>
+      </div>
+    </div>
+
+    <div class="top-sites-wrap">
+      <div class="form-section-title">Top Sites</div>
+      <ul id="topSitesList" class="top-sites-list"></ul>
+    </div>
+
+    <div id="statsEmpty" class="empty-state hidden">
+      <div class="empty-icon">📊</div>
+      <p>Track some videos first!</p>
+    </div>
+
+  </div><!-- /tab-stats -->
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TAB: Add / Settings
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="tab-add" class="tab-content hidden">
+
+    <!-- Manual entry -->
+    <div class="form-section">
+      <div class="form-section-title">Add Entry Manually</div>
       <div class="form-group">
         <label for="manualTitle">Movie / Show Name</label>
-        <input type="text" id="manualTitle" placeholder="e.g. Avengers: Endgame" maxlength="100" />
+        <input type="text" id="manualTitle" placeholder="e.g. Avengers: Endgame" maxlength="120" />
       </div>
       <div class="form-group">
         <label for="manualUrl">Page URL <span class="optional">(optional)</span></label>
@@ -69,7 +147,41 @@
       <div id="formError" class="form-error hidden"></div>
       <button id="saveManualBtn" class="btn-primary full-width">Save Entry</button>
     </div>
-  </section>
+
+    <!-- Export / Import -->
+    <div class="form-section">
+      <div class="form-section-title">Export / Import</div>
+      <div class="row-btns">
+        <button id="exportBtn" class="btn-secondary">↑ Export JSON</button>
+        <button id="importBtn" class="btn-secondary">↓ Import JSON</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" />
+      </div>
+    </div>
+
+    <!-- Notification settings -->
+    <div class="form-section">
+      <div class="form-section-title">Resume Reminder</div>
+      <label class="toggle-label">
+        <input type="checkbox" id="notifyToggle" />
+        <span class="toggle-switch"></span>
+        <span class="toggle-text">Notify me to resume</span>
+      </label>
+      <div id="notifyDelayRow" class="form-group hidden" style="margin-top:10px">
+        <label for="notifyDelay">Remind after</label>
+        <select id="notifyDelay">
+          <option value="1">1 hour</option>
+          <option value="2">2 hours</option>
+          <option value="3" selected>3 hours</option>
+          <option value="6">6 hours</option>
+          <option value="12">12 hours</option>
+          <option value="24">24 hours</option>
+        </select>
+      </div>
+      <button id="saveSettingsBtn" class="btn-primary full-width" style="margin-top:12px">Save Settings</button>
+      <div id="settingsSaved" class="settings-saved hidden">✓ Settings saved</div>
+    </div>
+
+  </div><!-- /tab-add -->
 
   <script src="popup.js"></script>
 </body>
