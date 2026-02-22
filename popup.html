@@ -17,16 +17,29 @@
       <span class="app-name">Playback Tracker</span>
     </div>
     <div class="header-actions">
-      <button id="compactToggle" class="icon-btn" title="Toggle compact/card view">⊟</button>
-      <button id="clearAllBtn" class="icon-btn danger" title="Clear all history">🗑</button>
+      <button id="compactToggle" class="icon-btn" title="Toggle compact/card view">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm16 16V5H5v14h14zM7 10h10v4H7v-4z"/></svg>
+      </button>
+      <button id="clearAllBtn" class="icon-btn danger" title="Clear all history">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
+      </button>
     </div>
   </header>
 
   <!-- ── Tabs ───────────────────────────────────────────────────── -->
   <nav class="tabs">
-    <button class="tab-btn active" data-tab="history">🎬 History</button>
-    <button class="tab-btn" data-tab="stats">📊 Stats</button>
-    <button class="tab-btn" data-tab="add">✎ Add</button>
+    <button class="tab-btn active" data-tab="history">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+      History
+    </button>
+    <button class="tab-btn" data-tab="stats">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      Stats
+    </button>
+    <button class="tab-btn" data-tab="add">
+      <svg class="svg-icon sm" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      Add
+    </button>
   </nav>
 
   <!-- ══════════════════════════════════════════════════════════════
@@ -36,14 +49,18 @@
 
     <!-- Search -->
     <div class="search-wrap">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </span>
       <input type="text" id="searchInput" placeholder="Search history..." autocomplete="off" />
-      <button id="searchClear" class="search-clear hidden">✕</button>
+      <button id="searchClear" class="search-clear hidden">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
     </div>
 
     <!-- Resume Banner -->
     <section id="resumeBanner" class="resume-banner hidden">
-      <div class="resume-label">▶ RESUME WHERE YOU LEFT OFF</div>
+      <div class="resume-label">RESUME WHERE YOU LEFT OFF</div>
       <div class="resume-row">
         <div id="resumeThumbWrap" class="resume-thumb-wrap">
           <img id="resumeThumb" class="resume-thumb" src="" alt="" />
@@ -63,17 +80,24 @@
           </div>
         </div>
       </div>
-      <button id="resumeBtn" class="btn-primary">Open &amp; Resume →</button>
+      <button id="resumeBtn" class="btn-primary">
+        Open &amp; Resume 
+        <svg class="svg-icon sm inherit" viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </button>
     </section>
 
     <!-- Empty / No-results states -->
     <div id="emptyState" class="empty-state hidden">
-      <div class="empty-icon">🎬</div>
+      <div class="empty-icon">
+        <svg class="svg-icon xl" viewBox="0 0 24 24"><path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+      </div>
       <p>No videos tracked yet</p>
       <p class="empty-sub">Play and pause any video on any site to start tracking automatically.</p>
     </div>
     <div id="noResults" class="empty-state hidden">
-      <div class="empty-icon">🔍</div>
+      <div class="empty-icon">
+        <svg class="svg-icon xl" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </div>
       <p>No results found</p>
     </div>
 
@@ -118,7 +142,9 @@
     </div>
 
     <div id="statsEmpty" class="empty-state hidden">
-      <div class="empty-icon">📊</div>
+      <div class="empty-icon">
+        <svg class="svg-icon xl" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      </div>
       <p>Track some videos first!</p>
     </div>
 
@@ -152,8 +178,14 @@
     <div class="form-section">
       <div class="form-section-title">Export / Import</div>
       <div class="row-btns">
-        <button id="exportBtn" class="btn-secondary">↑ Export JSON</button>
-        <button id="importBtn" class="btn-secondary">↓ Import JSON</button>
+        <button id="exportBtn" class="btn-secondary">
+          <svg class="svg-icon sm inherit" viewBox="0 0 24 24"><path d="M5 20h14v-2H5v2zM12 16l4-4h-3V4h-2v8H8l4 4z"/></svg>
+          Export JSON
+        </button>
+        <button id="importBtn" class="btn-secondary">
+          <svg class="svg-icon sm inherit" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Import JSON
+        </button>
         <input type="file" id="importFile" accept=".json" style="display:none" />
       </div>
     </div>
@@ -178,7 +210,10 @@
         </select>
       </div>
       <button id="saveSettingsBtn" class="btn-primary full-width" style="margin-top:12px">Save Settings</button>
-      <div id="settingsSaved" class="settings-saved hidden">✓ Settings saved</div>
+      <div id="settingsSaved" class="settings-saved hidden">
+        <svg class="svg-icon sm" style="fill:#34d399" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        Settings saved
+      </div>
     </div>
 
   </div><!-- /tab-add -->

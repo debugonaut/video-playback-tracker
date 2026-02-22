@@ -201,6 +201,11 @@
       const noteDisplay = entry.note
         ? `<div class="item-note-display">"${esc(entry.note)}"</div>` : '';
 
+      const pinIcon = `<svg class="svg-icon" viewBox="0 0 24 24"><path d="M16 9V4l1 0V2H7v2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>`;
+      const noteIcon = `<svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>`;
+      const doneIcon = `<svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>`;
+      const deleteIcon = `<svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
+
       li.innerHTML = `
         <div class="item-thumb-wrap">
           ${thumbHtml}
@@ -222,10 +227,10 @@
           </div>
         </div>
         <div class="item-actions">
-          <button class="action-btn btn-pin${entry.pinned ? ' active' : ''}" title="${entry.pinned ? 'Unpin' : 'Pin'}">📌</button>
-          <button class="action-btn btn-note" title="Add note">✏️</button>
-          <button class="action-btn btn-done" title="Mark as done">✓</button>
-          <button class="action-btn btn-delete" title="Remove">✕</button>
+          <button class="action-btn btn-pin${entry.pinned ? ' active' : ''}" title="${entry.pinned ? 'Unpin' : 'Pin'}">${pinIcon}</button>
+          <button class="action-btn btn-note" title="Add note">${noteIcon}</button>
+          <button class="action-btn btn-done" title="Mark as done">${doneIcon}</button>
+          <button class="action-btn btn-delete" title="Remove">${deleteIcon}</button>
         </div>`;
 
       // Open URL on row click (not on buttons)
@@ -352,7 +357,10 @@
     isCompact = !isCompact;
     document.body.classList.toggle('compact', isCompact);
     compactToggle.title = isCompact ? 'Card view' : 'Compact view';
-    compactToggle.textContent = isCompact ? '⊞' : '⊟';
+    
+    compactToggle.innerHTML = isCompact 
+      ? `<svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z"/></svg>`
+      : `<svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm16 16V5H5v14h14zM7 10h10v4H7v-4z"/></svg>`;
   });
 
   // Search

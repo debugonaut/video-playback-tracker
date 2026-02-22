@@ -5,14 +5,14 @@ chrome.runtime.onStartup.addListener(() => {
   chrome.storage.local.get({ lastEntry: null }, ({ lastEntry }) => {
     if (lastEntry) {
       chrome.action.setBadgeText({ text: '▶' });
-      chrome.action.setBadgeBackgroundColor({ color: '#a855f7' });
+      chrome.action.setBadgeBackgroundColor({ color: '#e11d48' });
       chrome.action.setTitle({ title: `Resume: ${lastEntry.title} at ${lastEntry.formattedTime}` });
     }
   });
 });
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.setBadgeBackgroundColor({ color: '#a855f7' });
+  chrome.action.setBadgeBackgroundColor({ color: '#e11d48' });
 });
 
 // Clear badge when popup opens
@@ -45,7 +45,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     chrome.notifications.create('resumeReminder', {
       type:    'basic',
       iconUrl: 'icons/icon128.png',
-      title:   '🎬 Continue Watching?',
+      title:   'Continue Watching?',
       message: `${lastEntry.title} — you left off at ${lastEntry.formattedTime}`,
       buttons: [{ title: 'Open & Resume' }],
       requireInteraction: true,
