@@ -7,6 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
+        "brand-pink": "#e51152",
+        "brand-yellow": "#f7e600",
         "surface-container-highest": "#e2e2e2",
         "surface-container": "#eeeeee",
         "on-primary-fixed-variant": "#910030",

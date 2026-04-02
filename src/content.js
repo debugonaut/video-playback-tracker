@@ -74,8 +74,8 @@
       note:          '',
     };
 
-    chrome.storage.local.get({ entries: [] }, (data) => {
-      let entries = data.entries || [];
+    chrome.storage.local.get({ history: [] }, (data) => {
+      let history = data.history || [];
       // Preserve pinned state and note from existing entry for same URL
       const existing = entries.find(e => e.url === entry.url);
       if (existing) {
@@ -85,7 +85,7 @@
       entries = entries.filter(e => e.url !== entry.url);
       entries.unshift(entry);
       if (entries.length > MAX_ENTRIES) entries = entries.slice(0, MAX_ENTRIES);
-      chrome.storage.local.set({ entries, lastEntry: entry });
+      chrome.storage.local.set({ history, lastEntry: entry });
     });
   }
 
@@ -112,10 +112,10 @@
     video.addEventListener('ended', () => {
       clearInterval(periodicTimer);
       // Remove entry when video finishes — user has seen it all
-      chrome.storage.local.get({ entries: [] }, (data) => {
-        const entries = (data.entries || []).filter(e => e.url !== window.location.href);
-        const lastEntry = entries[0] || null;
-        chrome.storage.local.set({ entries, lastEntry });
+      chrome.storage.local.get({ history: [] }, (data) => {
+        const history = (data.history || []).filter(e => e.url !== window.location.href);
+        const lastEntry = history[0] || null;
+        chrome.storage.local.set({ history, lastEntry });
       });
     });
   }

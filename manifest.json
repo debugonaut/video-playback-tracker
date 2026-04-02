@@ -12,9 +12,9 @@
   ],
   "host_permissions": [
     "<all_urls>",
-    "https://*.firebaseio.com",
-    "https://*.googleapis.com",
-    "https://*.firebaseapp.com"
+    "https://*.firebaseio.com/*",
+    "https://*.googleapis.com/*",
+    "https://*.firebaseapp.com/*"
   ],
   "background": {
     "scripts": ["background.js"]

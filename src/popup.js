@@ -239,7 +239,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     };
 
     allEntries = [entry, ...allEntries].slice(0, 42); 
-    chrome.storage.local.set({ entries: allEntries }, () => {
+    chrome.storage.local.set({ history: allEntries }, () => {
       manualTitle.value = manualUrl.value = manualTime.value = '';
       renderHistory();
       $q('[data-tab="history"]').click();
@@ -340,7 +340,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       
       if (cloudEntries.length > 0) {
         allEntries = cloudEntries;
-        chrome.storage.local.set({ entries: allEntries });
+        chrome.storage.local.set({ history: allEntries });
         renderHistory();
       }
     });
@@ -368,8 +368,8 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   // ─── Storage ──────────────────────────────────────────────────────
 
   function load() {
-    chrome.storage.local.get({ entries: [] }, data => {
-      allEntries = data.entries || [];
+    chrome.storage.local.get({ history: [] }, data => {
+      allEntries = data.history || [];
       renderHistory();
     });
   }

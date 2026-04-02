@@ -48,19 +48,23 @@ async function syncPendingToCloud() {
 }
 
 // ── Startup badge ──────────────────────────────────────────────────────────
-chrome.runtime.onStartup.addListener(() => {
+const initBadge = () => {
+  if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.action) return;
   chrome.storage.local.get({ lastEntry: null }, ({ lastEntry }) => {
     if (lastEntry) {
       chrome.action.setBadgeText({ text: '▶' });
-      chrome.action.setBadgeBackgroundColor({ color: '#e11d48' });
+      chrome.action.setBadgeBackgroundColor({ color: '#e51152' });
       chrome.action.setTitle({ title: `Resume: ${lastEntry.title} at ${lastEntry.formattedTime}` });
     }
   });
-});
+};
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.setBadgeBackgroundColor({ color: '#e11d48' });
-});
+if (typeof chrome !== 'undefined' && chrome.runtime) {
+  chrome.runtime.onStartup.addListener(initBadge);
+  chrome.runtime.onInstalled.addListener(() => {
+    if (chrome.action) chrome.action.setBadgeBackgroundColor({ color: '#e51152' });
+  });
+}
 
 // Clear badge when popup opens
 chrome.action.onClicked.addListener(() => {

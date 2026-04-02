@@ -3,81 +3,84 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --brand-pink: #e51152;
+    --brand-yellow: #f7e600;
+    --bg-dark: #0e0e0e;
+  }
+
   .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
   
   html, body {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--bg-dark);
+    color: white;
     -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
-  /* Global inheritance reset to prevent font fallback issues */
-  *, *::before, *::after {
-    font-family: inherit;
+  * {
+    cursor: crosshair;
   }
-}
 
-h1, h2, h3, h4, h5, h6, .brand-text {
-  font-family: 'Space Grotesk', sans-serif !important;
-}
-
-button, input, textarea, select {
-  font-family: 'Manrope', sans-serif;
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--brand-pink);
+  }
 }
 
 @layer utilities {
-  /* NEO-BRUTALIST DESIGN TOKENS */
-  
-  .neo-shadow {
-    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
-  }
-
-  .neo-shadow-white {
-    box-shadow: 8px 8px 0px 0px rgba(255,255,255,1);
-  }
-
   .neo-shadow-pink {
-    box-shadow: 8px 8px 0px 0px #e51152;
+    box-shadow: 4px 4px 0px 0px var(--brand-pink);
   }
 
   .neo-shadow-yellow {
-    box-shadow: 8px 8px 0px 0px #f7e600;
+    box-shadow: 4px 4px 0px 0px var(--brand-yellow);
   }
 
-  .neo-shadow-active {
-    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  .neo-border-pink {
+    border: 2px solid var(--brand-pink);
   }
 
-  .neo-border {
-    border: 4px solid black;
+  .cyber-grid {
+    background-image: 
+      linear-gradient(to right, rgba(229, 17, 82, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(229, 17, 82, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 
-  .dark .neo-border {
-    border: 4px solid white;
+  .glitch-text {
+    text-shadow: 2px 2px var(--brand-yellow), -2px -2px #00fffb;
   }
 
-  /* TEXT INPUTS */
-  .neo-input {
-    @apply w-full bg-white dark:bg-black border-4 border-black dark:border-white p-4 font-['Space_Grotesk'] font-black uppercase text-lg tracking-tighter outline-none focus:bg-[#f7e600] dark:focus:bg-[#e51152] focus:text-black dark:focus:text-white transition-colors duration-200 placeholder:text-gray-400;
+  .input-cyber {
+    @apply bg-black/40 border-2 border-white/10 p-4 font-black uppercase text-sm tracking-widest outline-none focus:border-brand-pink focus:bg-brand-pink/5 transition-all placeholder:text-white/20;
   }
+}
 
-  /* JITTER BUTTON ANIMATION */
-  .jitter-button {
-    @apply transition-all duration-75 active:translate-x-1 active:translate-y-1 active:shadow-none;
-  }
+/* Custom Animations */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
 
-  /* DARK MODE BRUTALISM OVERRIDES */
-  .dark .neo-shadow {
-    box-shadow: 8px 8px 0px 0px rgba(255,255,255,1);
-  }
-  
-  .dark .neo-shadow-white {
-    box-shadow: 8px 8px 0px 0px rgba(0,0,0,0.5);
-  }
-
-  .dark .neo-shadow-active {
-    box-shadow: 0px 0px 0px 0px transparent;
-  }
+.scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(229, 17, 82, 0.1);
+  box-shadow: 0 0 10px var(--brand-pink);
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 100;
 }
