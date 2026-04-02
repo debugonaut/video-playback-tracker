@@ -92,8 +92,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
           <nav className="flex flex-col">
              {[
                { id: 'dashboard', icon: 'bar_chart', label: 'DASHBOARD', active: activeTab === 'analytics' },
-               { id: 'entry', icon: 'add_box', label: 'VIDEO ENTRY', active: activeTab === 'entry' },
-               { id: 'stats', icon: 'analytics', label: 'PLATFORM STATS', active: activeTab === 'history' },
+               { id: 'entry', icon: 'add_box', label: 'MANUAL ENTRY', active: activeTab === 'entry' },
                { id: 'rewind', icon: 'settings_backup_restore', label: 'REWIND MODE', active: false },
              ].map(item => (
                <button 
