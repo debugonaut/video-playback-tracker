@@ -9,6 +9,11 @@ export default {
       colors: {
         "brand-pink": "#e51152",
         "brand-yellow": "#f7e600",
+        "bg-primary": "var(--bg-primary)",
+        "bg-secondary": "var(--bg-secondary)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "border-primary": "var(--border-primary)",
         "surface-container-highest": "#e2e2e2",
         "surface-container": "#eeeeee",
         "on-primary-fixed-variant": "#910030",

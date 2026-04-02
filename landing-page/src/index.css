@@ -6,7 +6,27 @@
   :root {
     --brand-pink: #e51152;
     --brand-yellow: #f7e600;
-    --bg-dark: #0e0e0e;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f3f3;
+    --text-primary: #000000;
+    --text-secondary: #555555;
+    --border-primary: #000000;
+    --neo-shadow: 4px 4px 0px 0px #000000;
+    --neo-border-width: 4px;
+    --selection-bg: var(--brand-pink);
+    --selection-text: #ffffff;
+  }
+
+  .dark {
+    --bg-primary: #0e0e0e;
+    --bg-secondary: #1a1a1a;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --border-primary: var(--brand-pink);
+    --neo-shadow: 0px 0px 0px 0px transparent;
+    --neo-border-width: 2px;
+    --selection-bg: var(--brand-yellow);
+    --selection-text: #000000;
   }
 
   .material-symbols-outlined {
@@ -15,14 +35,20 @@
   
   html, body {
     font-family: 'Space Grotesk', sans-serif;
-    background-color: var(--bg-dark);
-    color: white;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   * {
     cursor: crosshair;
+  }
+
+  ::selection {
+    background: var(--selection-bg);
+    color: var(--selection-text);
   }
 
   ::-webkit-scrollbar {
@@ -30,7 +56,7 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #000;
+    background: var(--bg-primary);
   }
   ::-webkit-scrollbar-thumb {
     background: var(--brand-pink);
@@ -38,16 +64,39 @@
 }
 
 @layer utilities {
-  .neo-shadow-pink {
-    box-shadow: 4px 4px 0px 0px var(--brand-pink);
+  .neo-card {
+    background-color: var(--bg-primary);
+    border: var(--neo-border-width) solid var(--border-primary);
+    box-shadow: var(--neo-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .neo-shadow-yellow {
-    box-shadow: 4px 4px 0px 0px var(--brand-yellow);
+  .neo-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px var(--border-primary);
   }
 
-  .neo-border-pink {
-    border: 2px solid var(--brand-pink);
+  .dark .neo-card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #ffffff;
+  }
+
+  .neo-btn {
+    @apply font-black uppercase tracking-widest text-sm py-4 px-8 transition-all active:scale-95 flex items-center justify-center gap-3;
+    border: var(--neo-border-width) solid var(--border-primary);
+    box-shadow: var(--neo-shadow);
+  }
+
+  .neo-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px var(--border-primary);
+  }
+
+  .dark .neo-btn:hover {
+    transform: none;
+    box-shadow: none;
+    @apply bg-white text-black;
   }
 
   .cyber-grid {
@@ -62,7 +111,19 @@
   }
 
   .input-cyber {
-    @apply bg-black/40 border-2 border-white/10 p-4 font-black uppercase text-sm tracking-widest outline-none focus:border-brand-pink focus:bg-brand-pink/5 transition-all placeholder:text-white/20;
+    @apply w-full p-4 font-black uppercase text-sm tracking-widest outline-none transition-all;
+    background-color: var(--bg-primary);
+    border: var(--neo-border-width) solid var(--border-primary);
+    color: var(--text-primary);
+  }
+
+  .input-cyber:focus {
+    border-color: var(--brand-pink);
+    box-shadow: var(--neo-shadow);
+  }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
   }
 }
 
