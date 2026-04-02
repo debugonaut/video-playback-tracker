@@ -6,29 +6,84 @@ import type { User } from 'firebase/auth';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import './index.css';
 
-// The Complex Operational Dashboard Mockup
-// The Complex Operational Dashboard Component
+// The Complete Operational Dashboard Component
 const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => void }) => {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'history' | 'stats' | 'add'>('history');
+  const [syncing, setSyncing] = useState(false);
+  const [addForm, setAddForm] = useState({ title: '', url: '', timestamp: '' });
+  const [addStatus, setAddStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
 
-  useEffect(() => {
+  const fetchHistory = () => {
     if (!user) return;
-    
+    setSyncing(true);
     const historyRef = collection(db, 'users', user.uid, 'history');
     const q = query(historyRef, orderBy('savedAt', 'desc'));
-    
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setHistory(data);
       setLoading(false);
+      setSyncing(false);
+    }, () => {
+      setError('Failed to load history. Check your connection.');
+      setLoading(false);
+      setSyncing(false);
     });
+    return unsubscribe;
+  };
 
-    return () => unsubscribe();
+  useEffect(() => {
+    const unsub = fetchHistory();
+    return () => unsub && unsub();
   }, [user]);
+
+  const handleRefresh = () => {
+    setSyncing(true);
+    setTimeout(() => setSyncing(false), 1500);
+  };
+
+  const handleAddEntry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addForm.title) return;
+    setAddStatus('saving');
+    try {
+      const { doc, setDoc } = await import('firebase/firestore');
+      const entryId = `manual_${Date.now()}`;
+      await setDoc(doc(db, 'users', user.uid, 'history', entryId), {
+        title: addForm.title,
+        url: addForm.url || null,
+        formattedTime: addForm.timestamp || '0:00',
+        progress: 0,
+        savedAt: new Date().toISOString(),
+        thumbnail: null,
+        manual: true,
+      });
+      setAddForm({ title: '', url: '', timestamp: '' });
+      setAddStatus('done');
+      setTimeout(() => { setAddStatus('idle'); setActiveTab('history'); }, 1500);
+    } catch {
+      setAddStatus('error');
+      setTimeout(() => setAddStatus('idle'), 2000);
+    }
+  };
+
+  // Stats calculations
+  const totalVideos = history.length;
+  const totalSecs = history.reduce((s, e) => {
+    const parts = (e.formattedTime || '0:00').split(':').map(Number);
+    if (parts.length === 3) return s + parts[0] * 3600 + parts[1] * 60 + parts[2];
+    if (parts.length === 2) return s + parts[0] * 60 + parts[1];
+    return s + (parts[0] || 0);
+  }, 0);
+  const totalHours = (totalSecs / 3600).toFixed(1);
+  const siteCount: Record<string, number> = {};
+  history.forEach(e => {
+    try { const h = new URL(e.url || '').hostname.replace('www.', ''); siteCount[h] = (siteCount[h] || 0) + 1; } catch {}
+  });
+  const topSite = Object.entries(siteCount).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+  const completedCount = history.filter(e => (e.progress || 0) >= 90).length;
 
   return (
     <motion.div 
@@ -41,32 +96,47 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
       {/* Sidebar */}
       <div className="w-[160px] md:w-[220px] bg-black border-r-4 border-[#e51152] flex flex-col justify-between py-6 shrink-0 relative">
          <div>
+           {/* Profile */}
            <div className="px-4 md:px-6 mb-8">
              <div className="w-12 h-12 border-2 border-[#e51152] mb-3 overflow-hidden bg-[#111]">
                {user.photoURL ? (
                  <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
                ) : (
-                 <div className="w-full h-full flex items-center justify-center font-black text-[#e51152]">?</div>
+                 <div className="w-full h-full flex items-center justify-center font-black text-xl text-[#e51152]">
+                   {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                 </div>
                )}
              </div>
-             <h3 className="font-black text-xs md:text-sm leading-none truncate uppercase">{user.displayName || 'OPERATOR_01'}</h3>
+             <h3 className="font-black text-xs md:text-sm leading-none truncate uppercase">{user.displayName || 'OPERATOR'}</h3>
+             <p className="text-[8px] md:text-[10px] text-gray-500 font-bold truncate mt-0.5">{user.email}</p>
              <p className="text-[#e51152] text-[8px] md:text-[10px] uppercase font-bold tracking-widest mt-1">SYSTEM_ACTIVE</p>
            </div>
-           <div className="flex flex-col gap-4 md:gap-6 px-4 md:px-6 border-y-2 border-white/20 py-6">
-              <span className="text-xs md:text-sm font-bold flex items-center gap-2 hover:text-[#e51152] cursor-pointer"><span className="material-symbols-outlined text-sm">videocam</span> LIVE FEED</span>
-              <span className="text-xs md:text-sm font-bold flex items-center gap-2 hover:text-[#e51152] cursor-pointer"><span className="material-symbols-outlined text-sm">movie</span> SAVED CLIPS</span>
-              <span className="text-xs md:text-sm font-bold flex items-center gap-2 hover:text-[#e51152] cursor-pointer"><span className="material-symbols-outlined text-sm">download</span> EXPORT LOGS</span>
-              <span className="text-xs md:text-sm font-bold flex items-center gap-2 hover:text-[#e51152] cursor-pointer"><span className="material-symbols-outlined text-sm">memory</span> SYSTEM HEALTH</span>
+           {/* Nav Tabs */}
+           <div className="flex flex-col border-y-2 border-white/20 py-4">
+             {(['history', 'stats', 'add'] as const).map(tab => (
+               <button key={tab} onClick={() => setActiveTab(tab)}
+                 className={`text-xs md:text-sm font-black flex items-center gap-2 px-4 md:px-6 py-3 transition-all uppercase ${activeTab === tab ? 'text-[#e51152] bg-[#e51152]/10 border-l-4 border-[#e51152]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                 <span className="material-symbols-outlined text-sm">
+                   {tab === 'history' ? 'history' : tab === 'stats' ? 'bar_chart' : 'add_box'}
+                 </span>
+                 {tab.toUpperCase()}
+               </button>
+             ))}
            </div>
          </div>
+         {/* Actions */}
          <div className="px-4 md:px-6 flex flex-col gap-4">
-           <button className="bg-[#e51152] py-2 md:py-3 font-black text-xs md:text-sm transition-transform active:scale-95 text-white uppercase">REFRESH_SYNC</button>
-           <div 
-            onClick={onLogout}
-            className="text-xs font-bold flex items-center gap-2 text-gray-400 hover:text-white cursor-pointer group"
-          >
-            <span className="material-symbols-outlined text-sm group-hover:text-[#e51152]">logout</span> LOGOUT
-          </div>
+           <button
+             onClick={handleRefresh}
+             disabled={syncing}
+             className="bg-[#e51152] py-2 md:py-3 font-black text-xs md:text-sm transition-all active:scale-95 text-white uppercase flex items-center justify-center gap-2 disabled:opacity-60"
+           >
+             <span className={`material-symbols-outlined text-sm ${syncing ? 'animate-spin' : ''}`}>sync</span>
+             {syncing ? 'SYNCING...' : 'REFRESH_SYNC'}
+           </button>
+           <div onClick={onLogout} className="text-xs font-bold flex items-center gap-2 text-gray-400 hover:text-white cursor-pointer group">
+             <span className="material-symbols-outlined text-sm group-hover:text-[#e51152]">logout</span> LOGOUT
+           </div>
          </div>
       </div>
       
@@ -77,74 +147,152 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
         {/* Top Nav */}
         <div className="flex justify-between items-center mb-6 border-b-2 border-white/10 pb-4 relative z-10">
           <h2 className="text-[#e51152] text-lg md:text-xl font-black italic tracking-tighter">REWIND</h2>
-          <div className="flex gap-4 md:gap-6 text-[10px] md:text-xs font-bold uppercase items-center">
-             <span className="text-[#f7e600] border-b-2 border-[#f7e600] pb-1 cursor-pointer">HISTORY</span>
-             <span className="text-gray-400 hover:text-white cursor-pointer">STATS</span>
-             <span className="text-gray-400 hover:text-white cursor-pointer">ADD</span>
-             <span className="material-symbols-outlined text-lg ml-0 md:ml-4 text-gray-400 hover:text-white cursor-pointer">settings</span>
-             <div className="relative cursor-pointer">
-                <span className="material-symbols-outlined text-lg text-white">notifications</span>
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#f7e600] rounded-full animate-pulse"></div>
-             </div>
+          <div className="text-[10px] text-gray-500 font-mono uppercase">
+            {totalVideos} VIDEOS • {totalHours} HRS
           </div>
         </div>
-        
-        {/* Banner - Most Recent Item */}
-        {history.length > 0 ? (
-          <div className="w-full border-2 md:border-4 border-[#e51152] h-[140px] md:h-[180px] relative overflow-hidden mb-6 flex items-center bg-[#131313] shrink-0">
-             <img src={history[0].thumbnail || "https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=2574&auto=format&fit=crop"} className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale saturate-0 mix-blend-screen" alt="Banner Background" />
-             <div className="absolute inset-0 bg-gradient-to-l from-black via-black/80 to-transparent"></div>
-             <div className="z-10 absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex flex-col items-end justify-center w-[60%]">
-               <h1 className="text-2xl md:text-3xl font-black italic text-right leading-[0.9] text-white tracking-tighter shadow-black drop-shadow-lg uppercase truncate max-w-full">{history[0].title}</h1>
-               <p className="text-[8px] md:text-[10px] tracking-widest text-gray-400 font-bold mb-3 md:mb-4 uppercase">LAST_WATCHED: {history[0].formattedTime}</p>
-               <div className="w-full max-w-[200px] md:max-w-[300px] h-1 md:h-2 bg-gray-800 relative mb-1 md:mb-2">
-                 <div 
-                  className="absolute left-0 top-0 h-full bg-[#e51152] shadow-[0_0_10px_#e51152]"
-                  style={{ width: `${history[0].progress || 0}%` }}
-                ></div>
-               </div>
-               <div className="flex justify-between w-full max-w-[200px] md:max-w-[300px] text-[8px] md:text-[10px] font-bold text-[#f7e600] mb-3 md:mb-4">
-                 <span>{history[0].progress || 0}% COMPLETE</span>
-               </div>
-               <a href={history[0].url} target="_blank" rel="noreferrer" className="bg-[#e51152] text-[10px] md:text-xs font-black uppercase px-4 md:px-6 py-2 border-2 border-[#e51152] hover:bg-white hover:text-black transition-colors text-white">RESUME_WATCHING</a>
-             </div>
-             <div className="absolute left-4 bottom-4 bg-[#f7e600] text-black font-black text-[8px] md:text-[10px] px-2 py-1 z-10 shadow-lg shadow-[#f7e600]/20 uppercase">LATEST_ACTIVITY</div>
+
+        {/* Error State */}
+        {error && (
+          <div className="mb-4 border-2 border-[#e51152] bg-[#e51152]/10 p-3 text-[#e51152] font-black text-xs uppercase flex items-center gap-2 relative z-10">
+            <span className="material-symbols-outlined text-sm">error</span>
+            {error}
           </div>
-        ) : (
-          <div className="w-full border-2 border-dashed border-gray-800 h-[140px] md:h-[180px] flex items-center justify-center mb-6 text-gray-500 font-black uppercase text-xs">
-            NO_DATA_LOGGED // START_TRACKING_TO_SYNC
+        )}
+        
+        {/* ── HISTORY TAB ── */}
+        {activeTab === 'history' && (
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+            {/* Banner */}
+            {history.length > 0 ? (
+              <div className="w-full border-2 md:border-4 border-[#e51152] h-[140px] md:h-[180px] relative overflow-hidden mb-6 flex items-center bg-[#131313] shrink-0">
+                <img src={history[0].thumbnail || "https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=2574&auto=format&fit=crop"} className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale mix-blend-screen" alt="" />
+                <div className="absolute inset-0 bg-gradient-to-l from-black via-black/80 to-transparent"></div>
+                <div className="z-10 absolute right-4 md:right-8 top-1/2 -translate-y-1/2 flex flex-col items-end w-[60%]">
+                  <h1 className="text-2xl md:text-3xl font-black italic text-right leading-[0.9] text-white tracking-tighter uppercase truncate max-w-full">{history[0].title}</h1>
+                  <p className="text-[8px] md:text-[10px] tracking-widest text-gray-400 font-bold mb-3 mt-1 uppercase">LAST_WATCHED: {history[0].formattedTime}</p>
+                  <div className="w-full max-w-[250px] h-1 md:h-2 bg-gray-800 relative mb-3">
+                    <div className="absolute left-0 top-0 h-full bg-[#e51152]" style={{ width: `${history[0].progress || 0}%` }}></div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[8px] md:text-[10px] font-bold text-[#f7e600]">{history[0].progress || 0}% WATCHED</span>
+                    {history[0].url && (
+                      <a href={history[0].url} target="_blank" rel="noreferrer" className="bg-[#e51152] text-[10px] md:text-xs font-black uppercase px-4 py-2 hover:bg-white hover:text-black transition-colors text-white">RESUME</a>
+                    )}
+                  </div>
+                </div>
+                <div className="absolute left-4 bottom-4 bg-[#f7e600] text-black font-black text-[8px] px-2 py-1 z-10 uppercase">LATEST ACTIVITY</div>
+              </div>
+            ) : !loading && (
+              <div className="w-full border-2 border-dashed border-gray-800 h-[140px] md:h-[180px] flex flex-col items-center justify-center mb-6 text-center px-4 shrink-0">
+                <span className="material-symbols-outlined text-4xl text-gray-700 mb-2">movie</span>
+                <p className="text-gray-500 font-black uppercase text-xs">No videos tracked yet</p>
+                <p className="text-gray-700 text-[10px] mt-1">Install the extension and watch something to get started</p>
+              </div>
+            )}
+            
+            {/* Grid */}
+            <div className="flex justify-between items-end border-b border-white/20 pb-2 mb-4 shrink-0 relative z-10">
+              <h2 className="text-xl md:text-2xl font-black italic text-white tracking-tighter uppercase">WATCH_HISTORY</h2>
+              <span className="text-[8px] md:text-[10px] font-bold tracking-widest text-gray-500 uppercase">TOTAL_RECORDS: {history.length}</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 flex-1 min-h-0 relative z-10 overflow-y-auto pr-2 custom-scrollbar">
+              {loading ? (
+                <div className="col-span-full h-32 flex items-center justify-center text-gray-700 animate-pulse font-black uppercase tracking-widest">SYNCING_HISTORY...</div>
+              ) : history.length > 0 ? (
+                history.map((item) => (
+                  <div key={item.id} onClick={() => item.url && window.open(item.url, '_blank')} className={`border-t-4 border-[#e51152] bg-[#1a1a1a] flex flex-col relative group overflow-hidden border border-white/10 h-fit ${item.url ? 'cursor-pointer' : ''}`}>
+                    <div className="absolute top-2 left-2 bg-black/80 border border-[#e51152] text-[#e51152] text-[8px] font-black px-2 py-0.5 z-10 uppercase">
+                      {(item.progress || 0) >= 90 ? '✓ DONE' : `${item.progress || 0}%`}
+                    </div>
+                    <div className="h-[70px] md:h-[100px] bg-black relative overflow-hidden">
+                      <img src={item.thumbnail || "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop"} className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" alt="" />
+                      <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gray-800"><div className="h-full bg-[#e51152]" style={{ width: `${item.progress || 0}%` }}></div></div>
+                    </div>
+                    <div className="p-3 bg-gradient-to-t from-black to-[#1a1a1a]">
+                      <p className="text-[10px] md:text-xs font-black leading-[1.1] mb-1 text-white truncate group-hover:text-[#e51152] transition-colors">{item.title}</p>
+                      <p className="text-[8px] text-gray-500 font-bold uppercase">{new Date(item.savedAt).toLocaleDateString()} • {item.formattedTime}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-800">
+                  <span className="material-symbols-outlined text-3xl text-gray-700 mb-2">history</span>
+                  <p className="text-gray-600 font-black uppercase text-xs">No history yet</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* History Grid */}
-        <div className="flex justify-between items-end border-b border-white/20 pb-2 mb-4 shrink-0 relative z-10">
-          <h2 className="text-xl md:text-2xl font-black italic text-white tracking-tighter uppercase">WATCH_HISTORY</h2>
-          <span className="text-[8px] md:text-[10px] font-bold tracking-widest text-gray-500 uppercase">TOTAL_RECORDS: {history.length}</span>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 flex-1 min-h-0 relative z-10 overflow-y-auto pr-2 custom-scrollbar">
-          {loading ? (
-            <div className="col-span-full h-32 flex items-center justify-center text-gray-700 animate-pulse font-black uppercase tracking-widest">SYNCING_HISTORY...</div>
-          ) : history.length > 0 ? (
-            history.map((item) => (
-              <div key={item.id} className="border-t-4 border-[#e51152] bg-[#1a1a1a] flex flex-col relative group overflow-hidden border border-white/10 h-fit">
-                <div className="absolute top-2 left-2 bg-black/80 backdrop-blur-sm border border-[#e51152] text-[#e51152] text-[8px] font-black px-2 py-0.5 z-10 uppercase">
-                  {item.progress === 100 ? 'COMPLETED' : `${item.progress || 0}%_WATCHED`}
+        {/* ── STATS TAB ── */}
+        {activeTab === 'stats' && (
+          <div className="flex-1 flex flex-col gap-6 overflow-y-auto relative z-10">
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: 'Total Videos', value: totalVideos, icon: 'movie', color: '#e51152' },
+                { label: 'Hours Watched', value: `${totalHours}h`, icon: 'schedule', color: '#f7e600' },
+                { label: 'Completed', value: completedCount, icon: 'check_circle', color: '#00ff9d' },
+                { label: 'Top Platform', value: topSite, icon: 'language', color: '#a78bfa' },
+              ].map(s => (
+                <div key={s.label} className="bg-[#1a1a1a] border border-white/10 border-t-4 p-4" style={{ borderTopColor: s.color }}>
+                  <span className="material-symbols-outlined text-2xl mb-2 block" style={{ color: s.color }}>{s.icon}</span>
+                  <p className="text-2xl md:text-3xl font-black truncate" style={{ color: s.color }}>{s.value}</p>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{s.label}</p>
                 </div>
-                <div className="h-[70px] md:h-[100px] bg-black relative overflow-hidden flex-shrink-0">
-                  <img src={item.thumbnail || "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2600&auto=format&fit=crop"} className="w-full h-full object-cover opacity-60 grayscale group-hover:scale-110 group-hover:grayscale-0 transition-all duration-500" alt="Thumbnail" />
-                  <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gray-800"><div className="h-full bg-[#e51152]" style={{ width: `${item.progress || 0}%` }}></div></div>
-                </div>
-                <div className="p-3 bg-gradient-to-t from-black to-[#1a1a1a] flex-1 flex flex-col justify-end">
-                  <p className="text-[10px] md:text-xs font-black leading-[1.1] mb-1 text-white truncate w-full group-hover:text-[#e51152] transition-colors" title={item.title}>{item.title}</p>
-                  <p className="text-[8px] text-gray-500 font-bold uppercase">{new Date(item.savedAt).toLocaleDateString()} • {item.formattedTime}</p>
+              ))}
+            </div>
+            {/* Top Sites */}
+            {Object.keys(siteCount).length > 0 && (
+              <div>
+                <h3 className="font-black uppercase text-xs text-gray-500 tracking-widest mb-3">Sites Breakdown</h3>
+                <div className="flex flex-col gap-2">
+                  {Object.entries(siteCount).sort((a,b) => b[1]-a[1]).slice(0,5).map(([site, count]) => (
+                    <div key={site} className="flex items-center gap-3 bg-[#1a1a1a] p-3 border border-white/10">
+                      <span className="text-xs font-black text-white flex-1 truncate uppercase">{site}</span>
+                      <span className="text-[#e51152] font-black text-xs">{count} videos</span>
+                      <div className="w-24 h-1 bg-gray-800"><div className="h-full bg-[#e51152]" style={{ width: `${Math.round((count / totalVideos) * 100)}%` }}></div></div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="col-span-full h-32 border-2 border-dashed border-gray-800 flex items-center justify-center text-gray-600 font-black uppercase text-xs">EMPTY_LOG</div>
-          )}
-        </div>
+            )}
+            {totalVideos === 0 && (
+              <div className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-gray-800">
+                <span className="material-symbols-outlined text-4xl text-gray-700 mb-2">bar_chart</span>
+                <p className="text-gray-600 font-black uppercase text-xs">No stats yet — start watching!</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── ADD TAB ── */}
+        {activeTab === 'add' && (
+          <div className="flex-1 flex flex-col relative z-10 max-w-lg">
+            <h2 className="text-xl font-black uppercase tracking-tighter text-white mb-6">Add Entry Manually</h2>
+            <form onSubmit={handleAddEntry} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Video Title *</label>
+                <input required value={addForm.title} onChange={e => setAddForm(f => ({...f, title: e.target.value}))}
+                  placeholder="Enter video title..." className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs focus:border-[#e51152] outline-none transition-colors placeholder:text-gray-600" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Video URL (optional)</label>
+                <input value={addForm.url} onChange={e => setAddForm(f => ({...f, url: e.target.value}))}
+                  placeholder="https://..." className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs focus:border-[#e51152] outline-none transition-colors placeholder:text-gray-600" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Timestamp (e.g. 1:23:45)</label>
+                <input value={addForm.timestamp} onChange={e => setAddForm(f => ({...f, timestamp: e.target.value}))}
+                  placeholder="0:00" className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs focus:border-[#e51152] outline-none transition-colors placeholder:text-gray-600" />
+              </div>
+              <button type="submit" disabled={addStatus === 'saving'}
+                className={`py-4 font-black text-sm uppercase tracking-widest transition-all ${addStatus === 'done' ? 'bg-[#00ff9d] text-black' : addStatus === 'error' ? 'bg-[#e51152]/50 text-white' : 'bg-[#e51152] text-white hover:bg-white hover:text-black'} disabled:opacity-50`}>
+                {addStatus === 'saving' ? 'SAVING...' : addStatus === 'done' ? '✓ SAVED!' : addStatus === 'error' ? 'ERROR — TRY AGAIN' : 'SAVE ENTRY'}
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </motion.div>
   );
