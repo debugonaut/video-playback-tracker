@@ -9,10 +9,17 @@ import './index.css';
 // The Cyber-Rewind / Kinetic Void Dashboard
 const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => void }) => {
   const [history, setHistory] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'entry' | 'history' | 'assets'>('analytics');
+  const [activeTab, setActiveTab] = useState<'analytics' | 'entry' | 'history' | 'assets'>('history');
   const [syncing, setSyncing] = useState(false);
   const [addForm, setAddForm] = useState({ title: '', url: '', timestamp: '' });
   const [addStatus, setAddStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // Apply theme to body
+  useEffect(() => {
+    if (isDarkMode) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  }, [isDarkMode]);
 
   useEffect(() => {
     if (!user) return;
@@ -49,7 +56,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
       setTimeout(() => { 
         setAddStatus('idle'); 
         setAddForm({ title: '', url: '', timestamp: '' });
-        setActiveTab('analytics');
+        setActiveTab('history');
       }, 1500);
     } catch {
       setAddStatus('error');
@@ -58,11 +65,69 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
 
   // Derived Stats
   const totalVideos = history.length;
-  const totalSecs = history.reduce((s, e) => {
-    const p = (e.formattedTime || '0:00').split(':').map(Number);
-    return s + (p.length === 3 ? p[0]*3600 + p[1]*60 + p[2] : p.length === 2 ? p[0]*60 + p[1] : p[0]);
-  }, 0);
+  const parseTimeToSeconds = (timeStr: string) => {
+    if (!timeStr) return 0;
+    const parts = timeStr.split(':').map(Number);
+    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    if (parts.length === 2) return parts[0] * 60 + parts[1];
+    return parts[0] || 0;
+  };
+
+  const totalSecs = history.reduce((acc, curr) => acc + parseTimeToSeconds(curr.formattedTime), 0);
   const totalHours = (totalSecs / 3600).toFixed(1);
+
+  // Analytics Helpers
+  const getDensityData = () => {
+    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const now = new Date();
+    const last7 = Array.from({length: 7}, (_, i) => {
+      const d = new Date();
+      d.setDate(now.getDate() - (6 - i));
+      return { day: days[d.getDay()], date: d.toDateString(), hours: 0 };
+    });
+
+    history.forEach(item => {
+      const itemDate = new Date(item.savedAt).toDateString();
+      const index = last7.findIndex(d => d.date === itemDate);
+      if (index !== -1) {
+        last7[index].hours += parseTimeToSeconds(item.formattedTime) / 3600;
+      }
+    });
+
+    const maxHours = Math.max(...last7.map(d => d.hours), 1);
+    return last7.map(d => ({ ...d, pct: (d.hours / maxHours) * 100 }));
+  };
+
+  const shadowNodes = [
+    { name: 'YOUTUBE_v3', domain: 'youtube.com', clr: 'var(--brand-yellow)', pct: 64 },
+    { name: 'NETFLIX_CORE', domain: 'netflix.com', clr: 'var(--brand-yellow)', pct: 22 },
+    { name: 'TWITCH_SYNC', domain: 'twitch.tv', clr: 'var(--brand-yellow)', pct: 14 },
+  ];
+
+  const getTopNodes = () => {
+    const counts: Record<string, number> = {};
+    history.forEach(item => {
+      if (!item.url) return;
+      try {
+        const domain = new URL(item.url).hostname.replace('www.', '');
+        counts[domain] = (counts[domain] || 0) + 1;
+      } catch {}
+    });
+
+    const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([domain, count]) => ({
+        name: domain.split('.')[0].toUpperCase(),
+        pct: Math.round((count / total) * 100),
+        clr: 'var(--brand-yellow)'
+      }));
+  };
+
+  const densityData = getDensityData();
+  const topNodes = getTopNodes();
+  const displayNodes = topNodes.length > 0 ? topNodes : shadowNodes;
 
   return (
     <motion.div 
@@ -72,10 +137,16 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
       <div className="scanline"></div>
       
       {/* LEFT MOST THIN BAR */}
-      <div className="w-16 border-r border-[#e51152]/30 flex flex-col items-center py-6 gap-8 shrink-0">
-          <div className="w-8 h-8 bg-[#e51152] flex items-center justify-center">
-            <span className="material-symbols-outlined text-sm">dashboard</span>
+      <div className="w-16 border-r border-border-primary/30 flex flex-col items-center py-6 gap-8 shrink-0 bg-bg-primary">
+          <div className="w-8 h-8 bg-brand-pink flex items-center justify-center">
+            <span className="material-symbols-outlined text-sm text-white">dashboard</span>
           </div>
+          <button 
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className="w-10 h-10 border-2 border-border-primary flex items-center justify-center hover:bg-brand-pink transition-all active:scale-90"
+          >
+            <span className="material-symbols-outlined text-sm">{isDarkMode ? 'light_mode' : 'dark_mode'}</span>
+          </button>
           <div className="vertical-text text-[10px] text-gray-500 font-black tracking-[0.2em] uppercase mt-auto pb-8 whitespace-nowrap -rotate-180" style={{ writingMode: 'vertical-rl' }}>
             NODE_OPERATOR_v3.1
           </div>
@@ -90,23 +161,23 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
           </div>
           
           <nav className="flex flex-col">
-             {[
-               { id: 'dashboard', icon: 'bar_chart', label: 'DASHBOARD', active: activeTab === 'analytics' },
-               { id: 'entry', icon: 'add_box', label: 'MANUAL ENTRY', active: activeTab === 'entry' },
-               { id: 'rewind', icon: 'settings_backup_restore', label: 'REWIND MODE', active: false },
-             ].map(item => (
-               <button 
-                key={item.id}
-                onClick={() => {
-                  if (item.id === 'dashboard') setActiveTab('analytics');
-                  if (item.id === 'entry') setActiveTab('entry');
-                  if (item.id === 'stats') setActiveTab('history');
-                }}
-                className={`py-6 px-8 flex items-center gap-4 text-xs font-black tracking-widest transition-all border-l-4 ${item.active ? 'bg-[#e51152] text-white border-white' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'}`}>
-                 <span className="material-symbols-outlined text-sm">{item.icon}</span>
-                 {item.label}
-               </button>
-             ))}
+              {[
+                { id: 'history', icon: 'history', label: 'USER HISTORY', active: activeTab === 'history' },
+                { id: 'dashboard', icon: 'bar_chart', label: 'ANALYTICS', active: activeTab === 'analytics' },
+                { id: 'entry', icon: 'add_box', label: 'MANUAL ENTRY', active: activeTab === 'entry' },
+              ].map(item => (
+                <button 
+                 key={item.id}
+                 onClick={() => {
+                   if (item.id === 'history') setActiveTab('history');
+                   if (item.id === 'dashboard') setActiveTab('analytics');
+                   if (item.id === 'entry') setActiveTab('entry');
+                 }}
+                 className={`py-6 px-8 flex items-center gap-4 text-xs font-black tracking-widest transition-all border-l-4 ${item.active ? 'bg-brand-pink text-white border-white' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'}`}>
+                  <span className="material-symbols-outlined text-sm">{item.icon}</span>
+                  {item.label}
+                </button>
+              ))}
           </nav>
         </div>
 
@@ -135,7 +206,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
           <div className="flex items-center gap-10">
             <h1 className="text-[#e51152] text-xl font-black italic tracking-tighter uppercase glitch-text">CYBER-REWIND</h1>
             <nav className="flex gap-8 text-[11px] font-black tracking-widest uppercase text-gray-500">
-               {['analytics', 'entry', 'history', 'assets'].map(tab => (
+               {['history', 'analytics', 'entry', 'assets'].map(tab => (
                  <button key={tab} onClick={() => setActiveTab(tab as any)} className={`transition-all pb-1 border-b-2 ${activeTab === tab ? 'text-white border-brand-yellow' : 'border-transparent hover:text-white'}`}>
                    {tab}
                  </button>
@@ -180,19 +251,19 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                    {/* STAT CARDS */}
                    <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
                       {[
-                        { label: 'TOTAL VIDEOS', val: totalVideos, icon: 'movie', clr: 'var(--brand-pink)' },
-                        { label: 'HOURS WATCHED', val: totalHours, icon: 'schedule', clr: 'var(--brand-pink)' },
-                        { label: 'SESSION_STREAK', val: '12D', icon: 'bolt', clr: 'var(--brand-pink)' },
-                        { label: 'COMPLETED', val: '88%', icon: 'check_circle', clr: 'var(--brand-pink)' },
+                        { label: 'TOTAL VIDEOS', val: totalVideos, icon: 'movie' },
+                        { label: 'HOURS WATCHED', val: totalHours, icon: 'schedule' },
+                        { label: 'SESSION_STREAK', val: '0D', icon: 'bolt' },
+                        { label: 'RECORD_VOLUME', val: `${history.length}u`, icon: 'database' },
                       ].map((item, idx) => (
-                        <div key={idx} className="bg-[#0e0e0e] border-2 border-[#e51152] p-6 relative group overflow-hidden">
+                        <div key={idx} className="neo-card p-6 relative group overflow-hidden">
                            <div className="absolute top-0 right-0 w-8 h-8 bg-brand-pink flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                              <span className="material-symbols-outlined text-white text-sm">{item.icon}</span>
                            </div>
                            <p className="text-[10px] font-black text-brand-pink tracking-widest uppercase mb-6 flex justify-between">
                              {item.label} <span className="material-symbols-outlined text-[10px]">{item.icon}</span>
                            </p>
-                           <p className="text-5xl font-black tracking-tighter text-white">{item.val}</p>
+                           <p className="text-5xl font-black tracking-tighter">{item.val}</p>
                         </div>
                       ))}
                    </div>
@@ -201,21 +272,21 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   {/* DENSITY CHART */}
                   <div className="lg:col-span-2 flex flex-col gap-8">
-                    <div className="bg-[#0e0e0e] border-2 border-brand-pink p-8 min-h-[350px] relative">
+                    <div className="neo-card p-8 min-h-[350px] relative">
                        <div className="flex justify-between items-start mb-12">
-                          <h3 className="text-white font-black uppercase text-xl italic tracking-widest">7-DAY_PLAYBACK_DENSITY</h3>
+                          <h3 className="font-black uppercase text-xl italic tracking-widest">7-DAY_PLAYBACK_DENSITY</h3>
                           <p className="text-brand-yellow font-black text-[10px] tracking-widest">UNIT: HRS/DAY</p>
                        </div>
                        <div className="flex items-end justify-between h-48 gap-4 px-4">
-                          {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day, i) => (
-                            <div key={day} className="flex-1 flex flex-col items-center gap-4">
-                               <div className="w-full bg-[#1a1a1a] relative group flex items-end" style={{ height: `${[40, 85, 30, 60, 45, 95, 70][i]}%` }}>
+                           {densityData.map((d) => (
+                            <div key={d.date} className="flex-1 flex flex-col items-center gap-4">
+                               <div className="w-full bg-bg-secondary relative group flex items-end" style={{ height: `${d.pct}%` }}>
                                   <div className="w-full bg-brand-pink group-hover:bg-brand-yellow transition-colors duration-300" style={{ height: '100%' }}></div>
-                                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-brand-pink opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {[1.2, 4.5, 0.8, 2.1, 1.4, 5.2, 3.8][i]}h
+                                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-black text-brand-pink opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    {d.hours.toFixed(1)}h
                                   </div>
                                 </div>
-                               <span className="text-[10px] font-black text-gray-500 tracking-widest">{day}</span>
+                               <span className="text-[10px] font-black text-gray-500 tracking-widest">{d.day}</span>
                             </div>
                           ))}
                        </div>
@@ -251,20 +322,16 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
 
                   {/* SIDE PANELS */}
                   <div className="flex flex-col gap-8">
-                    <div className="bg-[#0e0e0e] border-2 border-brand-pink p-6">
-                       <h3 className="text-brand-pink font-black uppercase text-xs tracking-widest mb-6">TOP_STREAMING_NODES</h3>
+                     <div className="neo-card p-6">
+                        <h3 className="font-black uppercase text-xs tracking-widest mb-6">TOP_STREAMING_NODES</h3>
                        <div className="flex flex-col gap-6">
-                          {[
-                            { name: 'YOUTUBE_v3', pct: 64, clr: 'var(--brand-yellow)' },
-                            { name: 'NETFLIX_CORE', pct: 22, clr: 'var(--brand-yellow)' },
-                            { name: 'TWITCH_SYNC', pct: 14, clr: 'var(--brand-yellow)' },
-                          ].map(node => (
+                          {displayNodes.map(node => (
                             <div key={node.name}>
-                               <div className="flex justify-between text-[10px] font-black text-white mb-2 tracking-widest">
+                               <div className="flex justify-between text-[10px] font-black mb-2 tracking-widest">
                                  <span>{node.name}</span>
                                  <span className="text-brand-pink">{node.pct}%</span>
                                </div>
-                               <div className="w-full h-4 bg-[#1a1a1a] relative">
+                               <div className="w-full h-4 bg-bg-secondary relative">
                                   <div className="h-full transition-all duration-1000" style={{ width: `${node.pct}%`, backgroundColor: node.clr }}></div>
                                </div>
                             </div>
@@ -402,7 +469,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                  
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {history.map(item => (
-                      <div key={item.id} className="bg-[#0e0e0e] border-2 border-white/5 hover:border-brand-pink transition-all p-4 group">
+                      <div key={item.id} className="neo-card p-4 group">
                          <div className="h-40 bg-black mb-4 relative overflow-hidden">
                             <img src={item.thumbnail || "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop"} className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" alt="" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
@@ -410,10 +477,10 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                                <span className="bg-brand-yellow text-black text-[9px] font-black px-2 py-1 uppercase">{item.progress || 0}%_WATCHED</span>
                             </div>
                          </div>
-                         <h4 className="text-white font-black text-sm uppercase truncate mb-1">{item.title}</h4>
+                         <h4 className="font-black text-sm uppercase truncate mb-1">{item.title}</h4>
                          <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                             <p>{new Date(item.savedAt).toLocaleDateString()} • {item.formattedTime}</p>
-                            <a href={item.url} target="_blank" rel="noreferrer" className="text-brand-pink hover:text-white">RE_LINK</a>
+                            <a href={item.url} target="_blank" rel="noreferrer" className="text-brand-pink hover:text-black hover:bg-brand-pink px-2 py-1 transition-colors">CONTINUE_TRACE</a>
                          </div>
                       </div>
                     ))}
