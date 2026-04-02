@@ -132,7 +132,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
   return (
     <motion.div 
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[60] bg-[#0e0e0e] flex font-['Space_Grotesk'] text-white overflow-hidden"
+      className="fixed inset-0 z-[60] bg-bg-primary flex font-['Space_Grotesk'] text-text-primary overflow-hidden"
     >
       <div className="scanline"></div>
       
@@ -153,7 +153,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
       </div>
 
       {/* PRIMARY SIDEBAR */}
-      <div className="w-[200px] md:w-[260px] bg-black border-r-2 border-[#e51152] flex flex-col justify-between py-8 shrink-0">
+      <div className="w-[200px] md:w-[260px] bg-bg-secondary border-r-2 border-brand-pink flex flex-col justify-between py-8 shrink-0">
         <div>
           <div className="px-8 mb-12">
             <h3 className="text-[#e51152] font-black text-xs tracking-widest uppercase mb-1">VOID_OPERATOR</h3>
@@ -173,7 +173,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                    if (item.id === 'dashboard') setActiveTab('analytics');
                    if (item.id === 'entry') setActiveTab('entry');
                  }}
-                 className={`py-6 px-8 flex items-center gap-4 text-xs font-black tracking-widest transition-all border-l-4 ${item.active ? 'bg-brand-pink text-white border-white' : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'}`}>
+                 className={`py-6 px-8 flex items-center gap-4 text-xs font-black tracking-widest transition-all border-l-4 ${item.active ? 'bg-brand-pink text-white border-border-primary' : 'text-text-secondary border-transparent hover:text-text-primary hover:bg-border-primary/5'}`}>
                   <span className="material-symbols-outlined text-sm">{item.icon}</span>
                   {item.label}
                 </button>
@@ -182,7 +182,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
         </div>
 
         <div className="px-8">
-           <div className="bg-[#1a1a1a] p-4 flex gap-3 items-center border border-white/10 mb-4">
+           <div className="bg-bg-primary p-4 flex gap-3 items-center border border-border-primary/10 mb-4">
               <div className="w-8 h-8 rounded-full bg-brand-yellow overflow-hidden">
                 <img src={user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} alt="" />
               </div>
@@ -191,7 +191,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                 <p className="text-[10px] font-bold text-gray-500 uppercase truncate w-[120px]">{user.displayName || 'RE_WIND_01'}</p>
               </div>
            </div>
-           <button onClick={onLogout} className="text-[10px] font-black text-gray-500 hover:text-white flex items-center gap-2 tracking-widest uppercase">
+           <button onClick={onLogout} className="text-[10px] font-black text-gray-500 hover:text-text-primary flex items-center gap-2 tracking-widest uppercase">
              <span className="material-symbols-outlined text-sm">power_settings_new</span> DISCONNECT_LINK
            </button>
         </div>
@@ -202,12 +202,12 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
         <div className="cyber-grid absolute inset-0 pointer-events-none opacity-20"></div>
 
         {/* TOP NAV BAR */}
-        <header className="h-20 border-b border-[#e51152]/30 flex items-center justify-between px-10 shrink-0 bg-black/50 backdrop-blur-sm relative z-10">
+        <header className="h-20 border-b border-brand-pink/30 flex items-center justify-between px-10 shrink-0 bg-bg-secondary/50 backdrop-blur-sm relative z-10">
           <div className="flex items-center gap-10">
             <h1 className="text-[#e51152] text-xl font-black italic tracking-tighter uppercase glitch-text">CYBER-REWIND</h1>
-            <nav className="flex gap-8 text-[11px] font-black tracking-widest uppercase text-gray-500">
+            <nav className="flex gap-8 text-[11px] font-black tracking-widest uppercase text-text-secondary">
                {['history', 'analytics', 'entry', 'assets'].map(tab => (
-                 <button key={tab} onClick={() => setActiveTab(tab as any)} className={`transition-all pb-1 border-b-2 ${activeTab === tab ? 'text-white border-brand-yellow' : 'border-transparent hover:text-white'}`}>
+                 <button key={tab} onClick={() => setActiveTab(tab as any)} className={`transition-all pb-1 border-b-2 ${activeTab === tab ? 'text-text-primary border-brand-yellow' : 'border-transparent hover:text-text-primary'}`}>
                    {tab}
                  </button>
                ))}
@@ -240,10 +240,10 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
               >
                 <header className="mb-10">
                   <p className="text-brand-yellow font-black text-[10px] tracking-[0.3em] mb-2 uppercase">SYSTEM.LOG_v04</p>
-                  <h2 className="text-6xl md:text-8xl font-black uppercase italic leading-none tracking-tighter text-white">REWIND <span className="text-brand-pink block">ANALYTICS</span></h2>
-                  <div className="bg-[#1a1a1a] border-l-4 border-white mt-4 p-4 inline-block">
+                  <h2 className="text-6xl md:text-8xl font-black uppercase italic leading-none tracking-tighter text-text-primary">REWIND <span className="text-brand-pink block">ANALYTICS</span></h2>
+                  <div className="bg-bg-secondary border-l-4 border-border-primary mt-4 p-4 inline-block">
                     <p className="text-[10px] font-black text-gray-400 mb-1 uppercase tracking-widest">STATUS</p>
-                    <p className="text-white font-black text-sm tracking-widest uppercase">NODE_SYNCED</p>
+                    <p className="font-black text-sm tracking-widest uppercase text-text-primary">NODE_SYNCED</p>
                   </div>
                 </header>
 
@@ -292,9 +292,9 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                        </div>
                     </div>
 
-                    <div className="bg-[#0e0e0e] border-2 border-brand-yellow p-8 min-h-[250px]">
+                    <div className="neo-card p-8 min-h-[250px]">
                        <div className="flex justify-between items-start mb-8">
-                          <h3 className="text-white font-black uppercase text-xl italic tracking-widest">CUMULATIVE_TIME_LOG</h3>
+                          <h3 className="font-black uppercase text-xl italic tracking-widest">CUMULATIVE_TIME_LOG</h3>
                           <div className="flex items-center gap-2">
                              <div className="w-3 h-3 bg-brand-yellow"></div>
                              <span className="text-gray-500 text-[10px] font-black">NODE_01</span>
@@ -339,27 +339,27 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                        </div>
                     </div>
 
-                    <div className="bg-[#1a1a1a] p-6 border-l-4 border-brand-yellow">
-                       <h3 className="text-brand-yellow font-black uppercase text-[10px] tracking-widest mb-6 border-b border-white/10 pb-2">SESSION_LOG</h3>
+                    <div className="neo-card bg-bg-secondary p-6 border-l-4 border-brand-yellow">
+                       <h3 className="text-brand-yellow font-black uppercase text-[10px] tracking-widest mb-6 border-b border-border-primary/10 pb-2">SESSION_LOG</h3>
                        <div className="flex flex-col gap-4 text-[10px] font-bold">
                           <div className="flex gap-4">
                              <div className="w-2 h-2 mt-1 shrink-0 bg-brand-yellow"></div>
                              <div>
-                               <p className="text-white uppercase">SYNC COMPLETE</p>
+                               <p className="text-text-primary uppercase">SYNC COMPLETE</p>
                                <p className="text-gray-500 uppercase">OPERATOR: VOID_04 // TIME: {new Date().toLocaleTimeString()}</p>
                              </div>
                           </div>
                           <div className="flex gap-4">
                              <div className="w-2 h-2 mt-1 shrink-0 bg-brand-yellow"></div>
                              <div>
-                               <p className="text-white uppercase">DATABASE LINK EST.</p>
+                               <p className="text-text-primary uppercase">DATABASE LINK EST.</p>
                                <p className="text-gray-500 uppercase">STATUS: SYNCED_ACTIVE</p>
                              </div>
                           </div>
                           <div className="flex gap-4 opacity-50">
                              <div className="w-2 h-2 mt-1 shrink-0 bg-brand-yellow animate-pulse"></div>
                              <div>
-                               <p className="text-white uppercase">ACTIVE TRACKING...</p>
+                               <p className="text-text-primary uppercase">ACTIVE TRACKING...</p>
                                <p className="text-gray-500 uppercase">PORT_LISTENING: 8080</p>
                              </div>
                           </div>
@@ -379,7 +379,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                 <div className="flex flex-col lg:flex-row gap-16 items-start">
                    <div className="flex-1 w-full">
                       <div className="mb-12">
-                        <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white italic leading-tight">
+                        <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-text-primary italic leading-tight">
                           ADD ENTRY <span className="text-brand-pink block">MANUALLY</span>
                         </h2>
                         <div className="h-2 w-32 bg-brand-yellow mt-4"></div>
@@ -426,25 +426,25 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
 
                    {/* RIGHT SIDEBAR NOTES */}
                    <div className="w-full lg:w-[320px] flex flex-col gap-8">
-                      <div className="bg-[#1a1a1a] p-8 border-l-4 border-brand-pink">
+                      <div className="neo-card bg-bg-secondary p-8 border-l-4 border-brand-pink">
                          <h3 className="text-brand-yellow font-black text-xs tracking-widest uppercase mb-4">METADATA LOGIC</h3>
                          <p className="text-gray-400 text-[10px] font-bold leading-relaxed uppercase">
                            MANUAL ENTRIES ARE PROCESSED THROUGH THE KINETIC VOID PROTOCOL. ENSURE ALL TIMESTAMPS ALIGN WITH UTC-0 OFFSET TO PREVENT SYNC FRAGMENTATION.
                          </p>
                       </div>
                       
-                      <div className="bg-black border-2 border-white/10 p-4 aspect-square flex flex-col relative overflow-hidden">
+                      <div className="bg-bg-primary border-2 border-border-primary/10 p-4 aspect-square flex flex-col relative overflow-hidden">
                          <div className="absolute inset-0 flex items-center justify-center">
                             <div className="w-48 h-48 border-[1px] border-brand-pink/30 rounded-full animate-ping"></div>
                             <div className="absolute w-32 h-32 border-[2px] border-brand-yellow/50 rounded-full"></div>
                             <div className="absolute w-16 h-16 border-[4px] border-brand-pink rounded-full"></div>
                          </div>
-                         <div className="mt-auto bg-black border border-white/20 p-2 text-center relative z-10">
-                            <p className="text-[8px] font-black tracking-widest text-white uppercase italic">SYSTEM_READY</p>
+                         <div className="mt-auto bg-bg-primary border border-border-primary/20 p-2 text-center relative z-10">
+                            <p className="text-[8px] font-black tracking-widest text-text-primary uppercase italic">SYSTEM_READY</p>
                          </div>
                       </div>
 
-                      <div className="border-2 border-dashed border-white/20 p-6 flex flex-col gap-4">
+                      <div className="border-2 border-dashed border-border-primary/20 p-6 flex flex-col gap-4">
                          <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-brand-pink"></div>
                             <p className="text-[10px] font-black text-white uppercase tracking-widest">AUTO-ARCHIVE ENABLED</p>
