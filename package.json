@@ -1,0 +1,27 @@
+{
+  "name": "video-playback-tracker",
+  "version": "1.0.0",
+  "description": "A cross-browser extension for **Chrome** and **Firefox** that automatically tracks your video playback timestamps on any streaming website — so you never lose your place again.",
+  "main": "background.js",
+  "scripts": {
+    "build": "esbuild src/background.js src/popup.js src/content.js --bundle --outdir=. --minify --sourcemap --platform=browser",
+    "watch": "esbuild src/background.js src/popup.js src/content.js --bundle --outdir=. --watch --sourcemap --platform=browser",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/debugonaut/video-playback-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/debugonaut/video-playback-tracker/issues"
+  },
+  "homepage": "https://github.com/debugonaut/video-playback-tracker#readme",
+  "devDependencies": {
+    "esbuild": "^0.27.5",
+    "firebase": "^12.11.0"
+  }
+}

@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  
+  html, body {
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  /* Global inheritance reset to prevent font fallback issues */
+  *, *::before, *::after {
+    font-family: inherit;
+  }
+}
+
+h1, h2, h3, h4, h5, h6, .brand-text {
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+button, input, textarea, select {
+  font-family: 'Manrope', sans-serif;
+}
+
+@layer utilities {
+  /* NEO-BRUTALIST DESIGN TOKENS */
+  
+  .neo-shadow {
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  }
+
+  .neo-shadow-white {
+    box-shadow: 8px 8px 0px 0px rgba(255,255,255,1);
+  }
+
+  .neo-shadow-pink {
+    box-shadow: 8px 8px 0px 0px #e51152;
+  }
+
+  .neo-shadow-yellow {
+    box-shadow: 8px 8px 0px 0px #f7e600;
+  }
+
+  .neo-shadow-active {
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  }
+
+  .neo-border {
+    border: 4px solid black;
+  }
+
+  .dark .neo-border {
+    border: 4px solid white;
+  }
+
+  /* TEXT INPUTS */
+  .neo-input {
+    @apply w-full bg-white dark:bg-black border-4 border-black dark:border-white p-4 font-['Space_Grotesk'] font-black uppercase text-lg tracking-tighter outline-none focus:bg-[#f7e600] dark:focus:bg-[#e51152] focus:text-black dark:focus:text-white transition-colors duration-200 placeholder:text-gray-400;
+  }
+
+  /* JITTER BUTTON ANIMATION */
+  .jitter-button {
+    @apply transition-all duration-75 active:translate-x-1 active:translate-y-1 active:shadow-none;
+  }
+
+  /* DARK MODE BRUTALISM OVERRIDES */
+  .dark .neo-shadow {
+    box-shadow: 8px 8px 0px 0px rgba(255,255,255,1);
+  }
+  
+  .dark .neo-shadow-white {
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,0.5);
+  }
+
+  .dark .neo-shadow-active {
+    box-shadow: 0px 0px 0px 0px transparent;
+  }
+}

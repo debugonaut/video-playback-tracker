@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rewind - Video Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body class="dark"> <!-- Defaulting to Dark/Neo-Night -->
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <span class="material-symbols-outlined logo-icon">play_circle</span>
+      <span class="app-name">REWIND</span>
+    </div>
+    <button id="closeBtn" class="header-close" title="Close popup">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </header>
+
+  <!-- ── Tab Content Container ───────────────────────────────────── -->
+  <main class="content-container">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TAB: History
+    ══════════════════════════════════════════════════════════════ -->
+    <div id="tab-history" class="tab-content active">
+      
+      <!-- Resume Banner Section -->
+      <div id="resumeSection" class="section-wrap">
+        <div class="section-header">
+           <span class="section-indicator"></span>
+           <span class="section-title">RESUME_WHERE_YOU_LEFT_OFF</span>
+        </div>
+        
+        <section id="resumeBanner" class="hero-card hidden">
+          <img id="resumeThumb" class="hero-bg" src="" alt="" />
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <h2 id="resumeTitle" class="hero-title">—</h2>
+            <div id="resumeEpisode" class="hero-episode">EPISODE 04</div>
+            
+            <div class="hero-footer">
+               <div class="hero-stats">
+                  <span id="resumeTime">00:00 / 00:00</span>
+               </div>
+               <div class="hero-progress-track">
+                  <div id="resumeProgressFill" class="hero-progress-fill" style="width:0%"></div>
+               </div>
+               <button id="resumeBtn" class="hero-btn">OPEN & RESUME</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- History List Section -->
+      <div id="historySection" class="section-wrap">
+        <div class="section-header flex-row">
+           <span class="section-title">HISTORY_LOG</span>
+           <span id="viewAllBtn" class="section-link">VIEW_ALL_<span id="entryCount">0</span></span>
+        </div>
+        
+        <div id="emptyState" class="empty-state hidden">
+          <p>NO_TRACKS_FOUND</p>
+        </div>
+        
+        <ul id="historyList" class="history-list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+
+    </div><!-- /tab-history -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TAB: Stats
+    ══════════════════════════════════════════════════════════════ -->
+    <div id="tab-stats" class="tab-content hidden">
+      <div class="section-header flex-row">
+         <h2 class="tab-title">KINETIC_STATS</h2>
+         <span class="material-symbols-outlined settings-icon">settings</span>
+      </div>
+
+      <div class="stats-viz-box">
+         <div class="viz-header">
+            <span class="viz-title">WEEKLY WATCH TIME</span>
+            <span class="viz-meta">LAST 7 DAYS</span>
+         </div>
+         <div class="viz-chart">
+            <div class="bar-wrap"><div class="bar" style="height:30%"></div><span class="day">MON</span></div>
+            <div class="bar-wrap"><div class="bar" style="height:55%"></div><span class="day">TUE</span></div>
+            <div class="bar-wrap"><div class="bar" style="height:40%"></div><span class="day">WED</span></div>
+            <div class="bar-wrap active"><div class="bar" style="height:90%"></div><span class="day">THU</span></div>
+            <div class="bar-wrap"><div class="bar" style="height:65%"></div><span class="day">FRI</span></div>
+            <div class="bar-wrap"><div class="bar" style="height:25%"></div><span class="day">SAT</span></div>
+            <div class="bar-wrap"><div class="bar" style="height:45%"></div><span class="day">SUN</span></div>
+         </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card pink">
+          <span class="stat-label">TOTAL VIDEOS TRACKED</span>
+          <div id="statTotal" class="stat-value">0</div>
+          <span class="stat-meta">+12% VS LW</span>
+        </div>
+        <div class="stat-card yellow">
+          <span class="stat-label">MOST WATCHED SITE</span>
+          <div id="statSite" class="stat-value">YOUTUBE</div>
+          <span id="statTime" class="stat-meta">84.2 HRS TOTAL</span>
+        </div>
+      </div>
+      
+      <div class="stat-footer-line"></div>
+    </div><!-- /tab-stats -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TAB: Add / Settings
+    ══════════════════════════════════════════════════════════════ -->
+    <div id="tab-add" class="tab-content hidden">
+      <div class="section-header flex-row">
+         <h2 class="tab-title">MANUAL_INJECT</h2>
+         <span class="badge neon-pink">LIVE_LINK</span>
+      </div>
+
+      <div class="inject-form">
+        <div class="form-group relative">
+          <label class="form-label">VIDEO TITLE</label>
+          <input type="text" id="manualTitle" placeholder="ENTER_NAME_SEQUENCE" class="inject-input" />
+          <div class="input-glow"></div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">URL</label>
+          <div class="input-with-icon">
+            <input type="url" id="manualUrl" placeholder="HTTPS://VOID.KINETIC/DATA" class="inject-input" />
+            <span class="material-symbols-outlined input-icon">link</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">TIMESTAMP</label>
+            <input type="text" id="manualTime" placeholder="00:00:00" class="inject-input" />
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-header">SYSTEM STATUS</div>
+          <p class="status-text">Injection point ready. Buffer cleared at 23ms. Metadata synchronization required after 'SAVE_OBJECT'.</p>
+        </div>
+
+        <button id="saveManualBtn" class="inject-btn">SAVE_OBJECT</button>
+      </div>
+    </div><!-- /tab-add -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TAB: Sync / Auth
+    ══════════════════════════════════════════════════════════════ -->
+    <div id="tab-sync" class="tab-content hidden">
+      <div class="section-header flex-row">
+         <h2 class="tab-title">CLOUD_NEURAL_SYNC</h2>
+         <span id="syncStatus" class="stat-badge offline">OFFLINE</span>
+      </div>
+
+      <!-- Login Form (Visible when signed out) -->
+      <div id="authContent" class="auth-box">
+        <div id="loginForm" class="inject-form">
+          <p class="auth-desc">Connect to REWIND Cloud to sync your playback history across all your devices instantly.</p>
+          
+          <div class="form-group">
+            <label class="form-label">NEURAL_ID (EMAIL)</label>
+            <input type="email" id="emailInput" placeholder="identity@void.kinetic" class="inject-input" />
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">ACCESS_KEY (PASSWORD)</label>
+            <input type="password" id="passwordInput" placeholder="••••••••" class="inject-input" />
+          </div>
+
+          <div class="auth-actions">
+            <button id="loginBtn" class="inject-btn primary">SIGN_IN</button>
+            <button id="registerBtn" class="inject-btn secondary">CREATE_ID</button>
+          </div>
+
+          <div class="divider"><span>OR</span></div>
+
+          <button id="googleBtn" class="google-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" />
+            CONTINUE_WITH_GOOGLE
+          </button>
+        </div>
+
+        <!-- Profile View (Visible when signed in) -->
+        <div id="profileView" class="profile-view hidden">
+          <div class="user-card">
+            <div class="user-info">
+              <span id="userEmail" class="user-email">identity@void.kinetic</span>
+              <span class="user-status">SYNC_STABLE</span>
+            </div>
+            <button id="logoutBtn" class="logout-btn">DISCONNECT</button>
+          </div>
+
+          <div class="sync-settings">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-name">REALTIME_LINK</span>
+                <span class="setting-desc">Push updates immediately on pause</span>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="realtimeToggle" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="status-box">
+            <div class="status-header">CLOUD_LOG</div>
+            <p id="cloudLog" class="status-text">Synchronizing neural pathways... Ready for transmission.</p>
+          </div>
+
+          <a id="viewProfileBtn" href="https://rewind-player.vercel.app" target="_blank" class="view-profile-btn">
+            <span class="material-symbols-outlined">open_in_new</span>
+            VIEW MY PROFILE
+          </a>
+        </div>
+      </div>
+    </div><!-- /tab-sync -->
+
+  </main>
+
+  <!-- ── Bottom Navigation ──────────────────────────────────────── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="history">
+      <span class="material-symbols-outlined">history</span>
+      <span class="nav-label">HISTORY</span>
+    </button>
+    <button class="nav-btn" data-tab="stats">
+      <span class="material-symbols-outlined">bar_chart</span>
+      <span class="nav-label">STATS</span>
+    </button>
+    <button class="nav-btn" data-tab="add">
+      <span class="material-symbols-outlined">add_box</span>
+      <span class="nav-label">ADD</span>
+    </button>
+    <button class="nav-btn" data-tab="sync">
+      <span class="material-symbols-outlined">cloud_sync</span>
+      <span class="nav-label">SYNC</span>
+    </button>
+  </nav>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CYBER TRACER NEO NIGHT - SYSTEM CONFIG</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-dim": "#00e5ee",
+              "tertiary-container": "#00f4fe",
+              "on-tertiary": "#006165",
+              "on-surface": "#ffffff",
+              "inverse-surface": "#f9f9f9",
+              "on-primary-fixed-variant": "#5f001c",
+              "surface-container-highest": "#262626",
+              "secondary": "#f7e600",
+              "on-error": "#490006",
+              "on-tertiary-fixed": "#004346",
+              "primary": "#ff8b9a",
+              "on-background": "#ffffff",
+              "on-surface-variant": "#ababab",
+              "on-tertiary-container": "#00575b",
+              "surface-tint": "#ff8b9a",
+              "on-secondary-container": "#fff8d5",
+              "on-secondary-fixed": "#464000",
+              "on-secondary": "#5a5300",
+              "secondary-dim": "#e8d800",
+              "tertiary": "#a1faff",
+              "tertiary-fixed": "#00f4fe",
+              "tertiary-fixed-dim": "#00e5ee",
+              "secondary-fixed-dim": "#e8d800",
+              "outline-variant": "#484848",
+              "on-primary-container": "#4d0015",
+              "primary-fixed-dim": "#ff5676",
+              "primary-fixed": "#ff7388",
+              "background": "#0e0e0e",
+              "secondary-container": "#676000",
+              "error": "#ff716c",
+              "primary-dim": "#e51152",
+              "secondary-fixed": "#f7e600",
+              "inverse-primary": "#bf0041",
+              "on-secondary-fixed-variant": "#645d00",
+              "surface-container-low": "#131313",
+              "on-primary": "#63001e",
+              "surface-container-high": "#1f1f1f",
+              "surface-bright": "#2c2c2c",
+              "surface-variant": "#262626",
+              "outline": "#757575",
+              "inverse-on-surface": "#555555",
+              "error-dim": "#d7383b",
+              "surface-container": "#191919",
+              "surface": "#0e0e0e",
+              "on-tertiary-fixed-variant": "#006266",
+              "surface-container-lowest": "#000000",
+              "error-container": "#9f0519",
+              "on-primary-fixed": "#000000",
+              "on-error-container": "#ffa8a3",
+              "surface-dim": "#0e0e0e",
+              "primary-container": "#ff7388"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Space Grotesk"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .brutalist-border {
+            border: 4px solid #ff2e63;
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 20px rgba(255, 46, 99, 0.2);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-body selection:bg-secondary selection:text-black">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen bg-black text-[#FF2E63] font-space-grotesk uppercase font-bold text-xs tracking-widest docked left w-72 h-full border-r-4 border-[#FF2E63] fixed z-50">
+<div class="p-6">
+<h1 class="text-lg font-black text-white mb-8">OPERATOR_01</h1>
+<div class="space-y-1">
+<p class="text-[#f7e600] font-black text-[10px] tracking-tighter">STATUS: SYSTEM_ACTIVE</p>
+</div>
+</div>
+<nav class="flex-1">
+<a class="flex items-center gap-4 text-white p-4 border-b border-zinc-800 hover:bg-[#FF2E63] hover:text-black transition-none cursor-crosshair active:translate-x-1" href="#">
+<span class="material-symbols-outlined">videocam</span>
+<span>LIVE FEED</span>
+</a>
+<a class="flex items-center gap-4 text-white p-4 border-b border-zinc-800 hover:bg-[#FF2E63] hover:text-black transition-none cursor-crosshair active:translate-x-1" href="#">
+<span class="material-symbols-outlined">video_library</span>
+<span>SAVED CLIPS</span>
+</a>
+<a class="flex items-center gap-4 text-white p-4 border-b border-zinc-800 hover:bg-[#FF2E63] hover:text-black transition-none cursor-crosshair active:translate-x-1" href="#">
+<span class="material-symbols-outlined">file_download</span>
+<span>EXPORT LOGS</span>
+</a>
+<a class="flex items-center gap-4 bg-[#f7e600] text-black font-black p-4 transition-none cursor-crosshair active:translate-x-1" href="#">
+<span class="material-symbols-outlined">memory</span>
+<span>SYSTEM HEALTH</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full bg-[#FF2E63] text-black p-4 font-black tracking-widest mb-4 hover:bg-white active:translate-y-1 transition-all">
+                    INITIATE_TRACE
+                </button>
+<a class="flex items-center gap-4 text-white p-4 hover:bg-error transition-none" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>LOGOUT</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 bg-surface-container-lowest min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-zinc-950/80 backdrop-blur-xl border-b-4 border-[#FF2E63] sticky top-0 z-40 flex justify-between items-center w-full px-6 py-4 shadow-[0_0_20px_rgba(255,46,99,0.2)]">
+<div class="flex items-center gap-8">
+<div class="text-xl font-black italic text-[#FF2E63] uppercase">CYBER TRACER NEO NIGHT</div>
+<nav class="hidden lg:flex gap-8 font-space-grotesk tracking-tight text-white uppercase font-bold text-sm">
+<a class="text-white/70 hover:text-white transition-none" href="#">HISTORY</a>
+<a class="text-white/70 hover:text-white transition-none" href="#">STATS</a>
+<a class="text-[#f7e600] border-b-2 border-[#f7e600] pb-1 transition-none" href="#">ADD</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-white/70 hover:text-[#FF2E63] transition-none scale-100 active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-white/70 hover:text-[#FF2E63] transition-none scale-100 active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 border-2 border-[#FF2E63] overflow-hidden">
+<img alt="OPERATOR_01" class="w-full h-full object-cover" data-alt="Cyberpunk operator profile portrait with glowing visor and tactical gear in high contrast dark lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArjP7znl90JazJdrUwRY2PpWms5U1_hPqzS12YXd-kjjiWolhoatQQtjBD0PeK6ts6CnJ9g1ZEJPpihN3CLrbnIVpvm_ZZll3FIf0d2ayue8QKVopOBynE9RBLOgxaQnP1cqQtDGR0yTVCAyh_BW8RcOOZTwqOwl94To0XhAO04e5byXHWvxbuzY2GRB22VMeRTm9FAi8OmVjWTcT5wNYUJ2z-mlXmmRp1DL17WIkZDeLXujcoAim3VP1w3gXZryxpjNlXrNh5Hac"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-6 md:p-12 max-w-7xl mx-auto space-y-12">
+<!-- Hero Section: Manual Entry -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-0 border-4 border-[#FF2E63] bg-surface-container shadow-[10px_10px_0px_#f7e600]">
+<div class="lg:col-span-5 p-8 border-b-4 lg:border-b-0 lg:border-r-4 border-[#FF2E63] flex flex-col justify-between">
+<div>
+<span class="text-[10px] font-black tracking-[0.2em] text-secondary uppercase block mb-2">Manual Data Insertion</span>
+<h2 class="text-4xl md:text-5xl font-black tracking-tighter text-white mb-6 leading-none">ADD NEW <br/><span class="text-[#FF2E63]">TRACE_OBJECT</span></h2>
+<p class="text-on-surface-variant font-medium leading-relaxed max-w-md">Override automated tracking by manually injecting trace coordinates and metadata into the neural grid.</p>
+</div>
+<div class="mt-12 hidden lg:block">
+<div class="text-[8px] font-bold text-zinc-600 font-mono tracking-widest leading-tight">
+                                SYSTEM_CORE_INJECTOR_V4.2<br/>
+                                STATUS: READY_FOR_SIGNAL<br/>
+                                LATENCY: 0.002MS<br/>
+                                SECURE_TUNNEL: ENABLED
+                            </div>
+</div>
+</div>
+<div class="lg:col-span-7 p-8 bg-black">
+<form class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Trace Identifier</label>
+<input class="w-full bg-surface-container-low border-b-2 border-zinc-800 text-white p-4 focus:outline-none focus:border-secondary transition-all font-bold placeholder:text-zinc-700" placeholder="TX_009_NEON" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Encryption Protocol</label>
+<select class="w-full bg-surface-container-low border-b-2 border-zinc-800 text-white p-4 focus:outline-none focus:border-secondary transition-all font-bold">
+<option>AES-256 QUANTUM</option>
+<option>SHA-512 NEURAL</option>
+<option>GHOST_PROTOCOL</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Trace Data Payload</label>
+<textarea class="w-full bg-surface-container-low border-b-2 border-zinc-800 text-white p-4 focus:outline-none focus:border-secondary transition-all font-bold placeholder:text-zinc-700" placeholder="Enter raw hex or trace descriptions..." rows="4"></textarea>
+</div>
+<div class="flex flex-wrap gap-4 items-center justify-between pt-4">
+<div class="flex items-center gap-4">
+<label class="flex items-center cursor-pointer group">
+<div class="relative">
+<input class="sr-only" type="checkbox"/>
+<div class="w-6 h-6 border-2 border-zinc-700 bg-black group-hover:border-secondary transition-colors flex items-center justify-center">
+<div class="w-2 h-2 bg-secondary opacity-0 check-mark"></div>
+</div>
+</div>
+<span class="ml-3 text-[10px] font-black text-white uppercase tracking-widest">Priority Trace</span>
+</label>
+</div>
+<button class="bg-[#FF2E63] text-black px-10 py-4 font-black uppercase tracking-widest hover:bg-secondary active:scale-95 transition-all" type="submit">
+                                    EXECUTE_ADD
+                                </button>
+</div>
+</form>
+</div>
+</section>
+<!-- System Config Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Left: Subtext Metadata -->
+<div class="md:col-span-1 space-y-4">
+<h3 class="text-2xl font-black text-white italic border-l-4 border-secondary pl-4 uppercase">System_Config</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Global parameters for data handling and hardware interface. Changes here may require full neural re-sync.</p>
+<div class="bg-surface-container p-6 border-2 border-zinc-800">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-black text-secondary">STORAGE_STATUS</span>
+<span class="text-[10px] font-black text-white">88% CAP</span>
+</div>
+<div class="w-full bg-black h-2 overflow-hidden">
+<div class="bg-secondary h-full w-[88%] shadow-[0_0_10px_#f7e600]"></div>
+</div>
+</div>
+</div>
+<!-- Right: Interactive Toggles (Bento) -->
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Toggle Card 1 -->
+<div class="bg-surface-container-high p-6 border-t-4 border-secondary flex flex-col justify-between hover:bg-surface-bright transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-secondary text-3xl">hub</span>
+<div class="w-12 h-6 bg-black border-2 border-zinc-700 relative group-hover:border-secondary transition-all">
+<div class="absolute right-1 top-1 w-3 h-3 bg-secondary"></div>
+</div>
+</div>
+<div>
+<h4 class="font-black text-white uppercase tracking-tighter text-lg">NEURAL_SYNC</h4>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mt-1">Real-time biometrics linking</p>
+</div>
+</div>
+<!-- Toggle Card 2 -->
+<div class="bg-surface-container-high p-6 border-t-4 border-[#FF2E63] flex flex-col justify-between hover:bg-surface-bright transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-[#FF2E63] text-3xl">satellite_alt</span>
+<div class="w-12 h-6 bg-black border-2 border-zinc-700 relative group-hover:border-[#FF2E63] transition-all">
+<div class="absolute left-1 top-1 w-3 h-3 bg-zinc-600"></div>
+</div>
+</div>
+<div>
+<h4 class="font-black text-white uppercase tracking-tighter text-lg">SAT_OVERRIDE</h4>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mt-1">Direct orbital uplink</p>
+</div>
+</div>
+<!-- Toggle Card 3 -->
+<div class="bg-surface-container-high p-6 border-t-4 border-white flex flex-col justify-between hover:bg-surface-bright transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-white text-3xl">security</span>
+<div class="w-12 h-6 bg-black border-2 border-zinc-700 relative group-hover:border-white transition-all">
+<div class="absolute right-1 top-1 w-3 h-3 bg-white"></div>
+</div>
+</div>
+<div>
+<h4 class="font-black text-white uppercase tracking-tighter text-lg">STEALTH_MODE</h4>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mt-1">Zero-trace signature</p>
+</div>
+</div>
+<!-- Toggle Card 4 -->
+<div class="bg-surface-container-high p-6 border-t-4 border-secondary flex flex-col justify-between hover:bg-surface-bright transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-secondary text-3xl">database</span>
+<div class="w-12 h-6 bg-black border-2 border-zinc-700 relative group-hover:border-secondary transition-all">
+<div class="absolute right-1 top-1 w-3 h-3 bg-secondary"></div>
+</div>
+</div>
+<div>
+<h4 class="font-black text-white uppercase tracking-tighter text-lg">AUTO_PURGE</h4>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase mt-1">Daily data incineration</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Quick Actions -->
+<div class="pt-8 border-t-4 border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-3 h-3 bg-secondary animate-pulse"></div>
+<span class="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant">Ready for manual input sequence</span>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 border-2 border-zinc-700 text-white text-[10px] font-black uppercase tracking-widest hover:border-[#FF2E63] hover:text-[#FF2E63] transition-all">REBOOT_CORE</button>
+<button class="px-6 py-2 border-2 border-[#FF2E63] text-[#FF2E63] text-[10px] font-black uppercase tracking-widest hover:bg-[#FF2E63] hover:text-black transition-all">DUMP_LOGS</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Navigation (Visible only on small screens) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t-4 border-[#FF2E63] flex justify-around p-4 z-50">
+<button class="flex flex-col items-center gap-1 text-white/50">
+<span class="material-symbols-outlined">videocam</span>
+<span class="text-[8px] font-black">LIVE</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/50">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[8px] font-black">LOGS</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-secondary">
+<span class="material-symbols-outlined">add_box</span>
+<span class="text-[8px] font-black">ADD</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/50">
+<span class="material-symbols-outlined">settings_suggest</span>
+<span class="text-[8px] font-black">CONFIG</span>
+</button>
+</nav>
+</body></html>

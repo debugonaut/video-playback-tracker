@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#e2e2e2",
+              "surface-container": "#eeeeee",
+              "on-primary-fixed-variant": "#910030",
+              "tertiary": "#5c5c5c",
+              "on-error": "#ffffff",
+              "surface-container-high": "#e8e8e8",
+              "on-secondary-fixed-variant": "#4e4800",
+              "on-primary-fixed": "#400010",
+              "on-secondary-fixed": "#1f1c00",
+              "tertiary-fixed-dim": "#c6c6c6",
+              "error": "#ba1a1a",
+              "primary-container": "#e51152",
+              "tertiary-container": "#747474",
+              "surface-bright": "#f9f9f9",
+              "surface-tint": "#bd0041",
+              "surface-dim": "#dadada",
+              "on-primary": "#ffffff",
+              "primary-fixed": "#ffd9dc",
+              "inverse-surface": "#2f3131",
+              "secondary-fixed": "#f7e600",
+              "surface-variant": "#e2e2e2",
+              "outline": "#906e71",
+              "on-surface-variant": "#5c3f42",
+              "on-surface": "#1a1c1c",
+              "inverse-on-surface": "#f1f1f1",
+              "inverse-primary": "#ffb2ba",
+              "on-tertiary-fixed": "#1b1b1b",
+              "on-primary-container": "#fffbff",
+              "outline-variant": "#e5bdc0",
+              "on-tertiary": "#ffffff",
+              "background": "#f9f9f9",
+              "surface": "#f9f9f9",
+              "primary": "#b9003f",
+              "on-secondary-container": "#6c6400",
+              "surface-container-lowest": "#ffffff",
+              "secondary-fixed-dim": "#d8ca00",
+              "on-tertiary-fixed-variant": "#474747",
+              "secondary-container": "#f3e300",
+              "on-background": "#1a1c1c",
+              "on-error-container": "#93000a",
+              "tertiary-fixed": "#e2e2e2",
+              "on-secondary": "#ffffff",
+              "secondary": "#676000",
+              "on-tertiary-container": "#fcfcfc",
+              "primary-fixed-dim": "#ffb2ba",
+              "error-container": "#ffdad6",
+              "surface-container-low": "#f3f3f3"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Manrope"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+        .neo-shadow-active {
+            box-shadow: 0px 0px 0px 0px #000000;
+        }
+        .neo-border {
+            border: 3px solid #000000;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f9f9f9;
+            color: #1a1c1c;
+        }
+        h1, h2, h3, .label-text {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="w-full border-b-[3px] border-black bg-[#f9f9f9] sticky top-0 z-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex justify-between items-center px-6 py-4">
+<div class="text-2xl font-black italic tracking-tighter text-black uppercase">Cyber Tracer Neo</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-['Space_Grotesk'] uppercase tracking-tighter text-black font-bold hover:bg-[#f7e600] hover:text-black transition-none px-2 py-1" href="#features">Features</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-tighter text-black font-bold hover:bg-[#f7e600] hover:text-black transition-none px-2 py-1" href="#compatibility">Compatibility</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-tighter text-black font-bold hover:bg-[#f7e600] hover:text-black transition-none px-2 py-1" href="#how-it-works">How It Works</a>
+<button class="bg-primary text-on-primary font-bold uppercase py-2 px-6 neo-border neo-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-none">Install Extension</button>
+</nav>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative px-6 py-24 md:py-32 flex flex-col items-center text-center overflow-hidden border-b-[3px] border-black">
+<div class="absolute top-10 left-10 -rotate-12 hidden lg:block">
+<div class="bg-secondary text-on-secondary-fixed font-black px-4 py-2 neo-border neo-shadow text-xl uppercase italic">LIVE TRACKING</div>
+</div>
+<div class="absolute bottom-20 right-10 rotate-6 hidden lg:block">
+<div class="bg-primary text-on-primary font-black px-4 py-2 neo-border neo-shadow text-xl uppercase italic">AUTOSAVE: ON</div>
+</div>
+<h1 class="text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-8 max-w-5xl">
+                NEVER LOSE YOUR <span class="text-primary italic">PLACE</span> AGAIN.
+            </h1>
+<p class="text-xl md:text-2xl font-medium max-w-2xl mb-12 uppercase tracking-tight">
+                Automatic timestamp preservation for every video on the web. No logins. No manual bookmarks. Just pure tracking.
+            </p>
+<div class="flex flex-col sm:flex-row gap-6 w-full max-w-xl">
+<button class="flex-1 bg-primary text-on-primary text-xl font-black uppercase py-6 px-8 neo-border neo-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-none flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">browser_updated</span>
+                    Install to Chrome
+                </button>
+<button class="flex-1 bg-surface-container-lowest text-on-surface text-xl font-black uppercase py-6 px-8 neo-border neo-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-none flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">globe_uk</span>
+                    Install to Firefox
+                </button>
+</div>
+<div class="mt-20 w-full max-w-5xl neo-border neo-shadow bg-black overflow-hidden aspect-video relative group">
+<img class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" data-alt="Retro cinematic technology aesthetic showing a close-up of a digital video playback interface with heavy lines and high-contrast neon red accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHPm_vGJ5pgejYuLFDkeLYQ5cQdk6VqEuNkIMmMziG_bO6ClpddJ2L6pBHpXzdIRLAUF8criRSa6V9jE_igMTdG-wuhOtumdrMDlKYdAcP4y1JoUDDh-WeMmeLPUceTafMlxTWj4HtVJyrFvf1o1RoGPQZrmUHf1uzB1TDtRT4M_3vJrqd-KsMKElOdsbuCBb99XM2tmbwR7UTS2XrYfKQN_f1eDAyrffYgcDO9n4OJKIzB7kLDCdmGrYupbqHX27J9lzCcmtx7Os"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-primary-container p-6 neo-border neo-shadow">
+<span class="material-symbols-outlined text-6xl text-white">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-6 left-6 right-6 h-4 bg-surface-container-highest neo-border">
+<div class="h-full bg-primary w-[68%] relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-secondary neo-border"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature Grid Section -->
+<section class="px-6 py-24 md:py-32 bg-surface-container-low" id="features">
+<div class="max-w-7xl mx-auto">
+<div class="flex justify-between items-end mb-16 border-b-[3px] border-black pb-8">
+<h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter">Core Capabilities</h2>
+<span class="text-primary font-black text-2xl hidden md:block">VER: 2.0.4</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Feature 1 -->
+<div class="bg-surface-container-lowest p-8 neo-border neo-shadow flex flex-col gap-6">
+<div class="w-16 h-16 bg-secondary flex items-center justify-center neo-border">
+<span class="material-symbols-outlined text-4xl" data-weight="fill">radar</span>
+</div>
+<h3 class="text-3xl font-black uppercase tracking-tighter">Auto-Tracking</h3>
+<p class="text-lg font-medium leading-tight">
+                            Scans the DOM instantly to detect any <video> elements. Works without user interaction—it just sees and remembers.
+                        </video></p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-surface-container-lowest p-8 neo-border neo-shadow flex flex-col gap-6">
+<div class="w-16 h-16 bg-primary flex items-center justify-center neo-border">
+<span class="material-symbols-outlined text-4xl text-white" data-weight="fill">layers</span>
+</div>
+<h3 class="text-3xl font-black uppercase tracking-tighter">Works Everywhere</h3>
+<p class="text-lg font-medium leading-tight">
+                            Bypass iFrame restrictions. Tracks videos embedded deep within complex structures or third-party players.
+                        </p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-surface-container-lowest p-8 neo-border neo-shadow flex flex-col gap-6">
+<div class="w-16 h-16 bg-black flex items-center justify-center neo-border">
+<span class="material-symbols-outlined text-4xl text-secondary" data-weight="fill">notifications_active</span>
+</div>
+<h3 class="text-3xl font-black uppercase tracking-tighter">Startup Reminders</h3>
+<p class="text-lg font-medium leading-tight">
+                            Visual badge icons alert you the moment a page loads if a previous session was saved. Resume in one click.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Compatibility Section -->
+<section class="px-6 py-24 md:py-32" id="compatibility">
+<div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16">
+<div class="flex-1">
+<h2 class="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-8 leading-none">Universal <br/><span class="text-primary">Support.</span></h2>
+<p class="text-xl mb-12 max-w-md">Our engine is built on standard HTML5 Media APIs, ensuring compatibility with the modern web's video standards.</p>
+<div class="p-6 bg-error text-white neo-border neo-shadow inline-block rotate-[-2deg]">
+<h4 class="text-2xl font-black uppercase flex items-center gap-3">
+<span class="material-symbols-outlined">warning</span>
+                            Flash is Dead
+                        </h4>
+<p class="font-bold">Legacy Adobe Flash content is not supported. Welcome to the future.</p>
+</div>
+</div>
+<div class="flex-1">
+<div class="neo-border neo-shadow overflow-hidden bg-white">
+<div class="bg-black text-white p-4 font-black uppercase flex justify-between">
+<span>Platform</span>
+<span>Status</span>
+</div>
+<div class="divide-y-[3px] divide-black">
+<div class="p-6 flex justify-between items-center hover:bg-secondary-container transition-none">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high neo-border flex items-center justify-center">
+<span class="material-symbols-outlined">smart_display</span>
+</div>
+<span class="text-2xl font-black uppercase">YouTube</span>
+</div>
+<span class="bg-[#00c853] text-black px-4 py-1 font-black neo-border">OPTIMIZED</span>
+</div>
+<div class="p-6 flex justify-between items-center hover:bg-secondary-container transition-none">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high neo-border flex items-center justify-center">
+<span class="material-symbols-outlined">movie</span>
+</div>
+<span class="text-2xl font-black uppercase">Netflix</span>
+</div>
+<span class="bg-[#00c853] text-black px-4 py-1 font-black neo-border">OPTIMIZED</span>
+</div>
+<div class="p-6 flex justify-between items-center hover:bg-secondary-container transition-none">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high neo-border flex items-center justify-center">
+<span class="material-symbols-outlined">html</span>
+</div>
+<span class="text-2xl font-black uppercase">HTML5 Generic</span>
+</div>
+<span class="bg-[#00c853] text-black px-4 py-1 font-black neo-border">NATIVE</span>
+</div>
+<div class="p-6 flex justify-between items-center hover:bg-secondary-container transition-none">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high neo-border flex items-center justify-center">
+<span class="material-symbols-outlined">stream</span>
+</div>
+<span class="text-2xl font-black uppercase">Twitch</span>
+</div>
+<span class="bg-[#00c853] text-black px-4 py-1 font-black neo-border">OPTIMIZED</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works Section -->
+<section class="px-6 py-24 md:py-32 bg-black text-white" id="how-it-works">
+<div class="max-w-7xl mx-auto text-center mb-24">
+<h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter mb-6">The Machine <span class="text-secondary italic">Flow</span></h2>
+<p class="text-xl md:text-2xl text-surface-container-high max-w-3xl mx-auto uppercase">A simple architecture designed for maximum performance and zero friction.</p>
+</div>
+<div class="max-w-6xl mx-auto relative px-4">
+<!-- Horizontal connecting lines for desktop -->
+<div class="hidden lg:block absolute top-[52px] left-[15%] right-[15%] h-[3px] bg-secondary"></div>
+<div class="flex flex-col lg:flex-row justify-between items-start gap-16 relative">
+<!-- Step 1 -->
+<div class="flex-1 flex flex-col items-center text-center group">
+<div class="w-24 h-24 bg-surface-container-lowest text-black neo-border neo-shadow mb-8 flex items-center justify-center relative z-10 group-hover:bg-primary group-hover:text-white transition-none">
+<span class="material-symbols-outlined text-5xl">code</span>
+</div>
+<h4 class="text-3xl font-black uppercase mb-4 text-secondary">content.js</h4>
+<p class="text-lg leading-tight font-medium text-surface-container-high">Injects a silent observer into the tab to monitor active video durations.</p>
+</div>
+<!-- Step 2 -->
+<div class="flex-1 flex flex-col items-center text-center group">
+<div class="w-24 h-24 bg-surface-container-lowest text-black neo-border neo-shadow mb-8 flex items-center justify-center relative z-10 group-hover:bg-primary group-hover:text-white transition-none">
+<span class="material-symbols-outlined text-5xl">database</span>
+</div>
+<h4 class="text-3xl font-black uppercase mb-4 text-secondary">chrome.storage</h4>
+<p class="text-lg leading-tight font-medium text-surface-container-high">Encrypted local persistence. Your data never leaves your browser.</p>
+</div>
+<!-- Step 3 -->
+<div class="flex-1 flex flex-col items-center text-center group">
+<div class="w-24 h-24 bg-surface-container-lowest text-black neo-border neo-shadow mb-8 flex items-center justify-center relative z-10 group-hover:bg-primary group-hover:text-white transition-none">
+<span class="material-symbols-outlined text-5xl">web_asset</span>
+</div>
+<h4 class="text-3xl font-black uppercase mb-4 text-secondary">popup.js</h4>
+<p class="text-lg leading-tight font-medium text-surface-container-high">The control center. Manage, resume, or delete your tracking history.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA Section -->
+<section class="px-6 py-32 md:py-48 text-center bg-surface relative overflow-hidden">
+<div class="absolute inset-0 opacity-5 pointer-events-none select-none overflow-hidden">
+<div class="text-[20rem] font-black leading-none whitespace-nowrap -rotate-12 transform translate-x-[-10%] translate-y-[20%]">CYBER TRACER NEO</div>
+</div>
+<div class="max-w-4xl mx-auto relative z-10">
+<h2 class="text-6xl md:text-9xl font-black uppercase tracking-tighter mb-12 leading-[0.8]">
+                    STOP <span class="bg-primary text-white px-4">SCRUBBING.</span><br/>
+                    START <span class="underline decoration-[12px] decoration-secondary">TRACKING.</span>
+</h2>
+<div class="flex flex-col sm:flex-row gap-6 justify-center">
+<button class="bg-primary text-on-primary text-2xl font-black uppercase py-8 px-12 neo-border neo-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-none flex items-center justify-center gap-4">
+                        GET FOR CHROME
+                        <span class="material-symbols-outlined text-3xl">arrow_forward</span>
+</button>
+<button class="bg-black text-white text-2xl font-black uppercase py-8 px-12 neo-border neo-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-none flex items-center justify-center gap-4">
+                        GET FOR FIREFOX
+                        <span class="material-symbols-outlined text-3xl">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-black text-white w-full border-t-[3px] border-black flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6">
+<div class="text-xl font-black text-[#f7e600] uppercase">CYBER TRACER NEO</div>
+<div class="flex flex-wrap gap-8 justify-center">
+<a class="font-['Space_Grotesk'] font-bold uppercase text-sm text-white hover:text-[#f7e600] underline transition-none" href="#">Documentation</a>
+<a class="font-['Space_Grotesk'] font-bold uppercase text-sm text-white hover:text-[#f7e600] underline transition-none" href="#">Privacy Policy</a>
+<a class="font-['Space_Grotesk'] font-bold uppercase text-sm text-white hover:text-[#f7e600] underline transition-none" href="#">Github</a>
+<a class="font-['Space_Grotesk'] font-bold uppercase text-sm text-white hover:text-[#f7e600] underline transition-none" href="#">Twitter</a>
+</div>
+<div class="font-['Space_Grotesk'] font-bold uppercase text-sm opacity-60">© 2024 CYBER TRACER NEO. NO RADIUS ALLOWED.</div>
+</footer>
+</body></html>

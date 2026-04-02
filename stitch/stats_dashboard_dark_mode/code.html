@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CYBER TRACER NEO NIGHT - STATS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-dim": "#00e5ee",
+                        "tertiary-container": "#00f4fe",
+                        "on-tertiary": "#006165",
+                        "on-surface": "#ffffff",
+                        "inverse-surface": "#f9f9f9",
+                        "on-primary-fixed-variant": "#5f001c",
+                        "surface-container-highest": "#262626",
+                        "secondary": "#f7e600",
+                        "on-error": "#490006",
+                        "on-tertiary-fixed": "#004346",
+                        "primary": "#ff8b9a",
+                        "on-background": "#ffffff",
+                        "on-surface-variant": "#ababab",
+                        "on-tertiary-container": "#00575b",
+                        "surface-tint": "#ff8b9a",
+                        "on-secondary-container": "#fff8d5",
+                        "on-secondary-fixed": "#464000",
+                        "on-secondary": "#5a5300",
+                        "secondary-dim": "#e8d800",
+                        "tertiary": "#a1faff",
+                        "tertiary-fixed": "#00f4fe",
+                        "tertiary-fixed-dim": "#00e5ee",
+                        "secondary-fixed-dim": "#e8d800",
+                        "outline-variant": "#484848",
+                        "on-primary-container": "#4d0015",
+                        "primary-fixed-dim": "#ff5676",
+                        "primary-fixed": "#ff7388",
+                        "background": "#0e0e0e",
+                        "secondary-container": "#676000",
+                        "error": "#ff716c",
+                        "primary-dim": "#e51152",
+                        "secondary-fixed": "#f7e600",
+                        "inverse-primary": "#bf0041",
+                        "on-secondary-fixed-variant": "#645d00",
+                        "surface-container-low": "#131313",
+                        "on-primary": "#63001e",
+                        "surface-container-high": "#1f1f1f",
+                        "surface-bright": "#2c2c2c",
+                        "surface-variant": "#262626",
+                        "outline": "#757575",
+                        "inverse-on-surface": "#555555",
+                        "error-dim": "#d7383b",
+                        "surface-container": "#191919",
+                        "surface": "#0e0e0e",
+                        "on-tertiary-fixed-variant": "#006266",
+                        "surface-container-lowest": "#000000",
+                        "error-container": "#9f0519",
+                        "on-primary-fixed": "#000000",
+                        "on-error-container": "#ffa8a3",
+                        "surface-dim": "#0e0e0e",
+                        "primary-container": "#ff7388"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0rem", "lg": "0rem", "xl": "0rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #0e0e0e; color: #ffffff; font-family: 'Space Grotesk', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .kinetic-grid-cell { aspect-ratio: 1 / 1; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="flex overflow-hidden">
+<!-- SideNavBar (Authority JSON Source) -->
+<aside class="hidden md:flex flex-col h-screen bg-black border-r-4 border-[#FF2E63] w-72 shrink-0">
+<div class="p-6 border-b border-zinc-800">
+<h1 class="text-lg font-black text-white">OPERATOR_01</h1>
+<p class="text-[0.6875rem] font-bold text-[#FF2E63] tracking-[0.1em] uppercase">SYSTEM_ACTIVE</p>
+</div>
+<nav class="flex-1 overflow-y-auto no-scrollbar">
+<div class="flex flex-col">
+<a class="text-white p-4 border-b border-zinc-800 hover:bg-[#FF2E63] hover:text-black transition-none cursor-crosshair active:translate-x-1 duration-0 font-space-grotesk uppercase font-bold text-xs tracking-widest" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">videocam</span>
+<span>LIVE FEED</span>
+</div>
+</a>
+<a class="text-white p-4 border-b border-zinc-800 hover:bg-[#FF2E63] hover:text-black transition-none cursor-crosshair active:translate-x-1 duration-0 font-space-grotesk uppercase font-bold text-xs tracking-widest" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">video_library</span>
+<span>SAVED CLIPS</span>
+</div>
+</a>
+<a class="text-white p-4 border-b border-zinc-800 hover:bg-[#FF2E63] hover:text-black transition-none cursor-crosshair active:translate-x-1 duration-0 font-space-grotesk uppercase font-bold text-xs tracking-widest" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">file_download</span>
+<span>EXPORT LOGS</span>
+</div>
+</a>
+<a class="bg-[#f7e600] text-black font-black p-4 transition-none cursor-crosshair active:translate-x-1 duration-0 font-space-grotesk uppercase text-xs tracking-widest" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">memory</span>
+<span>SYSTEM HEALTH</span>
+</div>
+</a>
+</div>
+</nav>
+<div class="p-6 border-t border-zinc-800">
+<button class="w-full bg-primary-dim text-black font-black py-4 mb-4 flex items-center justify-center gap-2 border-4 border-black hover:bg-primary transition-none">
+                INITIATE_TRACE
+            </button>
+<a class="text-white p-4 flex items-center gap-3 hover:bg-[#FF2E63] hover:text-black transition-none font-space-grotesk uppercase font-bold text-xs tracking-widest" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>LOGOUT</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col min-w-0 bg-surface h-screen overflow-hidden">
+<!-- TopNavBar (Authority JSON Source) -->
+<header class="flex justify-between items-center w-full px-6 py-4 bg-zinc-950/80 backdrop-blur-xl border-b-4 border-[#FF2E63] shadow-[0_0_20px_rgba(255,46,99,0.2)] z-10">
+<div class="flex items-center gap-8">
+<div class="text-xl font-black italic text-[#FF2E63] uppercase">CYBER TRACER NEO NIGHT</div>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-white/70 hover:text-white font-space-grotesk tracking-tight uppercase text-sm font-bold" href="#">HISTORY</a>
+<a class="text-[#f7e600] border-b-2 border-[#f7e600] pb-1 font-space-grotesk tracking-tight uppercase text-sm font-bold" href="#">STATS</a>
+<a class="text-white/70 hover:text-white font-space-grotesk tracking-tight uppercase text-sm font-bold" href="#">ADD</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-white hover:text-[#FF2E63] transition-none active:scale-95 duration-0">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-white hover:text-[#FF2E63] transition-none active:scale-95 duration-0 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-[#f7e600]"></span>
+</button>
+<img alt="OPERATOR_01" class="w-8 h-8 grayscale brightness-125 border border-primary" data-alt="close-up portrait of a cyberpunk operator with glowing neon reflections on skin and tactical visor interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjzSZSf321lPnWM5tXydAboDBMn-R081Y0gGRB4AuCdJROGUkq4T81Lb65DsyqABon6voayNRVECu7lkXicOHyEBjBoptAHBxrsLbbLGNtO6SJFD0mZwqlmdVHYALPSaybbYnwjiKt0Ua7XhMdxhXjw6sTMwH4efciUrUgG8_yCvnUVwquIImnXODKkBOe-Pn-7DtFBNe2c2kE3vRU9dCqX-EpU6mOzlxyBVzZqeFIVDdhy097j5Uu_hZI1v8SCJiJiA85H0HBU4w"/>
+</div>
+</header>
+<!-- Scrollable Dashboard Area -->
+<div class="flex-1 overflow-y-auto p-8 no-scrollbar bg-surface-dim">
+<div class="max-w-[1400px] mx-auto space-y-12">
+<!-- Hero Header -->
+<section class="flex flex-col md:flex-row justify-between items-end gap-6 border-l-8 border-secondary p-6 bg-surface-container-lowest">
+<div>
+<span class="label-sm text-secondary tracking-[0.2em] uppercase font-black text-xs">SYSTEM_METRICS // V.2.0.4</span>
+<h2 class="display-lg text-white font-black text-6xl tracking-tighter mt-2 leading-none uppercase">REFINED_STATS</h2>
+</div>
+<div class="text-right">
+<p class="text-on-surface-variant label-sm uppercase tracking-widest text-[10px]">CURRENT_UPTIME</p>
+<p class="text-white headline-lg text-4xl font-bold font-mono">142:12:05:59</p>
+</div>
+</section>
+<!-- Stats Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Session Card -->
+<div class="col-span-1 md:col-span-2 bg-surface-container-high border-4 border-primary p-8 flex flex-col justify-between group">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-4xl">analytics</span>
+<span class="text-[10px] text-primary/50 font-black tracking-widest uppercase">TRACKED_SESSIONS</span>
+</div>
+<div class="mt-8">
+<div class="text-7xl font-black text-white leading-none">1,402</div>
+<div class="flex items-center gap-2 mt-4">
+<span class="bg-secondary text-black px-2 py-0.5 text-[10px] font-black tracking-tighter">+12.4%</span>
+<span class="text-on-surface-variant text-[10px] uppercase tracking-widest">VS PREV CYCLE</span>
+</div>
+</div>
+</div>
+<!-- Watch Time Card -->
+<div class="bg-surface-container-lowest border-4 border-on-surface p-8">
+<span class="text-[10px] text-on-surface-variant font-black tracking-widest uppercase block mb-4">WATCH_TIME</span>
+<div class="text-5xl font-black text-white mb-2">482<span class="text-xl text-secondary">HRS</span></div>
+<div class="w-full h-1 bg-zinc-800 mt-6 relative">
+<div class="absolute inset-0 bg-secondary w-3/4"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant mt-2 uppercase tracking-tighter">75% OF TARGET REACHED</p>
+</div>
+<!-- Sync Card -->
+<div class="bg-primary-dim p-8 flex flex-col justify-between border-4 border-black">
+<span class="material-symbols-outlined text-black text-4xl">sync</span>
+<div>
+<div class="text-4xl font-black text-black leading-tight uppercase">99.9%<br/>SYNC</div>
+<p class="text-black/70 text-[10px] font-bold uppercase tracking-widest mt-2">ULTRA_LOW_LATENCY</p>
+</div>
+</div>
+</div>
+<!-- Middle Section: Heat & Sites -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- KINETIC_HEAT Grid -->
+<div class="lg:col-span-7 bg-surface-container p-8 border-4 border-zinc-800">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-2xl font-black text-white uppercase italic tracking-tighter">KINETIC_HEAT_MAP</h3>
+<div class="flex gap-2">
+<div class="w-3 h-3 bg-zinc-900 border border-zinc-700"></div>
+<div class="w-3 h-3 bg-primary-dim opacity-40"></div>
+<div class="w-3 h-3 bg-primary-dim"></div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-2">
+<!-- Generated Grid Cells -->
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim opacity-70"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim opacity-20"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<!-- Repeat for density -->
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim opacity-50"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim opacity-80"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim opacity-10"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+<div class="kinetic-grid-cell bg-zinc-900"></div>
+<div class="kinetic-grid-cell bg-primary-dim opacity-60"></div>
+<div class="kinetic-grid-cell bg-primary-dim"></div>
+</div>
+<div class="mt-8 flex justify-between text-on-surface-variant text-[10px] uppercase font-bold tracking-[0.2em]">
+<span>MON_00:00</span>
+<span>SUN_23:59</span>
+</div>
+</div>
+<!-- TOP_SITES Bar Chart -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<div class="bg-black border-4 border-secondary p-8 flex-1">
+<h3 class="text-xl font-black text-white uppercase mb-8 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+                                TOP_SOURCES
+                            </h3>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between label-sm">
+<span class="text-white">NET_NEURAL_01</span>
+<span class="text-secondary">82%</span>
+</div>
+<div class="h-4 bg-zinc-900 w-full relative">
+<div class="absolute h-full bg-secondary w-[82%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between label-sm">
+<span class="text-white">OMEGA_STREAM</span>
+<span class="text-secondary">65%</span>
+</div>
+<div class="h-4 bg-zinc-900 w-full relative">
+<div class="absolute h-full bg-secondary w-[65%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between label-sm">
+<span class="text-white">VOID_CHANNEL_X</span>
+<span class="text-secondary">41%</span>
+</div>
+<div class="h-4 bg-zinc-900 w-full relative">
+<div class="absolute h-full bg-secondary w-[41%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between label-sm">
+<span class="text-white">RELIANCE_CORE</span>
+<span class="text-secondary">29%</span>
+</div>
+<div class="h-4 bg-zinc-900 w-full relative">
+<div class="absolute h-full bg-secondary w-[29%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Mini Alert/CTA Card -->
+<div class="bg-surface-container-highest p-6 border-l-4 border-primary-dim flex items-center gap-6">
+<div class="w-12 h-12 bg-primary-dim flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-black font-bold">warning</span>
+</div>
+<div>
+<p class="text-white font-black text-sm uppercase">BANDWIDTH_LIMIT_REACHED</p>
+<p class="text-on-surface-variant text-[10px] uppercase">OPTIMIZE TRACE PARAMETERS</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity (Asymmetric List) -->
+<section>
+<div class="flex items-center gap-4 mb-8">
+<h3 class="text-4xl font-black text-white uppercase tracking-tighter italic">RAW_LOG_FEED</h3>
+<div class="flex-1 h-px bg-zinc-800"></div>
+<button class="text-secondary text-xs font-black tracking-widest uppercase hover:bg-secondary hover:text-black px-4 py-2 border-2 border-secondary transition-none">VIEW_ALL</button>
+</div>
+<div class="space-y-4">
+<div class="grid grid-cols-12 bg-surface-container-low hover:bg-surface-bright p-4 border border-zinc-800 transition-none items-center group">
+<div class="col-span-1 text-[10px] font-black text-primary/50">02:14:55</div>
+<div class="col-span-5 text-sm font-bold text-white tracking-wide uppercase">PACKET_CAPTURE_INITIATED_X90</div>
+<div class="col-span-3 text-[10px] text-on-surface-variant font-mono">ID: 0x9821_FD92</div>
+<div class="col-span-3 flex justify-end">
+<span class="px-2 py-0.5 bg-green-500/20 text-green-500 text-[10px] font-black uppercase">SUCCESS</span>
+</div>
+</div>
+<div class="grid grid-cols-12 bg-surface-container-low hover:bg-surface-bright p-4 border border-zinc-800 transition-none items-center group">
+<div class="col-span-1 text-[10px] font-black text-primary/50">02:12:01</div>
+<div class="col-span-5 text-sm font-bold text-white tracking-wide uppercase">DECRYPTION_PROTOCOL_BYPASS</div>
+<div class="col-span-3 text-[10px] text-on-surface-variant font-mono">ID: 0x4421_AA12</div>
+<div class="col-span-3 flex justify-end">
+<span class="px-2 py-0.5 bg-secondary/20 text-secondary text-[10px] font-black uppercase">PENDING</span>
+</div>
+</div>
+<div class="grid grid-cols-12 bg-surface-container-low hover:bg-surface-bright p-4 border border-zinc-800 transition-none items-center group">
+<div class="col-span-1 text-[10px] font-black text-primary/50">01:59:42</div>
+<div class="col-span-5 text-sm font-bold text-white tracking-wide uppercase">EXTERNAL_LINK_SYNCHRONIZED</div>
+<div class="col-span-3 text-[10px] text-on-surface-variant font-mono">ID: 0x0012_CC41</div>
+<div class="col-span-3 flex justify-end">
+<span class="px-2 py-0.5 bg-primary-dim/20 text-primary-dim text-[10px] font-black uppercase">FLAGGED</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Mobile BottomNavBar (Authority JSON Source Replacement) -->
+<nav class="md:hidden flex justify-around items-center bg-black border-t-4 border-[#FF2E63] py-4">
+<a class="flex flex-col items-center text-[#f7e600]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-[8px] font-black tracking-widest mt-1 uppercase">STATS</span>
+</a>
+<a class="flex flex-col items-center text-white/70" href="#">
+<span class="material-symbols-outlined">videocam</span>
+<span class="text-[8px] font-black tracking-widest mt-1 uppercase">LIVE</span>
+</a>
+<a class="flex flex-col items-center text-white/70" href="#">
+<span class="material-symbols-outlined">video_library</span>
+<span class="text-[8px] font-black tracking-widest mt-1 uppercase">LOGS</span>
+</a>
+<a class="flex flex-col items-center text-white/70" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[8px] font-black tracking-widest mt-1 uppercase">SYSTEM</span>
+</a>
+</nav>
+</main>
+<!-- Floating Action Button (Shell Logic) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-[#f7e600] text-black border-4 border-black flex items-center justify-center hover:bg-white transition-none active:scale-95 z-50">
+<span class="material-symbols-outlined text-3xl font-black">add</span>
+</button>
+</body></html>

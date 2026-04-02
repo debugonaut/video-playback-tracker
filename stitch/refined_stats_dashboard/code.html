@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KINETIC TRACKER | STATS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed": "#f7e600",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#5c5c5c",
+                        "tertiary-container": "#747474",
+                        "on-secondary-fixed-variant": "#4e4800",
+                        "inverse-on-surface": "#f1f1f1",
+                        "primary-container": "#e51152",
+                        "background": "#f9f9f9",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#676000",
+                        "primary-fixed": "#ffd9dc",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary-fixed": "#1f1c00",
+                        "on-secondary-container": "#6c6400",
+                        "on-surface": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed-dim": "#d8ca00",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-primary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#f3e300",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#ffb2ba",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-tint": "#bd0041",
+                        "surface": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "primary-fixed-dim": "#ffb2ba",
+                        "on-tertiary-container": "#fcfcfc",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "surface-dim": "#dadada",
+                        "outline": "#906e71",
+                        "on-primary-fixed": "#400010",
+                        "primary": "#b9003f",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-surface-variant": "#5c3f42",
+                        "outline-variant": "#e5bdc0",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-fixed": "#1b1b1b",
+                        "on-primary-fixed-variant": "#910030"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Space Grotesk"]
+                    },
+                    borderRadius: { "DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f9f9f9;
+            color: #1a1c1c;
+        }
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+        }
+        .neo-shadow-side {
+            box-shadow: 4px 0px 0px 0px rgba(0, 0, 0, 1);
+        }
+        .neo-interaction:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#f9f9f9] border-b-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex justify-between items-center w-full px-6 py-4">
+<div class="text-2xl font-black italic text-[#b9003f] font-['Space_Grotesk'] tracking-tighter">KINETIC TRACKER</div>
+<nav class="hidden md:flex gap-x-8">
+<a class="font-['Space_Grotesk'] uppercase tracking-tighter font-bold text-black opacity-80 hover:bg-[#f7e600] hover:text-black transition-none px-2" href="#">HISTORY</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-tighter font-bold text-[#b9003f] border-b-[4px] border-[#b9003f] pb-1 px-2" href="#">STATS</a>
+<a class="font-['Space_Grotesk'] uppercase tracking-tighter font-bold text-black opacity-80 hover:bg-[#f7e600] hover:text-black transition-none px-2" href="#">ADD</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-black hover:text-[#b9003f]">settings</button>
+<button class="material-symbols-outlined text-black hover:text-[#b9003f]">help</button>
+</div>
+</header>
+<div class="flex h-screen pt-[75px]">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full w-64 bg-[#f9f9f9] border-r-[3px] border-black shadow-[4px_0px_0px_0px_rgba(0,0,0,1)] p-4 gap-y-4">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 border-2 border-black bg-secondary-fixed flex items-center justify-center overflow-hidden">
+<img alt="OPERATOR_01" class="w-full h-full object-cover" data-alt="Cyberpunk style character portrait with high contrast lighting and digital glitches, sharp focus on eyes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhcBzNyDo-qgBDIVB7hCTE5j8DH__3_SlJp5EZA9PkZzM6cmiG1TGDY9zYYQolg-BOgdqSWtxC45_AuLOJROzUfUglXnhm3FNv12B32GfgZhyP0IwgH7xlUAfsXqQLiROy388rRg-CREq4lc9v8Hwv7KbW9e1h_Fzt5wFIIAwTkv2gMEZaU_YF2mU7Y4aclCNvKr1ir6KqzuvvXFLxepY93h1FGWA8m8gaRupmox3hS8f2w8zUDPLzEplOjzaBPLCBfErolFTWj4A"/>
+</div>
+<div>
+<p class="text-lg font-black text-black font-['Space_Grotesk']">OPERATOR_01</p>
+<p class="text-[10px] font-bold text-[#b9003f] font-['Space_Grotesk'] tracking-widest uppercase">VIBRATING_ACTIVE</p>
+</div>
+</div>
+<div class="flex flex-col gap-y-2">
+<button class="flex items-center gap-3 p-2 bg-[#b9003f] text-white border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-['Space_Grotesk'] font-bold uppercase text-xs">
+<span class="material-symbols-outlined">sensors</span> Live Feed
+                </button>
+<button class="flex items-center gap-3 p-2 text-black border-[2px] border-transparent hover:bg-[#f7e600] hover:text-black hover:border-black font-['Space_Grotesk'] font-bold uppercase text-xs">
+<span class="material-symbols-outlined">movie</span> Saved Clips
+                </button>
+<button class="flex items-center gap-3 p-2 text-black border-[2px] border-transparent hover:bg-[#f7e600] hover:text-black hover:border-black font-['Space_Grotesk'] font-bold uppercase text-xs">
+<span class="material-symbols-outlined">terminal</span> Export Logs
+                </button>
+<button class="flex items-center gap-3 p-2 text-black border-[2px] border-transparent hover:bg-[#f7e600] hover:text-black hover:border-black font-['Space_Grotesk'] font-bold uppercase text-xs">
+<span class="material-symbols-outlined">settings_input_component</span> System Health
+                </button>
+</div>
+<div class="mt-auto border-t-2 border-black pt-4 flex flex-col gap-y-2">
+<button class="w-full bg-[#b9003f] text-white py-3 border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold text-xs font-headline active:translate-x-[2px] active:translate-y-[2px] active:shadow-none mb-4">
+                    NEW TRACKING SESSION
+                </button>
+<button class="flex items-center gap-3 p-2 text-black opacity-70 hover:opacity-100 font-['Space_Grotesk'] font-bold uppercase text-xs">
+<span class="material-symbols-outlined">description</span> Documentation
+                </button>
+<button class="flex items-center gap-3 p-2 text-[#b9003f] font-['Space_Grotesk'] font-bold uppercase text-xs">
+<span class="material-symbols-outlined">logout</span> Log Out
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto p-8 bg-surface">
+<!-- Header Section -->
+<div class="mb-12">
+<h1 class="text-6xl font-black font-headline tracking-tighter text-on-background mb-2">SYSTEM_STATS</h1>
+<div class="h-1.5 w-32 bg-primary"></div>
+</div>
+<!-- Key Metric Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+<!-- Metric 1 -->
+<div class="bg-surface-container-lowest border-[3px] border-black neo-shadow p-6 relative group hover:bg-primary-fixed transition-colors">
+<p class="font-label text-xs font-bold uppercase text-tertiary mb-1">Tracked Sessions</p>
+<p class="font-headline text-5xl font-black">20</p>
+<div class="absolute top-2 right-2 text-primary">
+<span class="material-symbols-outlined text-4xl opacity-20">sensors</span>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface-container-lowest border-[3px] border-black neo-shadow p-6 relative group hover:bg-secondary-fixed transition-colors">
+<p class="font-label text-xs font-bold uppercase text-tertiary mb-1">Watch Time</p>
+<p class="font-headline text-4xl font-black">2h 11m</p>
+<div class="absolute top-2 right-2 text-primary">
+<span class="material-symbols-outlined text-4xl opacity-20">schedule</span>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface-container-lowest border-[3px] border-black neo-shadow p-6 relative group hover:bg-primary-fixed transition-colors">
+<p class="font-label text-xs font-bold uppercase text-tertiary mb-1">Unique Sites</p>
+<p class="font-headline text-5xl font-black">4</p>
+<div class="absolute top-2 right-2 text-primary">
+<span class="material-symbols-outlined text-4xl opacity-20">language</span>
+</div>
+</div>
+<!-- Metric 4 -->
+<div class="bg-surface-container-lowest border-[3px] border-black neo-shadow p-6 relative group hover:bg-secondary-fixed transition-colors">
+<p class="font-label text-xs font-bold uppercase text-tertiary mb-1">Pinned Items</p>
+<p class="font-headline text-5xl font-black">0</p>
+<div class="absolute top-2 right-2 text-primary">
+<span class="material-symbols-outlined text-4xl opacity-20">push_pin</span>
+</div>
+</div>
+</div>
+<!-- Analytics Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+<!-- Left Column: Top Sites Progress -->
+<div class="lg:col-span-7 space-y-10">
+<section>
+<div class="flex items-center gap-4 mb-6">
+<h2 class="font-headline text-3xl font-black uppercase tracking-tight">TOP_SITES</h2>
+<div class="flex-1 h-[2px] bg-black"></div>
+</div>
+<div class="space-y-8 bg-surface-container-low border-[3px] border-black p-8 neo-shadow">
+<!-- Site 1 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-headline font-bold text-lg text-primary">youtube.com</span>
+<span class="font-label font-bold text-sm bg-secondary-fixed px-2 border-2 border-black">1h 15m</span>
+</div>
+<div class="h-6 w-full border-[2px] border-black bg-surface-container-highest">
+<div class="h-full bg-primary flex items-center justify-end px-2" style="width: 57%;">
+<span class="text-[10px] text-white font-black">57%</span>
+</div>
+</div>
+</div>
+<!-- Site 2 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-headline font-bold text-lg text-on-background">x.com</span>
+<span class="font-label font-bold text-sm bg-surface-container-lowest px-2 border-2 border-black">34m</span>
+</div>
+<div class="h-6 w-full border-[2px] border-black bg-surface-container-highest">
+<div class="h-full bg-primary opacity-80 flex items-center justify-end px-2" style="width: 26%;">
+<span class="text-[10px] text-white font-black">26%</span>
+</div>
+</div>
+</div>
+<!-- Site 3 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-headline font-bold text-lg text-on-background">cineby.sc</span>
+<span class="font-label font-bold text-sm bg-surface-container-lowest px-2 border-2 border-black">18m</span>
+</div>
+<div class="h-6 w-full border-[2px] border-black bg-surface-container-highest">
+<div class="h-full bg-primary opacity-60 flex items-center justify-end px-2" style="width: 14%;">
+<span class="text-[10px] text-white font-black">14%</span>
+</div>
+</div>
+</div>
+<!-- Site 4 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-headline font-bold text-lg text-on-background">twitch.tv</span>
+<span class="font-label font-bold text-sm bg-surface-container-lowest px-2 border-2 border-black">4m</span>
+</div>
+<div class="h-6 w-full border-[2px] border-black bg-surface-container-highest">
+<div class="h-full bg-primary opacity-30 flex items-center justify-end px-2" style="width: 3%;">
+<span class="text-[10px] text-white font-black">3%</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Activity Log Sub-section -->
+<section>
+<div class="flex items-center gap-4 mb-6">
+<h2 class="font-headline text-3xl font-black uppercase tracking-tight">RECENT_LOGS</h2>
+<div class="flex-1 h-[2px] bg-black"></div>
+</div>
+<div class="bg-surface-container-lowest border-[3px] border-black neo-shadow divide-y-[3px] divide-black">
+<div class="p-4 flex justify-between items-center bg-primary-fixed">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined bg-white border-2 border-black p-1">play_circle</span>
+<div>
+<p class="font-headline font-bold text-sm uppercase">Tracked: Lo-fi Beats 24/7</p>
+<p class="font-body text-xs opacity-70">Source: youtube.com</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label font-black text-xs">12:45 PM</p>
+<p class="font-body text-[10px] uppercase font-bold text-primary">LIVE</p>
+</div>
+</div>
+<div class="p-4 flex justify-between items-center hover:bg-secondary-fixed transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined bg-white border-2 border-black p-1">movie</span>
+<div>
+<p class="font-headline font-bold text-sm uppercase">Clipped: Speedrun Strat #04</p>
+<p class="font-body text-xs opacity-70">Source: twitch.tv</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label font-black text-xs">10:12 AM</p>
+<p class="font-body text-[10px] uppercase font-bold text-tertiary">SAVED</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Visualizer & Heatmap -->
+<div class="lg:col-span-5 space-y-10">
+<section>
+<div class="flex items-center gap-4 mb-6">
+<h2 class="font-headline text-3xl font-black uppercase tracking-tight">KINETIC_HEAT</h2>
+<div class="flex-1 h-[2px] bg-black"></div>
+</div>
+<div class="bg-black border-[3px] border-black neo-shadow aspect-square p-4 flex flex-col gap-4 relative overflow-hidden">
+<!-- Visual Decoration -->
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<div class="w-full h-full bg-[radial-gradient(#b9003f_1px,transparent_1px)] [background-size:20px_20px]"></div>
+</div>
+<div class="grid grid-cols-7 grid-rows-5 gap-2 flex-1 relative z-10">
+<!-- Dummy heatmap squares -->
+<div class="bg-primary"></div>
+<div class="bg-primary-container"></div>
+<div class="bg-primary opacity-50"></div>
+<div class="bg-black border border-white/20"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary-container"></div>
+<div class="bg-primary"></div>
+<div class="bg-secondary-fixed"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary-container"></div>
+<div class="bg-primary"></div>
+<div class="bg-black border border-white/20"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary"></div>
+<div class="bg-secondary-fixed"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary-container"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary-container"></div>
+<div class="bg-primary"></div>
+<div class="bg-black border border-white/20"></div>
+<div class="bg-primary"></div>
+<div class="bg-secondary-fixed"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary-container"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary"></div>
+<div class="bg-primary opacity-50"></div>
+<div class="bg-black border border-white/20"></div>
+<div class="bg-primary"></div>
+</div>
+<div class="flex justify-between items-center text-white font-label text-[10px] font-bold tracking-widest z-10">
+<span>MON</span>
+<span>TUE</span>
+<span>WED</span>
+<span>THU</span>
+<span>FRI</span>
+<span>SAT</span>
+<span>SUN</span>
+</div>
+</div>
+</section>
+<!-- Status Display -->
+<section class="bg-secondary-fixed border-[3px] border-black neo-shadow p-6">
+<div class="flex justify-between items-start mb-4">
+<span class="font-headline font-black text-xl uppercase">Status: Optimal</span>
+<span class="material-symbols-outlined text-3xl">bolt</span>
+</div>
+<p class="font-body text-sm font-bold leading-tight mb-4">
+                            DATA_FLOW IS CURRENTLY MAINTAINING PEAK THROUGHPUT. ALL TRACKERS ARE SYNCHRONIZED WITH THE GLOBAL CLOCK.
+                        </p>
+<div class="bg-white border-2 border-black p-2 font-label text-[10px] font-black uppercase text-center neo-interaction cursor-pointer">
+                            Run Deep Diagnostics
+                        </div>
+</section>
+</div>
+</div>
+<!-- Footer Spacing -->
+<div class="h-24"></div>
+</main>
+</div>
+<!-- Mobile Navigation Shell -->
+<footer class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#f9f9f9] border-t-[3px] border-black flex justify-around items-center py-3">
+<button class="flex flex-col items-center gap-1 text-black opacity-50">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-bold font-label uppercase">History</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#b9003f]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-[10px] font-bold font-label uppercase">Stats</span>
+</button>
+<div class="relative -top-8">
+<button class="w-14 h-14 bg-[#b9003f] border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-white active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center gap-1 text-black opacity-50">
+<span class="material-symbols-outlined">sensors</span>
+<span class="text-[10px] font-bold font-label uppercase">Live</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-black opacity-50">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold font-label uppercase">Menu</span>
+</button>
+</footer>
+</body></html>
