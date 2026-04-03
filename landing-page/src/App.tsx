@@ -200,7 +200,7 @@ const OperatorDashboard = ({
               </div>
            </div>
            <button onClick={onLogout} className="text-[10px] font-black text-gray-500 hover:text-text-primary flex items-center gap-2 tracking-widest uppercase">
-             <span className="material-symbols-outlined text-sm">power_settings_new</span> {isDemo ? 'EXIT_DEMO' : 'DISCONNECT_LINK'}
+             <span className="material-symbols-outlined text-sm">power_settings_new</span> {isDemo ? 'EXIT_DEMO' : 'LOGOUT'}
            </button>
         </div>
       </div>
