@@ -41,7 +41,7 @@ const $q = q => document.querySelector(q);
   const gridToggle = $('gridToggle');
   const clearAllBtn = $('clearAllBtn');
   const viewAllBtn = $('viewAllBtn');
-  let viewMode = 'list'; // 'list', 'grid', or 'horizontal'
+  let viewMode = 'grid'; // Default to grid for Image 3
 
   const manualTitle = $('manualTitle');
   const manualUrl = $('manualUrl');
@@ -306,9 +306,8 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   };
 
   gridToggle.onclick = () => {
-    if (viewMode === 'list') viewMode = 'grid';
-    else if (viewMode === 'grid') viewMode = 'horizontal';
-    else viewMode = 'list';
+    if (viewMode === 'grid') viewMode = 'list';
+    else viewMode = 'grid';
 
     applyViewMode();
     chrome.storage.local.set({ viewMode });
@@ -318,21 +317,14 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     const tabHistory = $('tab-history');
     
     // Reset classes
-    historyList.classList.remove('grid', 'horizontal');
-    tabHistory.classList.remove('horizontal');
+    historyList.classList.remove('grid', 'list');
     
     if (viewMode === 'grid') {
       historyList.classList.add('grid');
-      gridToggle.textContent = 'view_column';
-      gridToggle.title = 'Switch to Horizontal';
-    } else if (viewMode === 'horizontal') {
-      historyList.classList.add('horizontal');
-      tabHistory.classList.add('horizontal');
-      gridToggle.textContent = 'view_list';
-      gridToggle.title = 'Switch to List';
-    } else {
       gridToggle.textContent = 'grid_view';
-      gridToggle.title = 'Switch to Grid';
+    } else {
+      historyList.classList.add('list');
+      gridToggle.textContent = 'view_list';
     }
   }
 
@@ -412,10 +404,14 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     const isFirefox = /Firefox/.test(navigator.userAgent);
 
     if (isFirefox) {
-      // Firefox: Redirect to website to avoid popup closure bug.
-      // This is the most professional solution for Firefox reviewers.
-      chrome.tabs.create({ url: 'https://rewind-player.vercel.app/sync?reason=extension_auth' });
-      cloudLog.textContent = 'REDIRECTING_TO_AUTH_PORTAL...';
+      // Firefox: Open as a popup window instead of a new tab
+      chrome.windows.create({ 
+        url: 'https://rewind-player.vercel.app/sync?reason=extension_auth',
+        type: 'popup',
+        width: 500,
+        height: 600
+      });
+      cloudLog.textContent = 'OPENING_SECURE_AUTH_WINDOW...';
     } else {
       // Chrome: Use identity API
       try {

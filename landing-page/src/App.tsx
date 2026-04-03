@@ -1236,6 +1236,7 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
   }, []);
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = React.useRef<HTMLInputElement>(null);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -1254,7 +1255,15 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
     e.preventDefault();
     const email = emailRef.current?.value || '';
     const password = passwordRef.current?.value || '';
+    const confirmPassword = confirmPasswordRef.current?.value || '';
+    
     if (!email || !password) return;
+    
+    if (mode === 'signup' && password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -1386,20 +1395,20 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
                   <form className="flex flex-col gap-4" onSubmit={handleEmailSubmit}>
                      <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">IDENTIFIER (EMAIL)</label>
-                        <input ref={emailRef} type="email" placeholder="[EMAIL_ADDRESS]" className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs uppercase tracking-widest focus:border-[#e51152] outline-none transition-colors placeholder:text-gray-600" />
+                        <input ref={emailRef} type="email" placeholder="[EMAIL_ADDRESS]" required className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs uppercase tracking-widest focus:border-[#e51152] outline-none transition-colors placeholder:text-gray-600" />
                      </div>
                      <div className="flex flex-col gap-2">
                         <div className="flex justify-between items-center">
                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">CREDENTIAL (PASSWORD)</label>
                            <button type="button" className="text-[8px] font-black text-[#e51152] hover:underline uppercase tracking-widest transition-colors">Forgot Password?</button>
                         </div>
-                        <input ref={passwordRef} type="password" placeholder="••••••••" className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs tracking-widest focus:border-[#e51152] outline-none transition-colors" />
+                        <input ref={passwordRef} type="password" placeholder="••••••••" required minLength={6} className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs tracking-widest focus:border-[#e51152] outline-none transition-colors" />
                      </div>
 
                      {mode === 'signup' && (
                         <div className="flex flex-col gap-2">
                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">CONFIRM_CREDENTIAL</label>
-                           <input type="password" placeholder="••••••••" className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs tracking-widest focus:border-[#e51152] outline-none transition-colors" />
+                           <input ref={confirmPasswordRef} type="password" placeholder="••••••••" required className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs tracking-widest focus:border-[#e51152] outline-none transition-colors" />
                         </div>
                      )}
                      <button type="submit" disabled={loading} className="bg-[#e51152] text-white font-black uppercase py-5 text-sm border-2 border-white/20 neo-shadow hover:bg-black hover:text-[#f7e600] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all mt-4 disabled:opacity-50">
@@ -1588,7 +1597,7 @@ function App() {
           </div>
         ) : currentView === 'why-login' ? (
           <WhyLoginView onBack={() => setCurrentView('landing')} onLogin={() => setCurrentView('auth')} />
-        ) : currentView === 'profile' && user ? (
+        ) : (currentView === 'profile' || currentView === 'dashboard') && user ? (
           <OperatorDashboard 
             user={user} 
             onLogout={() => signOut(auth)} 
