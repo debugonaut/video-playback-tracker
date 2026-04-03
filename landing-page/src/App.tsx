@@ -1515,6 +1515,7 @@ function App() {
   // Auth Listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setLoading(false);
       setUser(user);
       if (user) {
         const params = new URLSearchParams(window.location.search);
@@ -1524,7 +1525,6 @@ function App() {
             window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token }, '*');
             
             if (params.get('handler') === 'firefox') {
-              console.log('[Rewind] Firefox capture mode. Appending token to URL...');
               window.location.hash = `token=${token}`;
               // DO NOT return here — allow the page to show Success and close itself
             }
@@ -1538,7 +1538,6 @@ function App() {
           }
         }
       }
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);

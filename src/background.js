@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 let currentUser = null;
+let lastCapturedToken = null;
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -36,14 +37,19 @@ async function processTokenUrl(urlStr, tabId) {
     const params = new URLSearchParams(url.hash.substring(1));
     const token = params.get('token');
     
-    if (token) {
-      console.log('[Background] Token captured. Linking neural account...');
+    if (token && token !== lastCapturedToken) {
+      lastCapturedToken = token;
+      console.log('[Background] Token captured. linking neural account...');
+      
       const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
       const credential = GoogleAuthProvider.credential(null, token);
       await signInWithCredential(auth, credential);
       
       chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
-      if (tabId) setTimeout(() => chrome.tabs.remove(tabId), 1500);
+      if (tabId) {
+        // Give the UI 2 more seconds to show Success on the page before closing
+        setTimeout(() => chrome.tabs.remove(tabId), 2500);
+      }
     }
   } catch (e) {
     console.error('[Background] Capture failure:', e);
