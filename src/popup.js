@@ -353,9 +353,10 @@ googleBtn.onclick = async () => {
   const isFirefox = /Firefox/.test(navigator.userAgent);
 
   if (isFirefox) {
-    // Firefox Bridge Alternative
+    // Firefox Guaranteed: Open in a standard tab. 
+    // The background script watches the address bar for the token.
     const authUrl = `https://rewind-player.vercel.app/sync?reason=extension_auth&handler=firefox`;
-    chrome.windows.create({ url: authUrl, type: 'popup', width: 500, height: 650 });
+    chrome.tabs.create({ url: authUrl });
     cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
   } else {
     // Chrome Identity API

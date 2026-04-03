@@ -1517,33 +1517,30 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        // AUTH BRIDGE: Send token to extension if it's an extension auth session
         const params = new URLSearchParams(window.location.search);
         if (params.get('reason') === 'extension_auth' || params.get('reason') === 'signup') {
           try {
             const token = await user.getIdToken();
-            // SILENT RELAY: Send token to extension via content script
             window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token }, '*');
             
-            // For extension auth session, stay on a 'Success' state rather than redirecting to dashboard
-            if (new URLSearchParams(window.location.search).get('reason') === 'extension_auth') {
-              console.log('[Rewind] Bridge successful. Auto-closing in 2s...');
-              setTimeout(() => window.close(), 2000); // 2s delay for reliable capture
+            if (params.get('handler') === 'firefox') {
+              window.location.hash = `token=${token}`;
+              return; 
+            }
+
+            if (params.get('reason') === 'extension_auth') {
+              setTimeout(() => window.close(), 2000);
               return; 
             }
           } catch (err) {
             console.error('[Rewind] Token relay error:', err);
           }
         }
-
-        if (currentView !== 'profile') setCurrentView('dashboard');
-      } else if (currentView === 'dashboard' || currentView === 'profile') {
-        setCurrentView('landing');
       }
       setLoading(false);
     });
     return () => unsubscribe();
-  }, []); // Run ONCE — never re-subscribe on view changes
+  }, []);
 
   // Separate effect: react to auth state changes to update the view
   useEffect(() => {

@@ -29,6 +29,35 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 });
 
+// ─── Firefox URL-Capture Auth Alternative ────────────────────────
+// This is the "Guaranteed" method: extension watches the address bar
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (changeInfo.url && changeInfo.url.includes('#token=')) {
+    try {
+      const url = new URL(changeInfo.url);
+      const params = new URLSearchParams(url.hash.substring(1));
+      const token = params.get('token');
+      
+      if (token) {
+        console.log('[Background] Stealth token captured from URL. Finalizing link...');
+        const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
+        const credential = GoogleAuthProvider.credential(null, token);
+        await signInWithCredential(auth, credential);
+        
+        // Notify all extension parts that we're linked!
+        chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+        
+        // Auto-close the sync tab after capture to keep things clean
+        setTimeout(() => chrome.tabs.remove(tabId), 1500);
+      }
+    } catch (e) {
+      console.error('[Background] Capture failure:', e);
+    }
+  }
+});
+
+// ─── Sync Logic ──────────────────────────────────────────────────
+
 // Helper: Push an entry to Firestore
 async function syncToCloud(entry) {
   if (!currentUser || !entry || !entry.url) return;
