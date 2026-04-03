@@ -1233,12 +1233,6 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
     if (reason === 'signup') {
       setMode('signup');
     }
-
-    // AUTOMATIC AUTH TRIGGER: Less hassle for users
-    if (reason === 'extension_auth' && !auth.currentUser) {
-      console.log('[Rewind] Automated auth trigger detected...');
-      handleGoogleLogin();
-    }
   }, []);
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
