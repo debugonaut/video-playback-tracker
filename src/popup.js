@@ -286,9 +286,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       manualTitle.value = manualUrl.value = manualTime.value = '';
       renderHistory();
       $q('[data-tab="history"]').click();
-
-      // If logged in, sync to cloud
-      if (currentUser) syncToCloud(entry);
+      // syncToCloud(entry); <- Removed, background.js handles this automatically
     });
   });
 
@@ -484,20 +482,8 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     if (unsubscribeHistory) unsubscribeHistory();
   }
 
-  async function syncToCloud(entry) {
-    if (!currentUser || !entry.url) return;
-    try {
-      const entryId = btoa(entry.url).replace(/[/+=]/g, '_').substring(0, 50);
-      const docRef = doc(db, `users/${currentUser.uid}/history`, entryId);
-      await setDoc(docRef, {
-        ...entry,
-        userId: currentUser.uid,
-        syncedAt: serverTimestamp(),
-      }, { merge: true });
-    } catch (e) {
-      console.error('Cloud sync error:', e);
-    }
-  }
+  // Note: syncToCloud is now handled centrally by background.js 
+  // listening for changes to chrome.storage.local
 
   // ─── Storage ──────────────────────────────────────────────────────
 

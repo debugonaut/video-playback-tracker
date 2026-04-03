@@ -7,6 +7,7 @@
     "build": "npm run build:extension && npm run build:web",
     "build:extension": "esbuild src/background.js src/popup.js src/content.js --bundle --outdir=. --minify --sourcemap --platform=browser",
     "build:web": "cd landing-page && npm install && npm run build",
+    "sync-manifests": "node -e \"const fs = require('fs'); const mx = JSON.parse(fs.readFileSync('manifest.json')); const mf = JSON.parse(fs.readFileSync('manifest.firefox.json')); ['version', 'permissions', 'host_permissions', 'action', 'icons'].forEach(k => mf[k] = mx[k]); fs.writeFileSync('manifest.firefox.json', JSON.stringify(mf, null, 2));\"",
     "watch": "esbuild src/background.js src/popup.js src/content.js --bundle --outdir=. --watch --sourcemap --platform=browser",
     "package": "npm run build:extension && zip -r dist-firefox.zip manifest.json background.js content.js popup.js popup.html popup.css icons/",
     "package:firefox": "npm run build && cp manifest.json manifest.json.bak && sed -i '' 's/service_worker/scripts/g' manifest.json && sed -i '' 's/\"background.js\"/[\"background.js\"]/g' manifest.json && zip -r dist-firefox.zip manifest.json background.js content.js popup.js popup.html popup.css icons/ && mv manifest.json.bak manifest.json",

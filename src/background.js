@@ -34,7 +34,9 @@ async function syncToCloud(entry) {
   if (!currentUser || !entry || !entry.url) return;
 
   try {
-    // Safer URL-to-ID conversion to handle Special/Unicode characters
+    // Unified, safe URL-to-ID hashing (Shared Logic)
+    // Note: syncToCloud is now handled centrally by background.js 
+    // listening for changes to chrome.storage.local
     const safeUrl = encodeURIComponent(entry.url);
     const entryId = btoa(unescape(safeUrl)).replace(/[/+=]/g, '_').substring(0, 50);
     const historyRef = doc(db, `users/${currentUser.uid}/history`, entryId);
@@ -46,9 +48,9 @@ async function syncToCloud(entry) {
       lastModified: Date.now()
     }, { merge: true });
 
-    console.log(`Cloud sync success: ${entry.title}`);
+    console.log(`[Sync] Cloud success: ${entry.title}`);
   } catch (error) {
-    console.error('Cloud sync error:', error);
+    console.error('[Sync] Cloud error:', error);
   }
 }
 
