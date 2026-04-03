@@ -629,11 +629,11 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
               <p className="text-sm md:text-lg font-bold text-gray-400 font-['Manrope'] max-w-md">
                 Now, open your browser's extension settings.
                 <br/><br/>
-                For {selectedBrowser === 'chrome' ? 'Chrome' : 'Firefox'}: {selectedBrowser === 'chrome' ? 'Click the 🧩 icon or type ' : 'Go to '} 
+                For {selectedBrowser === 'chrome' ? 'Chrome' : 'Firefox'}: {selectedBrowser === 'chrome' ? 'Click the 🧩 icon or type ' : 'Type '} 
                 <span className="bg-gray-800 text-white px-2 py-0.5 font-mono text-[10px] md:text-xs border border-white/20">
                   {selectedBrowser === 'chrome' ? 'chrome://extensions' : 'about:debugging'}
                 </span>
-                {selectedBrowser === 'chrome' ? ' in your address bar.' : ' to access the developer dashboard.'}
+                {selectedBrowser === 'chrome' ? ' in your address bar.' : ' in the search bar to access developer dashboard'}
               </p>
             </div>
           </div>
