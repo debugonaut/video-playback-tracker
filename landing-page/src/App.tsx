@@ -612,14 +612,19 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
           {/* Step 2 */}
           <div className="relative flex flex-col-reverse md:flex-row gap-8 items-start md:items-center">
             <div className="flex-1 md:pr-24">
-              <div className="bg-[#111] p-6 border-4 border-[#f7e600] neo-shadow-yellow text-left">
-                <div className="flex items-center gap-3 border-b border-white/20 pb-4 mb-4">
-                   <span className="material-symbols-outlined text-[#f7e600]">extension</span>
-                   <span className="text-xs font-black uppercase text-gray-400">Settings / Extensions</span>
+              <div className="bg-[#111] p-6 border-4 border-[#f7e600] neo-shadow-yellow text-left relative overflow-hidden group">
+                <div className="flex items-center gap-3 border-b border-white/20 pb-4 mb-6">
+                   <span className="material-symbols-outlined text-[#f7e600]">search</span>
+                   <span className="text-xs font-black uppercase text-gray-400">Browser / Address Bar</span>
                 </div>
-                <div className="bg-black/50 p-3 border-2 border-dashed border-gray-700 flex justify-between items-center group">
-                   <span className="text-[10px] font-bold text-gray-500">Manage Extensions</span>
-                   <span className="material-symbols-outlined text-sm text-[#f7e600] group-hover:rotate-180 transition-transform">settings</span>
+                <div className="bg-black border-2 border-white p-4 flex items-center justify-between group-hover:border-[#f7e600] transition-colors">
+                   <code className="text-[#f7e600] font-mono text-[10px] md:text-sm font-bold">
+                     {selectedBrowser === 'chrome' ? 'chrome://extensions' : 'about:debugging'}
+                   </code>
+                   <span className="material-symbols-outlined text-sm text-gray-500 animate-pulse">input</span>
+                </div>
+                <div className="mt-4 text-[8px] font-black text-gray-600 uppercase tracking-[0.2em]">
+                  PRESS_ENTER_TO_EXECUTE
                 </div>
               </div>
             </div>
