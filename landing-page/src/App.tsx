@@ -230,8 +230,13 @@ const OperatorDashboard = ({
               className={`bg-brand-yellow text-black h-10 px-6 font-black text-[11px] uppercase tracking-widest flex items-center gap-2 hover:scale-105 active:scale-95 transition-all ${syncing ? 'animate-pulse opacity-50' : ''}`}>
                <span className={`material-symbols-outlined text-sm ${syncing ? 'animate-spin' : ''}`}>sync</span> REFRESH_SYNC
              </button>
-             <span className="material-symbols-outlined text-gray-500 cursor-pointer hover:text-white">notifications</span>
-             <span className="material-symbols-outlined text-gray-500 cursor-pointer hover:text-white">settings</span>
+             <button 
+              onClick={onLogout}
+              className="material-symbols-outlined text-gray-400 hover:text-brand-pink transition-all active:scale-90 cursor-pointer"
+              title="Logout"
+             >
+               power_settings_new
+             </button>
              <div className={`${isDemo ? 'w-8 h-8' : 'w-10 h-10'} border-2 border-brand-pink p-0.5`}>
                <img src={user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} className="w-full h-full object-cover" alt="" />
              </div>
