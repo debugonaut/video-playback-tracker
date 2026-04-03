@@ -7,19 +7,24 @@ import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import './index.css';
 
 // The Cyber-Rewind / Kinetic Void Dashboard
-const OperatorDashboard = ({ user, onLogout, isDemo = false }: { user: User, onLogout: () => void, isDemo?: boolean }) => {
+const OperatorDashboard = ({ 
+  user, 
+  onLogout, 
+  isDemo = false,
+  isDarkMode = true,
+  setIsDarkMode = () => {}
+}: { 
+  user: User; 
+  onLogout: () => void; 
+  isDemo?: boolean;
+  isDarkMode?: boolean;
+  setIsDarkMode?: (val: boolean) => void;
+}) => {
   const [history, setHistory] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'analytics' | 'entry' | 'history' | 'assets'>('history');
   const [syncing, setSyncing] = useState(false);
   const [addForm, setAddForm] = useState({ title: '', url: '', timestamp: '' });
   const [addStatus, setAddStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
-  const [isDarkMode, setIsDarkMode] = useState(true);
-
-  // Apply theme to body
-  useEffect(() => {
-    if (isDarkMode) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-  }, [isDarkMode]);
 
   useEffect(() => {
     if (!user) return;
@@ -131,8 +136,9 @@ const OperatorDashboard = ({ user, onLogout, isDemo = false }: { user: User, onL
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      className={`${isDemo ? 'absolute inset-0 z-50' : 'fixed inset-0 z-[60]'} bg-bg-primary flex font-['Space_Grotesk'] text-text-primary overflow-hidden`}
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }}
+      className={`${isDemo ? 'absolute inset-0 z-50 border-4 border-brand-pink shadow-[0_0_50px_rgba(229,17,82,0.3)]' : 'fixed inset-0 z-[60]'} bg-bg-primary flex font-['Space_Grotesk'] text-text-primary overflow-hidden`}
     >
       <div className="scanline"></div>
       
@@ -1369,7 +1375,12 @@ function App() {
              <div className="text-[#e51152] font-black text-2xl animate-pulse tracking-tighter italic">INITIALIZING_CORE...</div>
           </div>
         ) : user ? (
-          <OperatorDashboard user={user} onLogout={() => signOut(auth)} />
+          <OperatorDashboard 
+            user={user} 
+            onLogout={() => signOut(auth)} 
+            isDarkMode={isDarkMode}
+            setIsDarkMode={setIsDarkMode}
+          />
         ) : currentView === 'auth' ? (
           <AuthView key="auth" onBack={() => setCurrentView('landing')} />
         ) : (
