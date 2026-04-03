@@ -642,18 +642,37 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
           <div className="relative flex flex-col md:flex-row gap-8 items-start md:items-center">
             <div className="w-12 h-12 bg-[#e51152] text-white font-black flex items-center justify-center text-xl neo-border relative z-10 md:absolute md:left-1/2 md:-translate-x-1/2">03</div>
             <div className="flex-1 md:pr-24 text-left md:text-right">
-              <h3 className="text-2xl md:text-4xl font-black text-[#e51152] uppercase mb-4 tracking-tighter">STEP 3: THE SECRET TOGGLE</h3>
+              <h3 className="text-2xl md:text-4xl font-black text-[#e51152] uppercase mb-4 tracking-tighter">
+                {selectedBrowser === 'chrome' ? 'STEP 3: THE SECRET TOGGLE' : 'STEP 3: ACCESS SYSTEM'}
+              </h3>
               <p className="text-sm md:text-lg font-bold text-gray-400 font-['Manrope'] max-w-md md:ml-auto uppercase">
-                <span className="text-[#f7e600] font-black">CRITICAL STEP:</span> Look at the top right corner of the Extensions page. You <span className="italic">must</span> turn on <span className="text-white">Developer Mode</span>. The buttons we need will not appear until this is switched on.
+                {selectedBrowser === 'chrome' ? (
+                  <>
+                    <span className="text-[#f7e600] font-black">CRITICAL STEP:</span> Look at the top right corner of the Extensions page. You <span className="italic">must</span> turn on <span className="text-white">Developer Mode</span>. The buttons we need will not appear until this is switched on.
+                  </>
+                ) : (
+                  <>
+                    <span className="text-[#f7e600] font-black">CRITICAL STEP:</span> Look at the left sidebar menu. You <span className="italic">must</span> select <span className="text-white">This Firefox</span> (or This Nightly). This will unlock the developer loading tools.
+                  </>
+                )}
               </p>
             </div>
             <div className="flex-1 md:pl-24">
               <div className="bg-[#111] p-8 border-4 border-white neo-shadow-pink flex justify-center items-center relative overflow-hidden group">
                  <div className="flex items-center gap-4 bg-black/40 border-2 border-white/10 px-6 py-4">
-                    <span className="text-[10px] md:text-xs font-black uppercase text-gray-400">Developer Mode</span>
-                    <div className="w-12 h-6 bg-[#e51152] border-2 border-white relative cursor-pointer shadow-[0_0_15px_rgba(229,17,82,0.5)]">
-                       <div className="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-white"></div>
-                    </div>
+                    {selectedBrowser === 'chrome' ? (
+                      <>
+                        <span className="text-[10px] md:text-xs font-black uppercase text-gray-400">Developer Mode</span>
+                        <div className="w-12 h-6 bg-[#e51152] border-2 border-white relative cursor-pointer shadow-[0_0_15px_rgba(229,17,82,0.5)]">
+                           <div className="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-white"></div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                         <span className="material-symbols-outlined text-[#f7e600]">laptop_mac</span>
+                         <span className="text-[10px] md:text-xs font-black uppercase text-white">This Firefox</span>
+                      </div>
+                    )}
                  </div>
                  <div className="absolute top-0 right-0 p-1 text-[6px] text-gray-700 uppercase font-black tracking-widest hidden group-hover:block">SYSTEM_OVERRIDE</div>
               </div>
@@ -664,7 +683,9 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
           <div className="relative flex flex-col-reverse md:flex-row gap-8 items-start md:items-center mb-16">
             <div className="flex-1 md:pr-24">
                <div className="flex gap-4">
-                  <button className="flex-1 bg-[#e51152] text-white font-black text-[10px] md:text-xs py-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_white]">LOAD UNPACKED</button>
+                  <button className="flex-1 bg-[#e51152] text-white font-black text-[10px] md:text-xs py-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_white]">
+                    {selectedBrowser === 'chrome' ? 'LOAD UNPACKED' : 'LOAD TEMPORARY ADD-ON'}
+                  </button>
                   <button className="flex-1 bg-transparent text-gray-500 font-black text-[10px] md:text-xs py-4 border-2 border-gray-700 cursor-not-allowed">PACK EXTENSION</button>
                </div>
             </div>
@@ -672,7 +693,13 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
             <div className="flex-1 md:pl-24 text-left">
               <h3 className="text-2xl md:text-4xl font-black text-[#f7e600] uppercase mb-4 tracking-tighter">STEP 4: LOAD IT UP</h3>
               <p className="text-sm md:text-lg font-bold text-gray-400 font-['Manrope'] max-w-md">
-                Click the <span className="text-white font-black italic">'Load Unpacked'</span> button. A folder window will pop up. Find the <span className="text-white font-black italic underline underline-offset-4 decoration-[#f7e600]">unzipped folder</span> you created in Step 1 and click <span className="text-white font-black italic">'Select Folder'</span>. 
+                Click the <span className="text-white font-black italic">'{selectedBrowser === 'chrome' ? 'Load Unpacked' : 'Load Temporary Add-on'}'</span> button. A folder window (or file selector) will pop up. 
+                <br/><br/>
+                {selectedBrowser === 'chrome' ? (
+                  <>Find the <span className="text-white font-black italic underline underline-offset-4 decoration-[#f7e600]">unzipped folder</span> and click <span className="text-white font-black italic">'Select Folder'</span>.</>
+                ) : (
+                  <>Navigate to the <span className="text-white font-black italic underline underline-offset-4 decoration-[#f7e600]">unzipped folder</span> and select the <span className="font-mono text-xs text-white">manifest.json</span> file.</>
+                )}
                 <br/><br/>
                 The extension should appear instantly in your browser!
               </p>
