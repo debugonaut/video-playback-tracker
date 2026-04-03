@@ -417,13 +417,30 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       chrome.identity.launchWebAuthFlow({
         url: authUrl,
         interactive: true
-      }, (responseUrl) => {
+      }, async (responseUrl) => {
         if (chrome.runtime.lastError || !responseUrl) {
           cloudLog.textContent = `AUTH_ERROR: ${chrome.runtime.lastError?.message || 'Login Cancelled'}`;
           return;
         }
-        // Background script will handle the token relay via content script on the landing page.
-        cloudLog.textContent = 'GOOGLE_AUTH_SUCCESS: SYNC_READY';
+
+        // Standard handshake: Extract token from hash
+        try {
+          const url = new URL(responseUrl);
+          const params = new URLSearchParams(url.hash.substring(1));
+          const token = params.get('token');
+          
+          if (token) {
+            const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
+            const credential = GoogleAuthProvider.credential(null, token);
+            await signInWithCredential(auth, credential);
+            cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
+            updateAuthState();
+          } else {
+            cloudLog.textContent = 'AUTH_ERROR: SECURE_TOKEN_MISSING';
+          }
+        } catch (e) {
+          cloudLog.textContent = `PARSE_ERROR: ${e.message}`;
+        }
       });
     } else {
       // Chrome: Use identity API
@@ -433,6 +450,25 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
             cloudLog.textContent = `AUTH_ERROR: ${chrome.runtime.lastError?.message || 'Check Chrome Identity Config'}`;
             return;
           }
+          try {
+            // Standard launchWebAuthFlow handshake: Redirect back to the extension
+            const redirectUri = new URLSearchParams(window.location.search).get('redirect_uri');
+            if (redirectUri) {
+              console.log('[Rewind] Redirecting back to extension callback...');
+              window.location.href = `${redirectUri}#token=${token}`;
+              return; // Prevent further UI changes
+            }
+
+            // Fallback: PostMessage and auto-close
+            window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token }, '*');
+            if (new URLSearchParams(window.location.search).get('reason') === 'extension_auth') {
+              setTimeout(() => window.close(), 1000);
+              return; // Prevent showing dashboard
+            }
+          } catch (err) {
+            console.error('[Rewind] Token relay error:', err);
+          }
+
           try {
             const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
             const credential = GoogleAuthProvider.credential(null, token);

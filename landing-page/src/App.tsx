@@ -1522,12 +1522,19 @@ function App() {
         if (params.get('reason') === 'extension_auth' || params.get('reason') === 'signup') {
           try {
             const token = await user.getIdToken();
-            console.log('[Rewind] Relaying auth token to extension...');
+            // Standard launchWebAuthFlow handshake: Redirect back to the extension
+            const redirectUri = new URLSearchParams(window.location.search).get('redirect_uri');
+            if (redirectUri) {
+              console.log('[Rewind] Redirecting back to extension callback...');
+              window.location.href = `${redirectUri}#token=${token}`;
+              return; // Prevent further UI changes
+            }
+
+            // Fallback: PostMessage and auto-close
             window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token }, '*');
-            
-            // Auto-close if this is an extension auth popup
             if (new URLSearchParams(window.location.search).get('reason') === 'extension_auth') {
-              setTimeout(() => window.close(), 1000); // Brief delay for message capture
+              setTimeout(() => window.close(), 1000);
+              return; // Prevent showing dashboard
             }
           } catch (err) {
             console.error('[Rewind] Token relay error:', err);
