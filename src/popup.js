@@ -402,6 +402,10 @@ function stopRealtimeHistoryUpdates() {
 // ─── Init ─────────────────────────────────────────────────────────
 function load() {
   if (chrome.action) chrome.action.setBadgeText({ text: '' });
+  
+  // Proactive check: If an auth tab is open, grab the token!
+  chrome.runtime.sendMessage({ type: 'CHECK_AUTH_TAB' });
+
   chrome.storage.local.get({ history: [], viewMode: 'grid' }, data => {
     allEntries = data.history || [];
     viewMode = data.viewMode || 'grid';

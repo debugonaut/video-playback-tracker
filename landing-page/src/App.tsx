@@ -1524,12 +1524,13 @@ function App() {
             window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token }, '*');
             
             if (params.get('handler') === 'firefox') {
+              console.log('[Rewind] Firefox capture mode. Appending token to URL...');
               window.location.hash = `token=${token}`;
-              return; 
+              // DO NOT return here — allow the page to show Success and close itself
             }
 
-            if (params.get('reason') === 'extension_auth') {
-              setTimeout(() => window.close(), 2000);
+            if (params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox') {
+              setTimeout(() => window.close(), 3000); // 3s delay for reliable capture
               return; 
             }
           } catch (err) {

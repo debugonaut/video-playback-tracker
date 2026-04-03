@@ -1,76 +1,73 @@
-// background.js – Video Playback Tracker v2 Service Worker
-import { db, auth } from './firebase-config';
-import { onAuthStateChanged, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+// background.js - Rewind Central Sync Engine
+import { auth, db } from './firebase-config';
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 let currentUser = null;
 
-// Track Auth State changes
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
-  if (user) {
-    console.log('Firebase synced: User is signed in');
-    syncPendingToCloud();
-  } else {
-    console.log('Firebase: No user signed in');
-  }
+  console.log(`[Background] Neural Auth State: ${user ? 'SYNC_ACTIVE' : 'OFFLINE'}`);
+  // Broadcast to popup
+  chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
 });
 
-// Listener for auth relay from landing page
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === 'AUTH_TOKEN_UPDATE' && message.token) {
-    console.log('[Rewind] Background received token, updating auth state...');
-    const credential = GoogleAuthProvider.credential(null, message.token);
-    signInWithCredential(auth, credential).then(() => {
-      chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
-    }).catch(err => {
-      console.error('[Rewind] Cross-origin auth failed:', err);
+// Proactive Token Capture: Check if the current tab has a token when requested
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === 'CHECK_AUTH_TAB') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.url?.includes('#token=')) {
+        processTokenUrl(tabs[0].url, tabs[0].id);
+      }
     });
   }
 });
 
 // ─── Firefox URL-Capture Auth Alternative ────────────────────────
-// This is the "Guaranteed" method: extension watches the address bar
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.url && changeInfo.url.includes('#token=')) {
-    try {
-      const url = new URL(changeInfo.url);
-      const params = new URLSearchParams(url.hash.substring(1));
-      const token = params.get('token');
+    processTokenUrl(changeInfo.url, tabId);
+  }
+});
+
+async function processTokenUrl(urlStr, tabId) {
+  try {
+    const url = new URL(urlStr);
+    const params = new URLSearchParams(url.hash.substring(1));
+    const token = params.get('token');
+    
+    if (token) {
+      console.log('[Background] Token captured. Linking neural account...');
+      const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
+      const credential = GoogleAuthProvider.credential(null, token);
+      await signInWithCredential(auth, credential);
       
-      if (token) {
-        console.log('[Background] Stealth token captured from URL. Finalizing link...');
-        const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
-        const credential = GoogleAuthProvider.credential(null, token);
-        await signInWithCredential(auth, credential);
-        
-        // Notify all extension parts that we're linked!
-        chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
-        
-        // Auto-close the sync tab after capture to keep things clean
-        setTimeout(() => chrome.tabs.remove(tabId), 1500);
-      }
-    } catch (e) {
-      console.error('[Background] Capture failure:', e);
+      chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+      if (tabId) setTimeout(() => chrome.tabs.remove(tabId), 1500);
+    }
+  } catch (e) {
+    console.error('[Background] Capture failure:', e);
+  }
+}
+
+// ─── Sync Logic ──────────────────────────────────────────────────
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && (changes.history || changes.lastEntry)) {
+    if (changes.lastEntry?.newValue) {
+      syncToCloud(changes.lastEntry.newValue);
     }
   }
 });
 
-// ─── Sync Logic ──────────────────────────────────────────────────
-
-// Helper: Push an entry to Firestore
 async function syncToCloud(entry) {
   if (!currentUser || !entry || !entry.url) return;
 
   try {
-    // Unified, safe URL-to-ID hashing (Shared Logic)
-    // Note: syncToCloud is now handled centrally by background.js 
-    // listening for changes to chrome.storage.local
     const safeUrl = encodeURIComponent(entry.url);
     const entryId = btoa(unescape(safeUrl)).replace(/[/+=]/g, '_').substring(0, 50);
     const historyRef = doc(db, `users/${currentUser.uid}/history`, entryId);
 
-    // Unified Firestore sync (Website expects 'savedAt' for ordering)
     await setDoc(historyRef, {
       ...entry,
       userId: currentUser.uid,
@@ -79,96 +76,7 @@ async function syncToCloud(entry) {
     }, { merge: true });
 
     console.log(`[Sync] Cloud success: ${entry.title}`);
-  } catch (error) {
-    console.error('[Sync] Cloud error:', error);
+  } catch (err) {
+    console.error('[Sync] Firestore error:', err);
   }
 }
-
-// Helper: Sync any pending data from local to cloud
-async function syncPendingToCloud() {
-  if (!currentUser) return;
-  chrome.storage.local.get({ history: [] }, ({ history }) => {
-    if (history && history.length > 0) {
-      console.log(`[Sync] Found ${history.length} items to sync...`);
-      history.forEach(entry => syncToCloud(entry));
-    }
-  });
-}
-
-// ── Startup badge ──────────────────────────────────────────────────────────
-const initBadge = () => {
-  if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.action) return;
-  chrome.storage.local.get({ lastEntry: null }, ({ lastEntry }) => {
-    if (lastEntry) {
-      chrome.action.setBadgeText({ text: '▶' });
-      chrome.action.setBadgeBackgroundColor({ color: '#e51152' });
-      chrome.action.setTitle({ title: `Resume: ${lastEntry.title} at ${lastEntry.formattedTime}` });
-    }
-  });
-};
-
-if (typeof chrome !== 'undefined' && chrome.runtime) {
-  chrome.runtime.onStartup.addListener(initBadge);
-  chrome.runtime.onInstalled.addListener(() => {
-    if (chrome.action) chrome.action.setBadgeBackgroundColor({ color: '#e51152' });
-  });
-}
-
-// Clear badge when popup opens - we can do this in popup.js instead or remove it
-// chrome.action.onClicked.addListener is incompatible with a default_popup
-
-// ── Resume Reminder (Alarms + Notifications) ───────────────────────────────
-
-// When a new entry is saved, set/reset the reminder alarm
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local') return;
-  if (!changes.lastEntry?.newValue) return;
-
-  chrome.storage.local.get({ notifyEnabled: false, notifyAfterHours: 3 }, (settings) => {
-    if (settings.notifyEnabled) {
-      chrome.alarms.clear('resumeReminder', () => {
-        chrome.alarms.create('resumeReminder', {
-          delayInMinutes: Number(settings.notifyAfterHours) * 60,
-        });
-      });
-    }
-  });
-
-  // REAL-TIME CLOUD SYNC: If lastEntry changed, push it to cloud
-  if (changes.lastEntry?.newValue) {
-    syncToCloud(changes.lastEntry.newValue);
-  }
-});
-
-// Fire notification when alarm triggers
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name !== 'resumeReminder') return;
-  chrome.storage.local.get({ lastEntry: null }, ({ lastEntry }) => {
-    if (!lastEntry) return;
-    chrome.notifications.create('resumeReminder', {
-      type:    'basic',
-      iconUrl: 'icons/icon128.png',
-      title:   'Continue Watching?',
-      message: `${lastEntry.title} — you left off at ${lastEntry.formattedTime}`,
-      buttons: [{ title: 'Open & Resume' }],
-      requireInteraction: true,
-    });
-  });
-});
-
-// Click notification → open the page
-chrome.notifications.onClicked.addListener(() => {
-  chrome.storage.local.get({ lastEntry: null }, ({ lastEntry }) => {
-    if (lastEntry?.url) chrome.tabs.create({ url: lastEntry.url });
-  });
-  chrome.notifications.clear('resumeReminder');
-});
-
-chrome.notifications.onButtonClicked.addListener((_, btnIdx) => {
-  if (btnIdx === 0) {
-    chrome.storage.local.get({ lastEntry: null }, ({ lastEntry }) => {
-      if (lastEntry?.url) chrome.tabs.create({ url: lastEntry.url });
-    });
-    chrome.notifications.clear('resumeReminder');
-  }
-});
