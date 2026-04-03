@@ -1598,12 +1598,37 @@ function App() {
         ) : currentView === 'why-login' ? (
           <WhyLoginView onBack={() => setCurrentView('landing')} onLogin={() => setCurrentView('auth')} />
         ) : (currentView === 'profile' || currentView === 'dashboard') && user ? (
-          <OperatorDashboard 
-            user={user} 
-            onLogout={() => signOut(auth)} 
-            isDarkMode={isDarkMode}
-            setIsDarkMode={setIsDarkMode}
-          />
+          new URLSearchParams(window.location.search).get('reason') === 'extension_auth' ? (
+            <div className="min-h-screen bg-[#0e0e0e] flex flex-col items-center justify-center p-8 text-center">
+              <div className="w-24 h-24 border-4 border-[#e51152] flex items-center justify-center mb-8 animate-pulse">
+                <span className="material-symbols-outlined text-[#e51152] text-5xl">sync</span>
+              </div>
+              <h1 className="text-4xl font-black italic text-white mb-4 tracking-tighter">NEURAL_LINK_ESTABLISHED</h1>
+              <p className="text-[#ababab] font-bold max-w-md text-lg mb-12">
+                Your browser extension is now securely connected to the REWIND network. 
+                Playback history will be synchronized automatically across your devices.
+              </p>
+              <div className="flex flex-col gap-4 w-full max-w-xs">
+                <div className="bg-[#1a1a1a] border-l-4 border-[#f7e600] p-4 text-left">
+                  <div className="text-[#f7e600] text-[10px] font-black uppercase mb-1">SYSTEM_STATUS</div>
+                  <div className="text-white text-sm font-bold truncate">{user.email}</div>
+                </div>
+                <button 
+                  onClick={() => window.close()}
+                  className="bg-[#e51152] text-white font-black py-4 px-8 text-xl hover:bg-white hover:text-black transition-colors"
+                >
+                  CLOSE_INTERFACE
+                </button>
+              </div>
+            </div>
+          ) : (
+            <OperatorDashboard 
+              user={user} 
+              onLogout={() => signOut(auth)} 
+              isDarkMode={isDarkMode}
+              setIsDarkMode={setIsDarkMode}
+            />
+          )
         ) : currentView === 'auth' ? (
           <AuthView key="auth" onBack={() => setCurrentView('landing')} />
         ) : (
