@@ -38,10 +38,10 @@ const $q = q => document.querySelector(q);
   const emptyState = $('emptyState');
   const historyList = $('historyList');
   const entryCount = $('entryCount');
-  
-  const statTotal = $('statTotal');
-  const statSite = $('statSite');
-  const statTime = $('statTime');
+  const gridToggle = $('gridToggle');
+  const clearAllBtn = $('clearAllBtn');
+  const viewAllBtn = $('viewAllBtn');
+  let viewMode = 'list'; // 'list', 'grid', or 'horizontal'
 
   const manualTitle = $('manualTitle');
   const manualUrl = $('manualUrl');
@@ -65,6 +65,7 @@ const registerBtn = $('registerBtn');
 const googleBtn = $('googleBtn');
 const logoutBtn = $('logoutBtn');
 const realtimeToggle = $('realtimeToggle');
+const settingsBtn = $('settingsBtn');
 
   // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -115,7 +116,6 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       targetTab.classList.remove('hidden');
       targetTab.classList.add('active');
     }
-    if (btn.dataset.tab === 'stats') renderStats();
     if (btn.dataset.tab === 'sync') updateAuthState();
   });
 });
@@ -142,6 +142,10 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       if (top.thumbnail) {
         resumeThumb.src = top.thumbnail;
         resumeThumb.classList.remove('hidden');
+        // Handle broken images for thumbnails
+        resumeThumb.onerror = () => {
+          resumeThumb.src = 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop';
+        };
       } else {
         resumeThumb.src = 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop';
       }
@@ -151,8 +155,24 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 
       resumeBtn.onclick = (e) => {
         e.stopPropagation();
-        if (top.url) chrome.tabs.create({ url: top.url });
+        if (top.url) {
+          let url = top.url;
+          // Deep Resume for YouTube
+          if (url.includes('youtube.com/watch') && top.timestamp > 5) {
+            const time = Math.floor(top.timestamp);
+            url = url.includes('?') ? (url + '&t=' + time + 's') : (url + '?t=' + time + 's');
+          }
+          chrome.tabs.create({ url });
+        }
       };
+
+      const heroTrash = document.getElementById('heroTrash');
+      if (heroTrash) {
+        heroTrash.onclick = (e) => {
+          e.stopPropagation();
+          deleteEntry(top.id);
+        };
+      }
 
       // 2. List Items
       allEntries.slice(1).forEach(entry => {
@@ -163,6 +183,16 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         const prog = entry.progress || 0;
         const siteLabel = entry.url ? host(entry.url) : 'MANUAL';
 
+        // Trash Button
+        const trashBtn = document.createElement('button');
+        trashBtn.className = 'hr-trash material-symbols-outlined';
+        trashBtn.textContent = 'delete';
+        trashBtn.title = 'DELETE_ENTRY';
+        trashBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteEntry(entry.id);
+        };
+
         // Thumbnail Wrap
         const thumbWrap = document.createElement('div');
         thumbWrap.className = 'hr-thumb-wrap';
@@ -171,6 +201,8 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         img.src = thumbUrl;
         img.alt = '';
         thumbWrap.appendChild(img);
+        thumbWrap.appendChild(trashBtn); // Move trash inside thumbnail
+        li.appendChild(thumbWrap);
 
         // Content Wrap
         const content = document.createElement('div');
@@ -206,11 +238,17 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         content.appendChild(title);
         content.appendChild(timeRow);
 
-        li.appendChild(thumbWrap);
         li.appendChild(content);
 
         li.addEventListener('click', () => {
-          if (entry.url) chrome.tabs.create({ url: entry.url });
+          if (entry.url) {
+            let url = entry.url;
+            if (url.includes('youtube.com/watch') && entry.timestamp > 5) {
+              const time = Math.floor(entry.timestamp);
+              url = url.includes('?') ? (url + '&t=' + time + 's') : (url + '?t=' + time + 's');
+            }
+            chrome.tabs.create({ url });
+          }
         });
 
         historyList.appendChild(li);
@@ -218,31 +256,6 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     } else {
       resumeBanner.classList.add('hidden');
     }
-  }
-
-  // ─── Stats ────────────────────────────────────────────────────────
-
-  function renderStats() {
-    if (allEntries.length === 0) {
-      statTotal.textContent = '0';
-      statSite.textContent = 'NONE';
-      statTime.textContent = '0.0 HRS TOTAL';
-      return;
-    }
-
-    const totalSecs = allEntries.reduce((s, e) => s + (e.timestamp || 0), 0);
-    const sites = {};
-    allEntries.forEach(e => {
-      const s = e.url ? host(e.url) : 'MANUAL';
-      sites[s] = (sites[s] || 0) + (e.timestamp || 0);
-    });
-
-    const sortedSites = Object.entries(sites).sort((a, b) => b[1] - a[1]);
-    const topSite = sortedSites[0];
-
-    statTotal.textContent = allEntries.length.toLocaleString();
-    statSite.textContent = topSite ? topSite[0].toUpperCase() : 'NONE';
-    statTime.textContent = `${(totalSecs / 3600).toFixed(1)} HRS TOTAL`;
   }
 
   // ─── Manual Actions ───────────────────────────────────────────────
@@ -279,6 +292,63 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     });
   });
 
+  function deleteEntry(id) {
+    allEntries = allEntries.filter(e => e.id !== id);
+    chrome.storage.local.set({ history: allEntries }, renderHistory);
+    // Note: Cloud exclusion would happen on next sync or we could delete from cloud doc here.
+  }
+
+  clearAllBtn.onclick = () => {
+    if (confirm('CLEAR_ALL_NEURAL_HISTORY?')) {
+      allEntries = [];
+      chrome.storage.local.set({ history: [] }, renderHistory);
+    }
+  };
+
+  gridToggle.onclick = () => {
+    if (viewMode === 'list') viewMode = 'grid';
+    else if (viewMode === 'grid') viewMode = 'horizontal';
+    else viewMode = 'list';
+
+    applyViewMode();
+    chrome.storage.local.set({ viewMode });
+  };
+
+  function applyViewMode() {
+    const tabHistory = $('tab-history');
+    
+    // Reset classes
+    historyList.classList.remove('grid', 'horizontal');
+    tabHistory.classList.remove('horizontal');
+    
+    if (viewMode === 'grid') {
+      historyList.classList.add('grid');
+      gridToggle.textContent = 'view_column';
+      gridToggle.title = 'Switch to Horizontal';
+    } else if (viewMode === 'horizontal') {
+      historyList.classList.add('horizontal');
+      tabHistory.classList.add('horizontal');
+      gridToggle.textContent = 'view_list';
+      gridToggle.title = 'Switch to List';
+    } else {
+      gridToggle.textContent = 'grid_view';
+      gridToggle.title = 'Switch to Grid';
+    }
+  }
+
+  viewAllBtn.onclick = () => {
+    if (allEntries.length > 5) {
+      $q('[data-tab="history"]').click();
+      historyList.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      chrome.tabs.create({ url: 'https://rewind-player.vercel.app' });
+    }
+  };
+
+  settingsBtn.onclick = () => {
+    chrome.tabs.create({ url: 'https://rewind-player.vercel.app' });
+  };
+
   // ─── Firebase Auth Logic ─────────────────────────────────────────
 
   onAuthStateChanged(auth, (user) => {
@@ -309,47 +379,49 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   }
 
   loginBtn.onclick = async () => {
-    const email = emailInput.value;
+    const email = emailInput.value.trim();
     const password = passwordInput.value;
+    
+    if (!email || !password) {
+      cloudLog.textContent = 'ERROR: EMAIL_AND_PASSWORD_REQUIRED';
+      return;
+    }
+
+    cloudLog.textContent = 'AUTHENTICATING_USER...';
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      cloudLog.textContent = 'AUTH_SUCCESS: NEURAL_LINK_ESTABLISHED';
     } catch (e) {
-      cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
+      console.error('Login error:', e);
+      let msg = e.message;
+      if (e.code === 'auth/invalid-credential') msg = 'INVALID_CREDENTIALS';
+      if (e.code === 'auth/user-not-found') msg = 'USER_NOT_FOUND';
+      cloudLog.textContent = `AUTH_ERROR: ${msg.toUpperCase()}`;
     }
   };
 
-  registerBtn.onclick = async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (e) {
-      cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
-    }
+  registerBtn.onclick = () => {
+    // Per user request: redirect to landing page signup
+    chrome.tabs.create({ url: 'https://rewind-player.vercel.app/sync?reason=signup' });
+    cloudLog.textContent = 'OPENING_REGISTRATION_PORTAL...';
   };
 
   googleBtn.onclick = async () => {
-    cloudLog.textContent = 'INITIALIZING_AUTH_FLOW...';
+    cloudLog.textContent = 'INITIALIZING_NEURAL_AUTH...';
     
     const isFirefox = /Firefox/.test(navigator.userAgent);
 
     if (isFirefox) {
-      // Firefox fallback: Use Firebase popup auth
-      try {
-        const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
-        const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
-        cloudLog.textContent = 'GOOGLE_AUTH_SUCCESS: SYNC_READY';
-      } catch (e) {
-        cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
-        console.error(e);
-      }
+      // Firefox: Redirect to website to avoid popup closure bug.
+      // This is the most professional solution for Firefox reviewers.
+      chrome.tabs.create({ url: 'https://rewind-player.vercel.app/sync?reason=extension_auth' });
+      cloudLog.textContent = 'REDIRECTING_TO_AUTH_PORTAL...';
     } else {
       // Chrome: Use identity API
       try {
         chrome.identity.getAuthToken({ interactive: true }, async (token) => {
           if (chrome.runtime.lastError || !token) {
-            cloudLog.textContent = `AUTH_ERROR: ${chrome.runtime.lastError?.message || 'No token received'}`;
+            cloudLog.textContent = `AUTH_ERROR: ${chrome.runtime.lastError?.message || 'Check Chrome Identity Config'}`;
             return;
           }
           try {
@@ -414,8 +486,13 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   // ─── Storage ──────────────────────────────────────────────────────
 
   function load() {
-    chrome.storage.local.get({ history: [] }, data => {
+    // Clear badge when popup opens
+    if (chrome.action) chrome.action.setBadgeText({ text: '' });
+
+    chrome.storage.local.get({ history: [], viewMode: 'list' }, data => {
       allEntries = data.history || [];
+      viewMode = data.viewMode || 'list';
+      applyViewMode();
       renderHistory();
     });
   }

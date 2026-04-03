@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, indexedDBLocalPersistence } from "firebase/auth";
 
 // REPLACE THESE WITH YOUR OWN FIREBASE CONFIGURATION
 // You can get these from your project settings in the Firebase Console
@@ -16,5 +16,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+// Extension Persistence: Ensure session survives popup closure
+setPersistence(auth, indexedDBLocalPersistence).catch(err => {
+  console.error("Firebase Auth Persistence Error:", err);
+});
 
 export default app;

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Video Playback Tracker",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "Automatically tracks your last watched video timestamp on any streaming site and reminds you when you return.",
   "permissions": [
     "storage",
@@ -10,6 +10,9 @@
     "alarms",
     "identity"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com"
+  },
   "host_permissions": [
     "<all_urls>",
     "https://*.firebaseio.com/*",
@@ -17,7 +20,15 @@
     "https://*.firebaseapp.com/*"
   ],
   "background": {
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
+  },
+  "oauth2": {
+    "client_id": "743702437264-peidajr25fgo9285rlu947k8iul50u01.apps.googleusercontent.com",
+    "scopes": [
+      "openid",
+      "email",
+      "profile"
+    ]
   },
   "content_scripts": [
     {

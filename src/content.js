@@ -19,8 +19,23 @@
   }
 
   function getTitle() {
+    // 1. YouTube Specific (most accurate for SPAs)
+    if (window.location.hostname.includes('youtube.com')) {
+      const ytTitle = document.querySelector('#container > h1 > yt-formatted-string');
+      if (ytTitle && ytTitle.textContent.trim()) return ytTitle.textContent.trim();
+    }
+    
+    // 2. Netflix Specific
+    if (window.location.hostname.includes('netflix.com')) {
+      const nfTitle = document.querySelector('.video-title h4') || document.querySelector('.video-title span');
+      if (nfTitle && nfTitle.textContent.trim()) return nfTitle.textContent.trim();
+    }
+
+    // 3. Generic Meta Tags
     const og    = getMeta(['meta[property="og:title"]', 'meta[name="twitter:title"]']);
     if (og) return og;
+    
+    // 4. Document Title Sanitization
     if (document.title && document.title.trim()) {
       return document.title.trim()
         .replace(/\s*[\|\-–—]\s*(Netflix|YouTube|Amazon|Prime Video|Hotstar|Disney\+?|Hulu|HBO|Crunchyroll|Twitch|Funimation|Aniwatch|Anikai).*$/i, '')
@@ -30,6 +45,19 @@
   }
 
   function getThumbnail() {
+    // 1. YouTube Reliable Link
+    if (window.location.hostname.includes('youtube.com')) {
+      const vidId = new URLSearchParams(window.location.search).get('v');
+      if (vidId) return `https://img.youtube.com/vi/${vidId}/maxresdefault.jpg`;
+    }
+
+    // 2. Netflix Poster (if possible)
+    if (window.location.hostname.includes('netflix.com')) {
+      const nfArt = document.querySelector('.evidence-item img') || document.querySelector('.boxart-image');
+      if (nfArt && nfArt.src) return nfArt.src;
+    }
+
+    // 3. Meta Tags
     const raw = getMeta([
       'meta[property="og:image"]',
       'meta[name="twitter:image"]',
@@ -101,6 +129,26 @@
       if (!video.ended) saveEntry(video);
     });
 
+    // Universal Auto-Resume logic (FIRST TIME ONLY)
+    let hasAutoSeeked = false;
+    const autoResume = () => {
+      if (hasAutoSeeked) return;
+      chrome.storage.local.get({ history: [] }, (data) => {
+        const history = data.history || [];
+        const entry = history.find(e => e.url === window.location.href);
+        if (entry && entry.timestamp > 5) {
+          console.log('[Rewind] Auto-resuming to:', entry.timestamp);
+          video.currentTime = entry.timestamp;
+          hasAutoSeeked = true;
+        }
+      });
+    };
+
+    video.addEventListener('loadedmetadata', autoResume);
+    video.addEventListener('play', autoResume, { once: true });
+    // Fallback if metadata already loaded
+    if (video.readyState >= 1) autoResume();
+
     // Periodic save every 30s while playing (backup for tab-close without pause)
     let periodicTimer = null;
     video.addEventListener('play', () => {
@@ -138,4 +186,17 @@
   scan();
   setTimeout(scan, 2000);
   setTimeout(scan, 5000);
+
+  // ─── Auth Bridge (Relay to Background) ───────────────────────────────────
+  if (window.location.hostname.includes('rewind-player.vercel.app')) {
+    window.addEventListener('message', (event) => {
+      if (event.data?.type === 'REWIND_AUTH_SUCCESS' && event.data?.token) {
+        console.log('[Rewind] Auth token detected, relaying to extension...');
+        chrome.runtime.sendMessage({ 
+          type: 'AUTH_TOKEN_UPDATE', 
+          token: event.data.token 
+        });
+      }
+    });
+  }
 })();

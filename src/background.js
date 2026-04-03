@@ -1,6 +1,6 @@
 // background.js – Video Playback Tracker v2 Service Worker
 import { db, auth } from './firebase-config';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 let currentUser = null;
@@ -16,13 +16,25 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+// Listener for auth relay from landing page
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === 'AUTH_TOKEN_UPDATE' && message.token) {
+    console.log('[Rewind] Background received token, updating auth state...');
+    const credential = GoogleAuthProvider.credential(null, message.token);
+    signInWithCredential(auth, credential).catch(err => {
+      console.error('[Rewind] Cross-origin auth failed:', err);
+    });
+  }
+});
+
 // Helper: Push an entry to Firestore
 async function syncToCloud(entry) {
   if (!currentUser || !entry || !entry.url) return;
 
   try {
-    // We use a hashed version of the URL or a clean ID to identify the video entry in Firestore
-    const entryId = btoa(entry.url).replace(/[/+=]/g, '_').substring(0, 50);
+    // Safer URL-to-ID conversion to handle Special/Unicode characters
+    const safeUrl = encodeURIComponent(entry.url);
+    const entryId = btoa(unescape(safeUrl)).replace(/[/+=]/g, '_').substring(0, 50);
     const historyRef = doc(db, `users/${currentUser.uid}/history`, entryId);
 
     await setDoc(historyRef, {
@@ -40,8 +52,10 @@ async function syncToCloud(entry) {
 
 // Helper: Sync any pending data from local to cloud
 async function syncPendingToCloud() {
+  if (!currentUser) return;
   chrome.storage.local.get({ history: [] }, ({ history }) => {
     if (history && history.length > 0) {
+      console.log(`[Sync] Found ${history.length} items to sync...`);
       history.forEach(entry => syncToCloud(entry));
     }
   });
@@ -66,10 +80,8 @@ if (typeof chrome !== 'undefined' && chrome.runtime) {
   });
 }
 
-// Clear badge when popup opens
-chrome.action.onClicked.addListener(() => {
-  chrome.action.setBadgeText({ text: '' });
-});
+// Clear badge when popup opens - we can do this in popup.js instead or remove it
+// chrome.action.onClicked.addListener is incompatible with a default_popup
 
 // ── Resume Reminder (Alarms + Notifications) ───────────────────────────────
 

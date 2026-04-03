@@ -17,9 +17,14 @@
       <span class="material-symbols-outlined logo-icon">play_circle</span>
       <span class="app-name">REWIND</span>
     </div>
-    <button id="closeBtn" class="header-close" title="Close popup">
-      <span class="material-symbols-outlined">close</span>
-    </button>
+    <div class="header-right">
+      <button id="settingsBtn" class="header-icon" title="Settings / Sync Help">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+      <button id="closeBtn" class="header-close" title="Close popup">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
   </header>
 
   <!-- ── Tab Content Container ───────────────────────────────────── -->
@@ -38,8 +43,10 @@
         </div>
         
         <section id="resumeBanner" class="hero-card hidden">
-          <img id="resumeThumb" class="hero-bg" src="" alt="" />
-          <div class="hero-overlay"></div>
+          <div class="hero-thumb-box">
+            <img id="resumeThumb" class="hero-bg" src="" alt="" />
+            <button id="heroTrash" class="hero-trash material-symbols-outlined" title="Delete entry">delete</button>
+          </div>
           <div class="hero-content">
             <h2 id="resumeTitle" class="hero-title">—</h2>
             <div id="resumeEpisode" class="hero-episode">EPISODE 04</div>
@@ -61,6 +68,10 @@
       <div id="historySection" class="section-wrap">
         <div class="section-header flex-row">
            <span class="section-title">HISTORY_LOG</span>
+           <div class="section-actions flex-row gap-4">
+              <span id="gridToggle" class="material-symbols-outlined action-icon" title="Toggle Grid/List">grid_view</span>
+              <span id="clearAllBtn" class="material-symbols-outlined action-icon" title="Clear All History">delete_sweep</span>
+           </div>
            <span id="viewAllBtn" class="section-link">VIEW_ALL_<span id="entryCount">0</span></span>
         </div>
         
@@ -75,46 +86,7 @@
 
     </div><!-- /tab-history -->
 
-    <!-- ══════════════════════════════════════════════════════════════
-         TAB: Stats
-    ══════════════════════════════════════════════════════════════ -->
-    <div id="tab-stats" class="tab-content hidden">
-      <div class="section-header flex-row">
-         <h2 class="tab-title">KINETIC_STATS</h2>
-         <span class="material-symbols-outlined settings-icon">settings</span>
-      </div>
-
-      <div class="stats-viz-box">
-         <div class="viz-header">
-            <span class="viz-title">WEEKLY WATCH TIME</span>
-            <span class="viz-meta">LAST 7 DAYS</span>
-         </div>
-         <div class="viz-chart">
-            <div class="bar-wrap"><div class="bar" style="height:30%"></div><span class="day">MON</span></div>
-            <div class="bar-wrap"><div class="bar" style="height:55%"></div><span class="day">TUE</span></div>
-            <div class="bar-wrap"><div class="bar" style="height:40%"></div><span class="day">WED</span></div>
-            <div class="bar-wrap active"><div class="bar" style="height:90%"></div><span class="day">THU</span></div>
-            <div class="bar-wrap"><div class="bar" style="height:65%"></div><span class="day">FRI</span></div>
-            <div class="bar-wrap"><div class="bar" style="height:25%"></div><span class="day">SAT</span></div>
-            <div class="bar-wrap"><div class="bar" style="height:45%"></div><span class="day">SUN</span></div>
-         </div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card pink">
-          <span class="stat-label">TOTAL VIDEOS TRACKED</span>
-          <div id="statTotal" class="stat-value">0</div>
-          <span class="stat-meta">+12% VS LW</span>
-        </div>
-        <div class="stat-card yellow">
-          <span class="stat-label">MOST WATCHED SITE</span>
-          <div id="statSite" class="stat-value">YOUTUBE</div>
-          <span id="statTime" class="stat-meta">84.2 HRS TOTAL</span>
-        </div>
-      </div>
-      
-      <div class="stat-footer-line"></div>
-    </div><!-- /tab-stats -->
+    <!-- Tab Content Container Ends -->
 
     <!-- ══════════════════════════════════════════════════════════════
          TAB: Add / Settings
@@ -236,10 +208,6 @@
     <button class="nav-btn active" data-tab="history">
       <span class="material-symbols-outlined">history</span>
       <span class="nav-label">HISTORY</span>
-    </button>
-    <button class="nav-btn" data-tab="stats">
-      <span class="material-symbols-outlined">bar_chart</span>
-      <span class="nav-label">STATS</span>
     </button>
     <button class="nav-btn" data-tab="add">
       <span class="material-symbols-outlined">add_box</span>
