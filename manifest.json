@@ -20,7 +20,7 @@
     "https://*.firebaseapp.com/*"
   ],
   "background": {
-    "scripts": ["background.js"]
+    "service_worker": "background.js"
   },
   "oauth2": {
     "client_id": "743702437264-peidajr25fgo9285rlu947k8iul50u01.apps.googleusercontent.com",

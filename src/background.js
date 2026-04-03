@@ -21,7 +21,9 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.type === 'AUTH_TOKEN_UPDATE' && message.token) {
     console.log('[Rewind] Background received token, updating auth state...');
     const credential = GoogleAuthProvider.credential(null, message.token);
-    signInWithCredential(auth, credential).catch(err => {
+    signInWithCredential(auth, credential).then(() => {
+      chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+    }).catch(err => {
       console.error('[Rewind] Cross-origin auth failed:', err);
     });
   }

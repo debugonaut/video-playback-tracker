@@ -411,14 +411,22 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     const isFirefox = /Firefox/.test(navigator.userAgent);
 
     if (isFirefox) {
-      // Firefox: Open as a popup window instead of a new tab
-      chrome.windows.create({ 
-        url: 'https://rewind-player.vercel.app/sync?reason=extension_auth',
-        type: 'popup',
-        width: 500,
-        height: 600
+      // Firefox: Use launchWebAuthFlow for a seamless 'one-click' experience
+      // This keeps the extension popup open, matching the Chrome UX.
+      const redirectUrl = chrome.identity.getRedirectURL();
+      const authUrl = `https://rewind-player.vercel.app/sync?reason=extension_auth&handler=firefox&redirect_uri=${encodeURIComponent(redirectUrl)}`;
+      
+      chrome.identity.launchWebAuthFlow({
+        url: authUrl,
+        interactive: true
+      }, (responseUrl) => {
+        if (chrome.runtime.lastError || !responseUrl) {
+          cloudLog.textContent = `AUTH_ERROR: ${chrome.runtime.lastError?.message || 'Login Cancelled'}`;
+          return;
+        }
+        // Background script will handle the token relay via content script on the landing page.
+        cloudLog.textContent = 'GOOGLE_AUTH_SUCCESS: SYNC_READY';
       });
-      cloudLog.textContent = 'OPENING_SECURE_AUTH_WINDOW...';
     } else {
       // Chrome: Use identity API
       try {
