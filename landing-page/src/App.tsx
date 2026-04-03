@@ -25,6 +25,7 @@ const OperatorDashboard = ({
   const [syncing, setSyncing] = useState(false);
   const [addForm, setAddForm] = useState({ title: '', url: '', timestamp: '' });
   const [addStatus, setAddStatus] = useState<'idle' | 'saving' | 'done' | 'error'>('idle');
+  const [isHistoryGridView, setIsHistoryGridView] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -65,6 +66,30 @@ const OperatorDashboard = ({
       }, 1500);
     } catch {
       setAddStatus('error');
+    }
+  };
+
+  const handleDeleteHistoryItem = async (id: string) => {
+    if (!confirm('DELETE_THIS_TRACE?')) return;
+    try {
+      const { deleteDoc, doc } = await import('firebase/firestore');
+      await deleteDoc(doc(db, 'users', user.uid, 'history', id));
+    } catch (err) {
+      console.error('Delete error:', err);
+    }
+  };
+
+  const handleClearAllHistory = async () => {
+    if (!confirm('CLEAR_ENTIRE_NEURAL_LOG? THIS CANNOT BE UNDONE.')) return;
+    try {
+      const { writeBatch, doc } = await import('firebase/firestore');
+      const batch = writeBatch(db);
+      history.forEach(item => {
+        batch.delete(doc(db, 'users', user.uid, 'history', item.id));
+      });
+      await batch.commit();
+    } catch (err) {
+      console.error('Clear error:', err);
     }
   };
 
@@ -485,28 +510,58 @@ const OperatorDashboard = ({
               </motion.div>
             )}
 
-            {/* ── HISTORY LIST VIEW (Fallover) ── */}
+             {/* ── HISTORY LIST VIEW (Fallover) ── */}
             {activeTab === 'history' && (
               <motion.div key="history" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto">
                  <div className="flex justify-between items-end border-b border-[#e51152] pb-6 mb-10">
-                    <h2 className="text-4xl font-black italic tracking-tighter uppercase">PLATFORM_LOGS</h2>
-                    <p className="text-[10px] font-black text-gray-500 tracking-[0.4em] mb-1">TOTAL_RECORDS: {history.length}</p>
+                    <div className="flex items-center gap-6">
+                       <h2 className="text-4xl font-black italic tracking-tighter uppercase">PLATFORM_LOGS</h2>
+                       <div className="flex items-center gap-3 bg-bg-secondary p-1 border border-border-primary/20">
+                          <button 
+                            onClick={() => setIsHistoryGridView(true)}
+                            className={`w-8 h-8 flex items-center justify-center transition-colors ${isHistoryGridView ? 'bg-brand-pink text-white' : 'text-gray-500 hover:text-white'}`}
+                          >
+                             <span className="material-symbols-outlined text-sm">grid_view</span>
+                          </button>
+                          <button 
+                            onClick={() => setIsHistoryGridView(false)}
+                            className={`w-8 h-8 flex items-center justify-center transition-colors ${!isHistoryGridView ? 'bg-brand-pink text-white' : 'text-gray-500 hover:text-white'}`}
+                          >
+                             <span className="material-symbols-outlined text-sm">view_list</span>
+                          </button>
+                       </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                       <button onClick={handleClearAllHistory} className="text-[10px] font-black text-brand-pink hover:bg-brand-pink hover:text-white px-2 py-1 border border-brand-pink transition-all uppercase tracking-widest">CLEAR_ALL_LOGS</button>
+                       <p className="text-[10px] font-black text-gray-500 tracking-[0.4em]">TOTAL_RECORDS: {history.length}</p>
+                    </div>
                  </div>
                  
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <div className={isHistoryGridView ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
                     {history.map(item => (
-                      <div key={item.id} className="neo-card p-4 group">
-                         <div className="h-40 bg-black mb-4 relative overflow-hidden">
+                      <div key={item.id} className={`neo-card group relative ${!isHistoryGridView ? 'p-4 flex gap-6 items-center' : 'p-4'}`}>
+                         {/* Specific Delete Button */}
+                         <button 
+                           onClick={() => handleDeleteHistoryItem(item.id)}
+                           className="absolute top-2 right-2 w-8 h-8 bg-black/80 text-brand-pink border border-brand-pink/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:bg-brand-pink hover:text-white"
+                           title="DELETE_TRACE"
+                         >
+                            <span className="material-symbols-outlined text-sm">delete</span>
+                         </button>
+
+                         <div className={`${isHistoryGridView ? 'h-40 mb-4' : 'w-48 h-28'} bg-black relative overflow-hidden shrink-0`}>
                             <img src={item.thumbnail || "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop"} className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" alt="" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
                             <div className="absolute bottom-4 left-4">
                                <span className="bg-brand-yellow text-black text-[9px] font-black px-2 py-1 uppercase">{item.progress || 0}%_WATCHED</span>
                             </div>
                          </div>
-                         <h4 className="font-black text-sm uppercase truncate mb-1">{item.title}</h4>
-                         <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                            <p>{new Date(item.savedAt).toLocaleDateString()} • {item.formattedTime}</p>
-                            <a href={item.url} target="_blank" rel="noreferrer" className="text-brand-pink hover:text-black hover:bg-brand-pink px-2 py-1 transition-colors">CONTINUE_TRACE</a>
+                         <div className="flex-1 min-w-0">
+                            <h4 className="font-black text-sm uppercase truncate mb-1">{item.title}</h4>
+                            <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                               <p>{new Date(item.savedAt).toLocaleDateString()} • {item.formattedTime}</p>
+                               <a href={item.url} target="_blank" rel="noreferrer" className="text-brand-pink hover:text-black hover:bg-brand-pink px-2 py-1 transition-colors">CONTINUE_TRACE</a>
+                            </div>
                          </div>
                       </div>
                     ))}
@@ -1171,6 +1226,20 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get('reason');
+    if (reason === 'signup') {
+      setMode('signup');
+    }
+
+    // AUTOMATIC AUTH TRIGGER: Less hassle for users
+    if (reason === 'extension_auth' && !auth.currentUser) {
+      console.log('[Rewind] Automated auth trigger detected...');
+      handleGoogleLogin();
+    }
+  }, []);
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
 
@@ -1357,22 +1426,108 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
   );
 };
 
+// The "Why Login" / Benefits Portal
+const WhyLoginView = ({ onBack, onLogin }: { onBack: () => void, onLogin: () => void }) => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="min-h-screen bg-[#0e0e0e] text-white font-['Space_Grotesk'] p-6 md:p-12 flex flex-col items-center justify-center relative overflow-hidden"
+    >
+      <div className="cyber-grid opacity-20"></div>
+      
+      <div className="max-w-4xl w-full relative z-10">
+        <button onClick={onBack} className="mb-8 flex items-center gap-2 text-brand-pink font-black uppercase text-xs tracking-widest hover:translate-x-1 transition-transform">
+          <span className="material-symbols-outlined">west</span> BACK_TO_SURFACE
+        </button>
+
+        <div className="border-4 border-white neo-shadow-white p-8 md:p-16 bg-black relative">
+          <div className="absolute top-0 right-0 bg-brand-yellow text-black px-4 py-1 font-black text-[10px] uppercase tracking-tighter">
+            UPGRADE_REQUIRED
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter mb-8 leading-none">
+            WHY <span className="text-brand-pink">SYNC?</span>
+          </h1>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
+            {[
+              { icon: 'cloud_sync', title: 'Cross-Device Persistence', desc: 'Your video markers follow you from desktop to laptop instantly. Never lose your place again.' },
+              { icon: 'history', title: 'Unlimited Neural Log', desc: 'Extension storage is limited. Cloud Sync unlocks your full historical archive.' },
+              { icon: 'insights', title: 'Deep Analytics', desc: 'Get weekly reports on your consumption entropy and site-specific focus metrics.' },
+              { icon: 'security', title: 'Data Hardening', desc: 'Securely backup your manual entries and custom bookmarks in our encrypted void.' }
+            ].map((item, i) => (
+              <div key={i} className="flex gap-6 group">
+                <div className="w-12 h-12 shrink-0 bg-brand-pink flex items-center justify-center neo-border group-hover:bg-brand-yellow group-hover:text-black transition-colors">
+                  <span className="material-symbols-outlined">{item.icon}</span>
+                </div>
+                <div>
+                  <h3 className="font-black uppercase text-sm mb-1 tracking-widest text-brand-yellow">{item.title}</h3>
+                  <p className="text-gray-400 text-sm font-bold leading-tight">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 flex flex-col md:flex-row gap-6">
+            <button 
+              onClick={onLogin}
+              className="flex-1 bg-brand-pink text-white font-black uppercase py-5 text-xl neo-shadow hover:bg-white hover:text-black transition-all active:translate-x-1 active:translate-y-1"
+            >
+              INITIALIZE_SYNC
+            </button>
+            <button 
+              onClick={onBack}
+              className="flex-1 border-2 border-white text-white font-black uppercase py-5 text-xl hover:bg-white/10 transition-all"
+            >
+              STAY_OFFLINE
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
   const [showBenefits, setShowBenefits] = useState(false);
-  const [currentView, setCurrentView] = useState<'landing' | 'auth' | 'dashboard'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'auth' | 'dashboard' | 'why-login' | 'profile'>('landing');
   const [onboardingBrowser, setOnboardingBrowser] = useState<'chrome' | 'firefox'>('chrome');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Simple Routing Handler
+  useEffect(() => {
+    const path = window.location.pathname;
+    
+    if (path === '/why-login') setCurrentView('why-login');
+    if (path === '/profile') setCurrentView('profile');
+    if (path === '/sync' || path === '/signup') {
+      setCurrentView('auth');
+    }
+  }, []);
+
   // Auth Listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        setCurrentView('dashboard');
-      } else if (currentView === 'dashboard') {
+        // AUTH BRIDGE: Send token to extension if it's an extension auth session
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('reason') === 'extension_auth' || params.get('reason') === 'signup') {
+          try {
+            const token = await user.getIdToken();
+            console.log('[Rewind] Relaying auth token to extension...');
+            window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token }, '*');
+          } catch (err) {
+            console.error('[Rewind] Token relay error:', err);
+          }
+        }
+
+        if (currentView !== 'profile') setCurrentView('dashboard');
+      } else if (currentView === 'dashboard' || currentView === 'profile') {
         setCurrentView('landing');
       }
       setLoading(false);
@@ -1437,7 +1592,9 @@ function App() {
           <div className="min-h-screen flex items-center justify-center bg-[#0e0e0e]">
              <div className="text-[#e51152] font-black text-2xl animate-pulse tracking-tighter italic">INITIALIZING_CORE...</div>
           </div>
-        ) : user ? (
+        ) : currentView === 'why-login' ? (
+          <WhyLoginView onBack={() => setCurrentView('landing')} onLogin={() => setCurrentView('auth')} />
+        ) : currentView === 'profile' && user ? (
           <OperatorDashboard 
             user={user} 
             onLogout={() => signOut(auth)} 
