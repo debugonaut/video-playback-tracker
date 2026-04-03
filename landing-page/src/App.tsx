@@ -7,7 +7,7 @@ import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import './index.css';
 
 // The Cyber-Rewind / Kinetic Void Dashboard
-const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => void }) => {
+const OperatorDashboard = ({ user, onLogout, isDemo = false }: { user: User, onLogout: () => void, isDemo?: boolean }) => {
   const [history, setHistory] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'analytics' | 'entry' | 'history' | 'assets'>('history');
   const [syncing, setSyncing] = useState(false);
@@ -132,12 +132,13 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
   return (
     <motion.div 
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[60] bg-bg-primary flex font-['Space_Grotesk'] text-text-primary overflow-hidden"
+      className={`${isDemo ? 'absolute inset-0 z-50' : 'fixed inset-0 z-[60]'} bg-bg-primary flex font-['Space_Grotesk'] text-text-primary overflow-hidden`}
     >
       <div className="scanline"></div>
       
       {/* LEFT MOST THIN BAR */}
-      <div className="w-16 border-r border-border-primary/30 flex flex-col items-center py-6 gap-8 shrink-0 bg-bg-primary">
+      {!isDemo && (
+        <div className="w-16 border-r border-border-primary/30 flex flex-col items-center py-6 gap-8 shrink-0 bg-bg-primary">
           <div className="w-8 h-8 bg-brand-pink flex items-center justify-center">
             <span className="material-symbols-outlined text-sm text-white">dashboard</span>
           </div>
@@ -150,14 +151,15 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
           <div className="vertical-text text-[10px] text-gray-500 font-black tracking-[0.2em] uppercase mt-auto pb-8 whitespace-nowrap -rotate-180" style={{ writingMode: 'vertical-rl' }}>
             NODE_OPERATOR_v3.1
           </div>
-      </div>
+        </div>
+      )}
 
       {/* PRIMARY SIDEBAR */}
-      <div className="w-[200px] md:w-[260px] bg-bg-secondary border-r-2 border-brand-pink flex flex-col justify-between py-8 shrink-0">
+      <div className={`${isDemo ? 'w-[140px]' : 'w-[200px] md:w-[260px]'} bg-bg-secondary border-r-2 border-brand-pink flex flex-col justify-between py-8 shrink-0`}>
         <div>
           <div className="px-8 mb-12">
-            <h3 className="text-[#e51152] font-black text-xs tracking-widest uppercase mb-1">VOID_OPERATOR</h3>
-            <p className="text-gray-500 text-[10px] uppercase font-bold">LEVEL 04 ANALYST</p>
+            <h3 className="text-[#e51152] font-black text-xs tracking-widest uppercase mb-1">{isDemo ? 'VOID_SIM' : 'VOID_OPERATOR'}</h3>
+            <p className="text-gray-500 text-[10px] uppercase font-bold">{isDemo ? 'DEMO_NODE' : 'LEVEL 04 ANALYST'}</p>
           </div>
           
           <nav className="flex flex-col">
@@ -175,7 +177,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                  }}
                  className={`py-6 px-8 flex items-center gap-4 text-xs font-black tracking-widest transition-all border-l-4 ${item.active ? 'bg-brand-pink text-white border-border-primary' : 'text-text-secondary border-transparent hover:text-text-primary hover:bg-border-primary/5'}`}>
                   <span className="material-symbols-outlined text-sm">{item.icon}</span>
-                  {item.label}
+                  {isDemo ? item.label.split(' ')[1] || item.label : item.label}
                 </button>
               ))}
           </nav>
@@ -192,7 +194,7 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
               </div>
            </div>
            <button onClick={onLogout} className="text-[10px] font-black text-gray-500 hover:text-text-primary flex items-center gap-2 tracking-widest uppercase">
-             <span className="material-symbols-outlined text-sm">power_settings_new</span> DISCONNECT_LINK
+             <span className="material-symbols-outlined text-sm">power_settings_new</span> {isDemo ? 'EXIT_DEMO' : 'DISCONNECT_LINK'}
            </button>
         </div>
       </div>
@@ -202,16 +204,18 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
         <div className="cyber-grid absolute inset-0 pointer-events-none opacity-20"></div>
 
         {/* TOP NAV BAR */}
-        <header className="h-20 border-b border-brand-pink/30 flex items-center justify-between px-10 shrink-0 bg-bg-secondary/50 backdrop-blur-sm relative z-10">
-          <div className="flex items-center gap-10">
-            <h1 className="text-[#e51152] text-xl font-black italic tracking-tighter uppercase glitch-text">CYBER-REWIND</h1>
-            <nav className="flex gap-8 text-[11px] font-black tracking-widest uppercase text-text-secondary">
+        <header className={`${isDemo ? 'h-14 px-4' : 'h-20 px-10'} border-b border-brand-pink/30 flex items-center justify-between shrink-0 bg-bg-secondary/50 backdrop-blur-sm relative z-10`}>
+          <div className="flex items-center gap-6">
+            <h1 className={`${isDemo ? 'text-sm' : 'text-xl'} text-[#e51152] font-black italic tracking-tighter uppercase glitch-text`}>CYBER-REWIND</h1>
+            {!isDemo && (
+              <nav className="flex gap-8 text-[11px] font-black tracking-widest uppercase text-text-secondary">
                {['history', 'analytics', 'entry', 'assets'].map(tab => (
                  <button key={tab} onClick={() => setActiveTab(tab as any)} className={`transition-all pb-1 border-b-2 ${activeTab === tab ? 'text-text-primary border-brand-yellow' : 'border-transparent hover:text-text-primary'}`}>
                    {tab}
                  </button>
                ))}
-            </nav>
+              </nav>
+            )}
           </div>
           
           <div className="flex items-center gap-6">
@@ -222,14 +226,14 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
              </button>
              <span className="material-symbols-outlined text-gray-500 cursor-pointer hover:text-white">notifications</span>
              <span className="material-symbols-outlined text-gray-500 cursor-pointer hover:text-white">settings</span>
-             <div className="w-10 h-10 border-2 border-brand-pink p-0.5">
+             <div className={`${isDemo ? 'w-8 h-8' : 'w-10 h-10'} border-2 border-brand-pink p-0.5`}>
                <img src={user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} className="w-full h-full object-cover" alt="" />
              </div>
           </div>
         </header>
 
         {/* CONTENT SWITCHER */}
-        <div className="flex-1 overflow-y-auto p-12 custom-scrollbar relative z-10">
+        <div className={`flex-1 overflow-y-auto ${isDemo ? 'p-4' : 'p-12'} custom-scrollbar relative z-10`}>
           <AnimatePresence mode="wait">
             
             {/* ── ANALYTICS VIEW ── */}
@@ -238,13 +242,15 @@ const OperatorDashboard = ({ user, onLogout }: { user: User, onLogout: () => voi
                 key="analytics" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                 className="max-w-7xl mx-auto"
               >
-                <header className="mb-10">
+                <header className={isDemo ? 'mb-4' : 'mb-10'}>
                   <p className="text-brand-yellow font-black text-[10px] tracking-[0.3em] mb-2 uppercase">SYSTEM.LOG_v04</p>
-                  <h2 className="text-6xl md:text-8xl font-black uppercase italic leading-none tracking-tighter text-text-primary">REWIND <span className="text-brand-pink block">ANALYTICS</span></h2>
-                  <div className="bg-bg-secondary border-l-4 border-border-primary mt-4 p-4 inline-block">
+                  <h2 className={`${isDemo ? 'text-3xl' : 'text-6xl md:text-8xl'} font-black uppercase italic leading-none tracking-tighter text-text-primary`}>REWIND <span className="text-brand-pink block">ANALYTICS</span></h2>
+                  {!isDemo && (
+                    <div className="bg-bg-secondary border-l-4 border-border-primary mt-4 p-4 inline-block">
                     <p className="text-[10px] font-black text-gray-400 mb-1 uppercase tracking-widest">STATUS</p>
-                    <p className="font-black text-sm tracking-widest uppercase text-text-primary">NODE_SYNCED</p>
-                  </div>
+                      <p className="font-black text-sm tracking-widest uppercase text-text-primary">NODE_SYNCED</p>
+                    </div>
+                  )}
                 </header>
 
                 <div className="flex flex-col lg:flex-row gap-8 mb-12">
@@ -829,6 +835,13 @@ const TrackingDemo = () => {
         src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2600&auto=format&fit=crop"
       />
       
+      {/* UI Interaction Warning if in Dashboard phase */}
+      {phase === 'dashboard' && (
+        <div className="absolute top-4 left-4 z-[70] bg-brand-pink text-white text-[10px] font-black px-3 py-1 uppercase italic animate-pulse pointer-events-none border border-white">
+          SIMULATED_INTERFACE // AUTO-EXIT IN 6s
+        </div>
+      )}
+      
       {/* Play/Pause Overlay Icon */}
       <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
         <motion.div 
@@ -883,8 +896,9 @@ const TrackingDemo = () => {
       <AnimatePresence>
         {phase === 'dashboard' && (
           <OperatorDashboard 
+            isDemo={true}
             user={{ displayName: 'SIMULATED_OPERATOR', photoURL: null, uid: 'demo' } as User} 
-            onLogout={() => {}} 
+            onLogout={() => setPhase('playing')} 
           />
         )}
       </AnimatePresence>
