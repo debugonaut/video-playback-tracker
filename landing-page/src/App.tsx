@@ -770,9 +770,9 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
            <SysStatus label="NODE_END_PT" status="online" />
            <div className="text-2xl font-black italic text-white uppercase tracking-tighter">EXT_GEN_2.0</div>
            <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-500">
-              <span className="hover:text-white cursor-pointer">DOCS</span>
-              <span className="hover:text-white cursor-pointer">GITHUB</span>
-              <span className="hover:text-white cursor-pointer">SUPPORT</span>
+              <a href="/docs" target="_blank" rel="noreferrer" className="hover:text-white cursor-pointer transition-colors">DOCS</a>
+              <a href="https://github.com/debugonaut/video-playback-tracker" target="_blank" rel="noreferrer" className="hover:text-white cursor-pointer transition-colors">GITHUB</a>
+              <a href="mailto:aadeshkhande9202@gmail.com" className="hover:text-white cursor-pointer transition-colors">SUPPORT</a>
            </div>
            <div className="text-[10px] font-black uppercase text-gray-600">©Rewind</div>
         </div>
