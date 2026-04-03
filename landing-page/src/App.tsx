@@ -658,22 +658,23 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
               </p>
             </div>
             <div className="flex-1 md:pl-24">
-              <div className="bg-[#111] p-8 border-4 border-white neo-shadow-pink flex justify-center items-center relative overflow-hidden group">
-                 <div className="flex items-center gap-4 bg-black/40 border-2 border-white/10 px-6 py-4">
-                    {selectedBrowser === 'chrome' ? (
-                      <>
-                        <span className="text-[10px] md:text-xs font-black uppercase text-gray-400">Developer Mode</span>
-                        <div className="w-12 h-6 bg-[#e51152] border-2 border-white relative cursor-pointer shadow-[0_0_15px_rgba(229,17,82,0.5)]">
-                           <div className="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-white"></div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                         <span className="material-symbols-outlined text-[#f7e600]">laptop_mac</span>
-                         <span className="text-[10px] md:text-xs font-black uppercase text-white">This Firefox</span>
+              <div className="bg-[#111] p-0 border-4 border-white neo-shadow-pink flex justify-center items-center relative overflow-hidden group">
+                 {selectedBrowser === 'chrome' ? (
+                   <div className="p-8 flex items-center gap-4 bg-black/40 border-2 border-white/10 px-6 py-4">
+                      <span className="text-[10px] md:text-xs font-black uppercase text-gray-400">Developer Mode</span>
+                      <div className="w-12 h-6 bg-[#e51152] border-2 border-white relative cursor-pointer shadow-[0_0_15px_rgba(229,17,82,0.5)]">
+                         <div className="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 bg-white"></div>
                       </div>
-                    )}
-                 </div>
+                   </div>
+                 ) : (
+                   <div className="relative w-full aspect-square md:aspect-video">
+                      <img src="/firefox_guide.png" alt="Firefox Debugging Guide" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
+                      <div className="absolute bottom-4 left-4 right-4 bg-[#e51152] text-white p-2 text-[10px] font-black uppercase italic border border-white">
+                        Access "This Firefox" in the sidebar
+                      </div>
+                   </div>
+                 )}
                  <div className="absolute top-0 right-0 p-1 text-[6px] text-gray-700 uppercase font-black tracking-widest hidden group-hover:block">SYSTEM_OVERRIDE</div>
               </div>
             </div>
@@ -682,11 +683,17 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
           {/* Step 4 */}
           <div className="relative flex flex-col-reverse md:flex-row gap-8 items-start md:items-center mb-16">
             <div className="flex-1 md:pr-24">
-               <div className="flex gap-4">
-                  <button className="flex-1 bg-[#e51152] text-white font-black text-[10px] md:text-xs py-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_white]">
-                    {selectedBrowser === 'chrome' ? 'LOAD UNPACKED' : 'LOAD TEMPORARY ADD-ON'}
-                  </button>
-                  <button className="flex-1 bg-transparent text-gray-500 font-black text-[10px] md:text-xs py-4 border-2 border-gray-700 cursor-not-allowed">PACK EXTENSION</button>
+               <div className="bg-[#111] border-4 border-[#f7e600] neo-shadow-yellow overflow-hidden relative group">
+                  <img src="/manifest_select.png" alt="Manifest Selection" className="w-full h-48 object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-transparent transition-colors">
+                     <div className="bg-[#f7e600] text-black font-black p-4 neo-border uppercase text-xs italic scale-110">TARGET: manifest.json</div>
+                  </div>
+                  <div className="p-4 bg-black/80 flex gap-4">
+                    <button className="flex-1 bg-[#e51152] text-white font-black text-[10px] md:text-xs py-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_white]">
+                      {selectedBrowser === 'chrome' ? 'LOAD UNPACKED' : 'LOAD TEMPORARY ADD-ON'}
+                    </button>
+                    <button className="flex-1 bg-transparent text-gray-500 font-black text-[10px] md:text-xs py-4 border-2 border-gray-700 cursor-not-allowed">PACK EXTENSION</button>
+                  </div>
                </div>
             </div>
             <div className="w-12 h-12 bg-[#f7e600] text-black font-black flex items-center justify-center text-xl neo-border relative z-10 md:absolute md:left-1/2 md:-translate-x-1/2">04</div>

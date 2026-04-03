@@ -46,9 +46,5 @@
       "id": "video-playback-tracker@extension",
       "strict_min_version": "109.0"
     }
-  },
-  "oauth2": {
-    "client_id": "743702437264-peidajr25fgo9285rlu947k8iul50u01.apps.googleusercontent.com",
-    "scopes": ["openid", "email", "profile"]
   }
 }

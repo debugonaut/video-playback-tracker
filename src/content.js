@@ -77,14 +77,14 @@
     chrome.storage.local.get({ history: [] }, (data) => {
       let history = data.history || [];
       // Preserve pinned state and note from existing entry for same URL
-      const existing = entries.find(e => e.url === entry.url);
+      const existing = history.find(e => e.url === entry.url);
       if (existing) {
         entry.pinned = existing.pinned || false;
         entry.note   = existing.note   || '';
       }
-      entries = entries.filter(e => e.url !== entry.url);
-      entries.unshift(entry);
-      if (entries.length > MAX_ENTRIES) entries = entries.slice(0, MAX_ENTRIES);
+      history = history.filter(e => e.url !== entry.url);
+      history.unshift(entry);
+      if (history.length > MAX_ENTRIES) history = history.slice(0, MAX_ENTRIES);
       chrome.storage.local.set({ history, lastEntry: entry });
     });
   }

@@ -299,25 +299,41 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   };
 
   googleBtn.onclick = async () => {
-    cloudLog.textContent = 'OPENING_GOOGLE_AUTH...';
-    try {
-      // Use chrome.identity API — the correct way to do Google auth in extensions
-      chrome.identity.getAuthToken({ interactive: true }, async (token) => {
-        if (chrome.runtime.lastError || !token) {
-          cloudLog.textContent = `AUTH_ERROR: ${chrome.runtime.lastError?.message || 'No token received'}`;
-          return;
-        }
-        try {
-          const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
-          const credential = GoogleAuthProvider.credential(null, token);
-          await signInWithCredential(auth, credential);
-          cloudLog.textContent = 'GOOGLE_AUTH_SUCCESS: SYNC_READY';
-        } catch (e) {
-          cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
-        }
-      });
-    } catch (e) {
-      cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
+    cloudLog.textContent = 'INITIALIZING_AUTH_FLOW...';
+    
+    const isFirefox = /Firefox/.test(navigator.userAgent);
+
+    if (isFirefox) {
+      // Firefox fallback: Use Firebase popup auth
+      try {
+        const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        cloudLog.textContent = 'GOOGLE_AUTH_SUCCESS: SYNC_READY';
+      } catch (e) {
+        cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
+        console.error(e);
+      }
+    } else {
+      // Chrome: Use identity API
+      try {
+        chrome.identity.getAuthToken({ interactive: true }, async (token) => {
+          if (chrome.runtime.lastError || !token) {
+            cloudLog.textContent = `AUTH_ERROR: ${chrome.runtime.lastError?.message || 'No token received'}`;
+            return;
+          }
+          try {
+            const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
+            const credential = GoogleAuthProvider.credential(null, token);
+            await signInWithCredential(auth, credential);
+            cloudLog.textContent = 'GOOGLE_AUTH_SUCCESS: SYNC_READY';
+          } catch (e) {
+            cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
+          }
+        });
+      } catch (e) {
+        cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
+      }
     }
   };
 
