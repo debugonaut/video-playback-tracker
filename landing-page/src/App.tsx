@@ -199,9 +199,12 @@ const OperatorDashboard = ({
                 <p className="text-[10px] font-bold text-gray-500 uppercase truncate w-[120px]">{user.displayName || 'RE_WIND_01'}</p>
               </div>
            </div>
-           <button onClick={onLogout} className="text-[10px] font-black text-gray-500 hover:text-text-primary flex items-center gap-2 tracking-widest uppercase">
+           <button onClick={onLogout} className="text-[10px] font-black text-gray-500 hover:text-text-primary flex items-center gap-2 tracking-widest uppercase mb-4">
              <span className="material-symbols-outlined text-sm">power_settings_new</span> {isDemo ? 'EXIT_DEMO' : 'LOGOUT'}
            </button>
+           <a href="/privacy" target="_blank" rel="noreferrer" className="text-[8px] font-black text-gray-600 hover:text-brand-pink flex items-center gap-2 tracking-[0.2em] uppercase">
+             <span className="material-symbols-outlined text-xs">shield</span> PRIVACY_POLICY_v1.0
+           </a>
         </div>
       </div>
 
@@ -640,6 +643,16 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
                 </span>
                 {selectedBrowser === 'chrome' ? ' in your address bar.' : ' in the search bar to access developer dashboard'}
               </p>
+              {selectedBrowser === 'firefox' && (
+                <div className="mt-4 p-3 bg-[#e51152]/10 border-l-4 border-[#e51152] flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[#e51152] text-sm">warning</span>
+                  <div className="text-[10px] font-bold text-gray-400 uppercase leading-tight">
+                    <span className="text-white">Note:</span> Firefox temporary add-ons reset after restart. 
+                    <br/>
+                    <span className="text-[#e51152] cursor-help" title="To stay permanent, use Firefox Developer Edition and set xpinstall.signatures.required to false in about:config">Learn how to make it permanent.</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

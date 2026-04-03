@@ -6,6 +6,9 @@
   "scripts": {
     "build": "esbuild src/background.js src/popup.js src/content.js --bundle --outdir=. --minify --sourcemap --platform=browser",
     "watch": "esbuild src/background.js src/popup.js src/content.js --bundle --outdir=. --watch --sourcemap --platform=browser",
+    "package": "npm run build && zip -r dist-firefox.zip manifest.json background.js content.js popup.js popup.html popup.css icons/",
+    "package:source": "zip -r source.zip src/ manifest.json package.json README.md",
+    "build:all": "npm run package && npm run package:source",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

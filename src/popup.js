@@ -123,7 +123,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   // ─── Render History ───────────────────────────────────────────────
 
   function renderHistory() {
-    historyList.innerHTML = '';
+    while (historyList.firstChild) historyList.removeChild(historyList.firstChild);
 
     const hasEntries = allEntries.length > 0;
     emptyState.classList.toggle('hidden', hasEntries);
@@ -159,25 +159,55 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         const li = document.createElement('li');
         li.className = 'history-item';
         
-        const thumb = entry.thumbnail || 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=400&auto=format&fit=crop';
+        const thumbUrl = entry.thumbnail || 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=400&auto=format&fit=crop';
         const prog = entry.progress || 0;
-        const h = entry.url ? host(entry.url) : 'MANUAL';
+        const siteLabel = entry.url ? host(entry.url) : 'MANUAL';
 
-        li.innerHTML = `
-          <div class="hr-thumb-wrap">
-            <img class="hr-thumb" src="${esc(thumb)}" alt="" />
-          </div>
-          <div class="hr-content">
-            <span class="hr-ago">${ago(entry.savedAt)}</span>
-            <div class="hr-title" title="${esc(entry.title)}">${esc(entry.title)}</div>
-            <div class="hr-time-row">
-              <span class="hr-timestamp">${fmt(entry.timestamp)}${entry.duration ? ' / ' + fmt(entry.duration) : ''}</span>
-              <div class="hr-progress-mini">
-                <div class="hr-progress-fill" style="width:${prog}%"></div>
-              </div>
-            </div>
-          </div>
-        `;
+        // Thumbnail Wrap
+        const thumbWrap = document.createElement('div');
+        thumbWrap.className = 'hr-thumb-wrap';
+        const img = document.createElement('img');
+        img.className = 'hr-thumb';
+        img.src = thumbUrl;
+        img.alt = '';
+        thumbWrap.appendChild(img);
+
+        // Content Wrap
+        const content = document.createElement('div');
+        content.className = 'hr-content';
+
+        const timeAgo = document.createElement('span');
+        timeAgo.className = 'hr-ago';
+        timeAgo.textContent = ago(entry.savedAt);
+
+        const title = document.createElement('div');
+        title.className = 'hr-title';
+        title.textContent = entry.title;
+        title.title = entry.title;
+
+        const timeRow = document.createElement('div');
+        timeRow.className = 'hr-time-row';
+
+        const timestampStr = document.createElement('span');
+        timestampStr.className = 'hr-timestamp';
+        timestampStr.textContent = `${fmt(entry.timestamp)}${entry.duration ? ' / ' + fmt(entry.duration) : ''}`;
+
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'hr-progress-mini';
+        const progressFill = document.createElement('div');
+        progressFill.className = 'hr-progress-fill';
+        progressFill.style.width = `${prog}%`;
+        progressContainer.appendChild(progressFill);
+
+        timeRow.appendChild(timestampStr);
+        timeRow.appendChild(progressContainer);
+
+        content.appendChild(timeAgo);
+        content.appendChild(title);
+        content.appendChild(timeRow);
+
+        li.appendChild(thumbWrap);
+        li.appendChild(content);
 
         li.addEventListener('click', () => {
           if (entry.url) chrome.tabs.create({ url: entry.url });
