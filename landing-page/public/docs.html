@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCS | REWIND</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        :root {
+            --brand-pink: #e51152;
+            --brand-yellow: #f7e600;
+            --bg-primary: #ffffff;
+            --text-primary: #000000;
+            --border-primary: #000000;
+            --neo-shadow: 6px 6px 0px 0px #000000;
+            --neo-border-width: 4px;
+        }
+
+        * {
+            box-sizing: border-box;
+            cursor: crosshair;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            background-image: 
+                linear-gradient(to right, rgba(229, 17, 82, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(229, 17, 82, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        header {
+            margin-bottom: 60px;
+            border: var(--neo-border-width) solid var(--border-primary);
+            background: var(--brand-pink);
+            padding: 40px;
+            box-shadow: var(--neo-shadow);
+            transform: rotate(1deg);
+            color: white;
+        }
+
+        h1 {
+            font-size: 4rem;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sub-head {
+            font-weight: bold;
+            text-transform: uppercase;
+            background: var(--text-primary);
+            color: var(--brand-yellow);
+            display: inline-block;
+            padding: 4px 12px;
+            margin-top: 20px;
+        }
+
+        section {
+            background: var(--bg-primary);
+            border: var(--neo-border-width) solid var(--border-primary);
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--neo-shadow);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            margin-top: 0;
+            background: var(--brand-yellow);
+            display: inline-block;
+            padding: 4px 16px;
+            color: black;
+            border: 2px solid black;
+            box-shadow: 3px 3px 0px 0px black;
+            margin-bottom: 24px;
+        }
+
+        p, li {
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        ul {
+            padding-left: 20px;
+            list-style: square;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            font-family: monospace;
+            border: 1px solid black;
+        }
+
+        .step-num {
+            background: black;
+            color: white;
+            padding: 2px 8px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-top: 2px dashed black;
+            padding-top: 40px;
+        }
+
+        .highlight {
+            background: var(--brand-yellow);
+            padding: 0 4px;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="material-symbols-outlined" style="font-size: 4rem;">terminal</span>SYSTEM<br>MANUAL</h1>
+            <div class="sub-head">REWIND_OPERATIONS // V2.0</div>
+            <p style="margin-top: 10px; font-weight: bold; color: rgba(255,255,255,0.8);">CORE PROTOCOL: SESSION PRESERVATION</p>
+        </header>
+
+        <section>
+            <h2>01 // GETTING STARTED</h2>
+            <p>TO ACTIVATING THE KINETIC VOID TRACKING SYSTEM, FOLLOW THESE STEPS:</p>
+            <ul>
+                <li><span class="step-num">01</span> INSTALL THE EXTENSION IN CHROME OR FIREFOX.</li>
+                <li><span class="step-num">02</span> PIN THE ICON TO YOUR TOOLBAR FOR INSTANT ACCESS.</li>
+                <li><span class="step-num">03</span> NAVIGATE TO ANY VIDEO STREAMING PLATFORM (YOUTUBE, NETFLIX, ETC.).</li>
+                <li><span class="step-num">04</span> THE SYSTEM WILL AUTOMATICALLY DETECT THE <code>&lt;video&gt;</code> ELEMENT.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>02 // DASHBOARD CONTROLS</h2>
+            <p>THE OPERATOR DASHBOARD IS YOUR COMMAND CENTER:</p>
+            <ul>
+                <li><span class="highlight">USER HISTORY:</span> VIEW THE LAST 20 TRACKED CLUSTERS.</li>
+                <li><span class="highlight">ANALYTICS:</span> MONITOR YOUR CONSUMPTION DENSITY ACROSS 7 DAYS.</li>
+                <li><span class="highlight">MANUAL ENTRY:</span> OVERRIDE THE AUTO-PROBE TO LOG DATA MANUALLY.</li>
+                <li><span class="highlight">REFRESH_SYNC:</span> FORCE A FIREBASE UPLINK TO SYNC WITH REMOTE NODES.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>03 // CLOUD SYNC</h2>
+            <p>BY DEFAULT, ALL DATA IS LOCAL. TO ENABLE CROSS-DEVICE TRACKING:</p>
+            <ul>
+                <li>CLICK <span class="highlight">LOGIN / SIGN UP</span> ON THE LANDING PAGE.</li>
+                <li>AUTHENTICATE VIA THE SECURE GOOGLE UPLINK.</li>
+                <li>YOUR HISTORY WILL NOW BE SYNCED TO THE <span class="highlight">FIRESTORE CLOUD NODES</span>.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>04 // TROUBLESHOOTING</h2>
+            <p>IF THE TRACKER FAILS TO INITIALIZE:</p>
+            <ul>
+                <li>ENSURE THE VIDEO PLAYER IS USING <span class="highlight">HTML5</span> (FLASH IS NOT SUPPORTED).</li>
+                <li>GIVE THE PAGE A HARD REFRESH TO RE-INJECT THE CONTENT SCRIPT.</li>
+                <li>CHECK IF THE EXTENSION BADGE IS SHOWING AS ACTIVE.</li>
+            </ul>
+        </section>
+
+        <footer>
+            &copy; 2026 // DEBUGONAUT // DOC_ID: REW-992-X
+            <br>
+            <a href="/" style="color: var(--brand-pink); text-decoration: none; margin-top: 20px; display: inline-block;">RETURN_TO_HOME</a>
+        </footer>
+    </div>
+</body>
+</html>

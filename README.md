@@ -134,6 +134,24 @@ Pull requests are welcome! Some ideas for future improvements:
 
 ---
 
+## 🛠️ Build from Source (for Reviewers)
+
+To build the extension from this source code, follow these steps:
+
+1.  **Prerequisites**: Ensure you have [Node.js](https://nodejs.org/) and `npm` installed.
+2.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Build**:
+    ```bash
+    npm run build
+    ```
+    This will use `esbuild` to bundle and minify the source files (`src/background.js`, `src/content.js`, `src/popup.js`) into the root directory.
+4.  **Verification**: The generated files (`background.js`, `content.js`, `popup.js`) in the root will match the files in the distributed version.
+
+---
+
 ## 📄 License
 
 MIT License — free to use, modify, and distribute.

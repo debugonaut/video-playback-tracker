@@ -202,9 +202,15 @@ const OperatorDashboard = ({
            <button onClick={onLogout} className="text-[10px] font-black text-gray-500 hover:text-text-primary flex items-center gap-2 tracking-widest uppercase mb-4">
              <span className="material-symbols-outlined text-sm">power_settings_new</span> {isDemo ? 'EXIT_DEMO' : 'LOGOUT'}
            </button>
-           <a href="/privacy" target="_blank" rel="noreferrer" className="text-[8px] font-black text-gray-600 hover:text-brand-pink flex items-center gap-2 tracking-[0.2em] uppercase">
-             <span className="material-symbols-outlined text-xs">shield</span> PRIVACY_POLICY_v1.0
-           </a>
+            <a href="/docs" target="_blank" rel="noreferrer" className="text-[8px] font-black text-gray-600 hover:text-brand-pink flex items-center gap-2 tracking-[0.2em] uppercase mb-2">
+              <span className="material-symbols-outlined text-xs">description</span> SYSTEM_DOCS_v2.0
+            </a>
+            <a href="/privacy" target="_blank" rel="noreferrer" className="text-[8px] font-black text-gray-600 hover:text-brand-pink flex items-center gap-2 tracking-[0.2em] uppercase mb-2">
+              <span className="material-symbols-outlined text-xs">shield</span> PRIVACY_POLICY_v1.0
+            </a>
+            <a href="/terms" target="_blank" rel="noreferrer" className="text-[8px] font-black text-gray-600 hover:text-brand-pink flex items-center gap-2 tracking-[0.2em] uppercase">
+              <span className="material-symbols-outlined text-xs">gavel</span> TERMS_OF_SERVICE
+            </a>
         </div>
       </div>
 
@@ -1696,13 +1702,13 @@ function App() {
         <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 items-center md:items-end text-center md:text-right">
           <div className="flex flex-col gap-3">
              <h5 className="font-black text-[#e51152] text-sm uppercase mb-1">Infrastructure</h5>
-             <a className="font-['Space_Grotesk'] font-bold uppercase text-sm text-gray-400 hover:text-white transition-colors" href="https://github.com/debugonaut/video-playback-tracker" target="_blank" rel="noreferrer">Documentation</a>
+             <a className="font-['Space_Grotesk'] font-bold uppercase text-sm text-gray-400 hover:text-white transition-colors" href="/docs" target="_blank" rel="noreferrer">Documentation</a>
              <a className="font-['Space_Grotesk'] font-bold uppercase text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1 justify-center md:justify-end" href="https://github.com/debugonaut/video-playback-tracker" target="_blank" rel="noreferrer">GitHub Repository <span className="material-symbols-outlined text-xs">open_in_new</span></a>
           </div>
           <div className="flex flex-col gap-3">
              <h5 className="font-black text-[#e51152] text-sm uppercase mb-1">Legal</h5>
-             <a className="font-['Space_Grotesk'] font-bold uppercase text-sm text-gray-400 hover:text-white transition-colors" href="#">Privacy Policy</a>
-             <a className="font-['Space_Grotesk'] font-bold uppercase text-sm text-gray-400 hover:text-white transition-colors" href="#">Terms of Service</a>
+             <a className="font-['Space_Grotesk'] font-bold uppercase text-sm text-gray-400 hover:text-white transition-colors" href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>
+             <a className="font-['Space_Grotesk'] font-bold uppercase text-sm text-gray-400 hover:text-white transition-colors" href="/terms" target="_blank" rel="noreferrer">Terms of Service</a>
           </div>
         </div>
        </footer>
