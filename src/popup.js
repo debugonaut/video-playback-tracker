@@ -355,6 +355,13 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     }
   });
 
+  // Listener for background auth updates
+  chrome.runtime.onMessage.addListener((msg) => {
+    if (msg.type === 'AUTH_STATE_UPDATED') {
+      updateAuthState();
+    }
+  });
+
   function updateAuthState() {
     if (currentUser) {
       loginForm.classList.add('hidden');
@@ -423,7 +430,12 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
           try {
             const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
             const credential = GoogleAuthProvider.credential(null, token);
-            await signInWithCredential(auth, credential);
+            await signInWithCredential(auth, credential).then(() => {
+              // Broadcast to popup to refresh UI immediately
+              chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+            }).catch(err => {
+              console.error('[Rewind] Cross-origin auth failed:', err);
+            });
             cloudLog.textContent = 'GOOGLE_AUTH_SUCCESS: SYNC_READY';
           } catch (e) {
             cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
