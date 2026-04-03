@@ -41,11 +41,12 @@ async function syncToCloud(entry) {
     const entryId = btoa(unescape(safeUrl)).replace(/[/+=]/g, '_').substring(0, 50);
     const historyRef = doc(db, `users/${currentUser.uid}/history`, entryId);
 
+    // Unified Firestore sync (Website expects 'savedAt' for ordering)
     await setDoc(historyRef, {
       ...entry,
       userId: currentUser.uid,
       syncedAt: serverTimestamp(),
-      lastModified: Date.now()
+      savedAt: entry.savedAt || Date.now()
     }, { merge: true });
 
     console.log(`[Sync] Cloud success: ${entry.title}`);
