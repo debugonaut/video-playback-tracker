@@ -1526,11 +1526,18 @@ function App() {
             
             if (params.get('handler') === 'firefox') {
               window.location.hash = `token=${token}`;
-              // DO NOT return here — allow the page to show Success and close itself
+              console.log('[Rewind] Persistent sync active. Waiting for extension...');
             }
 
+            // Persistence: Stay on Success screen for 5 seconds to ensure capture
             if (params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox') {
-              setTimeout(() => window.close(), 3000); // 3s delay for reliable capture
+              setTimeout(() => {
+                if (params.get('reason') === 'signup') {
+                  setCurrentView('dashboard');
+                } else {
+                  window.close();
+                }
+              }, 5000); 
               return; 
             }
           } catch (err) {

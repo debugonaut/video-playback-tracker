@@ -1,6 +1,6 @@
 // background.js - Rewind Central Sync Engine
 import { auth, db } from './firebase-config';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 let currentUser = null;
@@ -13,21 +13,25 @@ onAuthStateChanged(auth, (user) => {
   chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
 });
 
-// Proactive Token Capture: Check if the current tab has a token when requested
+// Proactive Token Capture: Check ALL tabs if requested
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'CHECK_AUTH_TAB') {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]?.url?.includes('#token=')) {
-        processTokenUrl(tabs[0].url, tabs[0].id);
+    // Search ALL windows and tabs for the token
+    chrome.tabs.query({}, (tabs) => {
+      const authTab = tabs.find(t => t.url && t.url.includes('#token='));
+      if (authTab) {
+        processTokenUrl(authTab.url, authTab.id);
       }
     });
   }
 });
 
-// ─── Firefox URL-Capture Auth Alternative ────────────────────────
+// ─── Firefox URL-Capture Alternative ───────────────────────────────
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.url && changeInfo.url.includes('#token=')) {
-    processTokenUrl(changeInfo.url, tabId);
+  // Catching both url change AND status loading to ensure we don't miss it
+  const url = changeInfo.url || tab.url;
+  if (url && url.includes('#token=')) {
+    processTokenUrl(url, tabId);
   }
 });
 
@@ -41,15 +45,14 @@ async function processTokenUrl(urlStr, tabId) {
       lastCapturedToken = token;
       console.log('[Background] Token captured. linking neural account...');
       
-      const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth');
       const credential = GoogleAuthProvider.credential(null, token);
       await signInWithCredential(auth, credential);
       
+      // Update UI across entire extension
       chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
-      if (tabId) {
-        // Give the UI 2 more seconds to show Success on the page before closing
-        setTimeout(() => chrome.tabs.remove(tabId), 2500);
-      }
+      
+      // Close capture tab after a brief delay for success visibility
+      if (tabId) setTimeout(() => chrome.tabs.remove(tabId), 3000);
     }
   } catch (e) {
     console.error('[Background] Capture failure:', e);
