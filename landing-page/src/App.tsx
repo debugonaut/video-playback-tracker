@@ -28,15 +28,26 @@ const OperatorDashboard = ({
   const [isHistoryGridView, setIsHistoryGridView] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-    const historyRef = collection(db, 'users', user.uid, 'history');
-    const q = query(historyRef, orderBy('savedAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setHistory(data);
-    });
-    return () => unsubscribe();
-  }, [user]);
+    // ULTIMATE GUARD: Never attempt a live connection in demo mode or without a user
+    if (isDemo || !user || !user.uid || user.uid === 'demo') {
+      console.log('[Dashboard] Operational Mode: LOCAL_DEMO');
+      return; 
+    }
+
+    try {
+      const historyRef = collection(db, 'users', user.uid, 'history');
+      const q = query(historyRef, orderBy('savedAt', 'desc'));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setHistory(data);
+      }, (err) => {
+        console.warn('[Dashboard] Sync interrupted:', err.message);
+      });
+      return () => unsubscribe();
+    } catch (err) {
+      console.error('[Dashboard] Initialization failure:', err);
+    }
+  }, [user, isDemo]);
 
   const handleRefresh = () => {
     setSyncing(true);
@@ -1549,15 +1560,26 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // Separate effect: react to auth state changes to update the view
+  // Selective Navigation: Only redirect to dashboard if we are on landing/auth and login is confirmed
   useEffect(() => {
     if (loading) return;
-    if (user) {
-      setCurrentView('dashboard');
-    } else if (!user && currentView === 'dashboard') {
+    
+    // Auto-redirect to dashboard only if we're on the root landing page or auth bridge
+    const isRootOrAuth = currentView === 'landing' || currentView === 'auth';
+    
+    if (user && isRootOrAuth) {
+      // If it's a signup/sync flow, the sync logic in the other effect handles the wait.
+      // Otherwise, go to dashboard.
+      const params = new URLSearchParams(window.location.search);
+      const isSyncFlow = params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox';
+      
+      if (!isSyncFlow) {
+        setCurrentView('dashboard');
+      }
+    } else if (!user && (currentView === 'dashboard' || currentView === 'profile')) {
       setCurrentView('landing');
     }
-  }, [user, loading]);
+  }, [user, loading, currentView]);
 
   const openSetup = (browser: 'chrome' | 'firefox') => {
     setOnboardingBrowser(browser);
