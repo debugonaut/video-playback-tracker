@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Video Playback Tracker",
   "version": "2.0.4",
   "description": "Automatically tracks your last watched video timestamp on any streaming site and reminds you when you return.",
@@ -10,19 +10,12 @@
     "alarms",
     "identity"
   ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com"
-  },
-  "host_permissions": [
-    "<all_urls>",
-    "https://*.firebaseio.com/*",
-    "https://*.googleapis.com/*",
-    "https://*.firebaseapp.com/*"
-  ],
+  "content_security_policy": "script-src 'self' 'wasm-unsafe-eval' https://*.googleapis.com https://*.firebaseio.com; object-src 'self';",
   "background": {
     "scripts": [
       "background.js"
-    ]
+    ],
+    "persistent": true
   },
   "oauth2": {
     "client_id": "743702437264-peidajr25fgo9285rlu947k8iul50u01.apps.googleusercontent.com",
@@ -44,7 +37,7 @@
       "all_frames": true
     }
   ],
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -69,5 +62,20 @@
         ]
       }
     }
+  },
+  "host_permissions": [
+    "<all_urls>",
+    "https://*.firebaseio.com/*",
+    "https://*.googleapis.com/*",
+    "https://*.firebaseapp.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Video Playback Tracker"
   }
 }
