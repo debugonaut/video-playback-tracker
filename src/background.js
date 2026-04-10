@@ -30,11 +30,14 @@ onAuthStateChanged(auth, async (user) => {
     } catch (e) {}
  
    if (user) {
-     if (isNewUser) startRealtimeHistoryUpdates(user.uid);
+     if (isNewUser) {
+       startRealtimeHistoryUpdates(user.uid);
+       migrateLocalHistoryToCloud();
+     }
    } else {
      stopRealtimeHistoryUpdates();
    }
- });
+});
  
  function startRealtimeHistoryUpdates(uid) {
    stopRealtimeHistoryUpdates();
@@ -220,6 +223,24 @@ chrome.storage.onChanged.addListener((changes, area) => {
     }
   }
 });
+
+async function migrateLocalHistoryToCloud() {
+  const activeUser = auth.currentUser;
+  if (!activeUser) return;
+
+  console.log('[Sync] Starting Neural Migration (Local -> Cloud)...');
+  
+  chrome.storage.local.get({ history: [] }, async (data) => {
+    const history = data.history || [];
+    if (history.length === 0) return;
+
+    // Push each entry to cloud
+    for (const entry of history) {
+      await syncToCloud(entry);
+    }
+    console.log(`[Sync] Neural Migration complete. ${history.length} traces synchronized.`);
+  });
+}
 
 async function syncToCloud(entry) {
   const activeUser = auth.currentUser;
