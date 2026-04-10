@@ -571,7 +571,7 @@ const OperatorDashboard = ({
                             <h4 className="font-black text-sm uppercase truncate mb-1">{item.title}</h4>
                             <div className="flex justify-between items-center text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                                <p>{new Date(item.savedAt).toLocaleDateString()} • {item.formattedTime}</p>
-                               <a href={item.url} target="_blank" rel="noreferrer" className="text-brand-pink hover:text-black hover:bg-brand-pink px-2 py-1 transition-colors">CONTINUE_TRACE</a>
+                               <a href={item.url} target="_blank" rel="noreferrer" className="text-brand-pink hover:text-black hover:bg-brand-pink px-2 py-1 transition-colors">CONTINUE_WATCHING</a>
                             </div>
                          </div>
                       </div>
