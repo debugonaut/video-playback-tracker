@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db, googleProvider } from './lib/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 // Neural Mirror Pulsar
 // This hidden component exposes the authenticated session token to the extension
@@ -56,7 +56,6 @@ const PairingTerminal = ({ user }: { user: User }) => {
     const newCode = chars.sort(() => Math.random() - 0.5).join('');
     
     try {
-      const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
       await setDoc(doc(db, 'sync_pairs', newCode), {
         uid: user.uid,
         email: user.email,
