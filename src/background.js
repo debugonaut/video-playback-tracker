@@ -258,4 +258,15 @@ async function syncToCloud(entry) {
   } catch (err) {
     console.error('[Sync] Firestore error:', err);
   }
+
+  // NEURAL BRIDGE: Always broadcast to all open tabs as a proxy-sync fallback
+  try {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id, { type: 'REWIND_PROXY_BROADCAST', entry });
+      });
+    });
+  } catch (e) {
+    // Some tabs might be restricted (chrome://) - ignore
+  }
 }

@@ -179,13 +179,40 @@ const OperatorDashboard = ({
     try {
       const historyRef = collection(db, 'users', user.uid, 'history');
       const q = query(historyRef, orderBy('savedAt', 'desc'));
+      
+      // NEURAL BRIDGE: Listen for proxy-sync requests from the extension
+      const handleProxySync = async (event: MessageEvent) => {
+        if (event.data?.type === 'REWIND_PROXY_SYNC' && event.data?.entry) {
+          const entry = event.data.entry;
+          const entryId = btoa(unescape(encodeURIComponent(entry.url))).replace(/[/+=]/g, '_').substring(0, 50);
+          console.log('[Neural Bridge] Proxying sync for:', entry.title);
+          
+          try {
+            await setDoc(doc(db, 'users', user.uid, 'history', entryId), {
+              ...entry,
+              userId: user.uid,
+              syncedAt: serverTimestamp(),
+              savedAt: entry.savedAt || Date.now()
+            }, { merge: true });
+          } catch (e) {
+            console.error('[Neural Bridge] Proxy failure:', e);
+          }
+        }
+      };
+
+      window.addEventListener('message', handleProxySync);
+      
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setHistory(data);
       }, (err) => {
         console.warn('[Dashboard] Sync interrupted:', err.message);
       });
-      return () => unsubscribe();
+      
+      return () => {
+        unsubscribe();
+        window.removeEventListener('message', handleProxySync);
+      };
     } catch (err) {
       console.error('[Dashboard] Initialization failure:', err);
     }

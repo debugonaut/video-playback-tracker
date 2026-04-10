@@ -233,4 +233,16 @@
     // This allows the portal to wait for us before releasing the token.
     window.postMessage({ type: 'REWIND_EXTENSION_READY' }, '*');
   }
+  // ─── Neural Bridge (Proxy Layer) ──────────────────────────────────────────
+  // Listens for broadcast signals from the background script and relays them
+  // to the web portal if we are on the rewind-player.vercel.app domain.
+  chrome.runtime.onMessage.addListener((msg) => {
+    if (msg.type === 'REWIND_PROXY_BROADCAST' && msg.entry) {
+      if (window.location.hostname.includes('rewind-player.vercel.app')) {
+        console.log('[Neural Bridge] Relaying sync pulse to portal...');
+        window.postMessage({ type: 'REWIND_PROXY_SYNC', entry: msg.entry }, '*');
+      }
+    }
+  });
+
 })();
