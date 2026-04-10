@@ -68,32 +68,32 @@ const PairingTerminal = ({ user }: { user: User }) => {
   }, [timeLeft]);
 
   return (
-    <div className="neo-card bg-black p-6 border-l-4 border-brand-yellow relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-2 opacity-10">
-        <span className="material-symbols-outlined text-4xl">key</span>
+    <div className="neo-card bg-black p-4 border-l-4 border-brand-yellow relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-1 opacity-10">
+        <span className="material-symbols-outlined text-2xl">key</span>
       </div>
-      <h3 className="text-brand-yellow font-black uppercase text-[10px] tracking-widest mb-4">NEURAL_PAIRING_UPLINK</h3>
+      <h3 className="text-brand-yellow font-black uppercase text-[8px] tracking-widest mb-3">NEURAL_PAIRING_UPLINK</h3>
       
       {!code ? (
         <button 
           onClick={generateCode}
           disabled={loading}
-          className="w-full bg-brand-yellow text-black font-black uppercase py-4 text-xs hover:bg-white transition-all border-2 border-black"
+          className="w-full bg-brand-yellow text-black font-black uppercase py-3 text-[10px] hover:bg-white transition-all border-2 border-black"
         >
           {loading ? 'GENERATING...' : 'GET_PAIR_CODE'}
         </button>
       ) : (
         <div className="text-center">
-          <div className="text-4xl font-black tracking-[0.2em] text-white mb-2 font-mono">
+          <div className="text-2xl font-black tracking-widest text-white mb-1 font-mono">
             {code.slice(0,3)}-{code.slice(3)}
           </div>
-          <div className="text-[10px] font-black text-brand-pink uppercase animate-pulse">
+          <div className="text-[8px] font-black text-brand-pink uppercase animate-pulse">
             EXPIRES IN {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
           </div>
         </div>
       )}
-      <p className="text-[8px] font-bold text-gray-500 uppercase mt-4 leading-tight">
-        ENTER THIS CODE IN THE BROWSER EXTENSION TO SYNC YOUR ACCOUNT INSTANTLY.
+      <p className="text-[7px] font-bold text-gray-500 uppercase mt-3 leading-tight">
+        ENTER CODE IN EXTENSION TO SYNC INSTANTLY.
       </p>
     </div>
   );
@@ -319,6 +319,10 @@ const OperatorDashboard = ({
           </nav>
         </div>
 
+        <div className="px-8 mb-6">
+           <PairingTerminal user={user} />
+        </div>
+
         <div className="px-8">
            <div className="bg-bg-primary p-4 flex gap-3 items-center border border-border-primary/10 mb-4">
               <div className="w-8 h-8 rounded-full bg-brand-yellow overflow-hidden">
@@ -478,8 +482,6 @@ const OperatorDashboard = ({
 
                   {/* SIDE PANELS */}
                      <div className="flex flex-col gap-8">
-                      <PairingTerminal user={user} />
-                      
                       <div className="neo-card p-6">
                         <h3 className="font-black uppercase text-xs tracking-widest mb-6">TOP_STREAMING_NODES</h3>
                        <div className="flex flex-col gap-6">
