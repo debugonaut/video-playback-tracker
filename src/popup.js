@@ -329,19 +329,11 @@ function updateAuthState() {
 
 // ─── Neural Pairing Flow ─────────────────────────────────────────
 
-if (pairingCodeInput) {
-  pairingCodeInput.addEventListener('input', (e) => {
-    let val = e.target.value.replace(/\D/g, '');
-    if (val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3, 6);
-    e.target.value = val;
-  });
-}
-
 if (syncPairBtn) {
   syncPairBtn.onclick = () => {
-    const code = pairingCodeInput.value.replace('-', '');
-    if (code.length !== 6) {
-      if (cloudLog) cloudLog.textContent = 'ERROR: INVALID_CODE_FORMAT';
+    const code = pairingCodeInput.value.trim();
+    if (code.length !== 10) {
+      if (cloudLog) cloudLog.textContent = 'ERROR: INVALID_KEY_LENGTH_(10_CHARS_REQUIRED)';
       return;
     }
     
@@ -349,6 +341,8 @@ if (syncPairBtn) {
     chrome.runtime.sendMessage({ type: 'EXECUTE_PAIRING', code }, (response) => {
       if (response && !response.success) {
         if (cloudLog) cloudLog.textContent = `ERROR: ${response.error || 'PAIRING_FAILED'}`;
+      } else if (response && response.success) {
+        if (cloudLog) cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED';
       }
     });
   };

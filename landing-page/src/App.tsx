@@ -32,25 +32,51 @@ const SyncPulse = ({ user }: { user: User | null }) => {
 };
 
 // Neural Pairing Terminal
-// Generates a 6-digit code for 100% reliable extension pairing
+// Generates a 10-character secure code for 100% reliable extension pairing
 const PairingTerminal = ({ user }: { user: User }) => {
   const [code, setCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [showToast, setShowToast] = useState(false);
 
   const generateCode = async () => {
     setLoading(true);
-    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Neural Link 2.0: 10-char complex (6 numbers, 2 special, 2 letters)
+    const nums = '0123456789';
+    const special = '!@#$%^&*';
+    const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    
+    let chars = [];
+    for (let i = 0; i < 6; i++) chars.push(nums[Math.floor(Math.random() * nums.length)]);
+    for (let i = 0; i < 2; i++) chars.push(special[Math.floor(Math.random() * special.length)]);
+    for (let i = 0; i < 2; i++) chars.push(letters[Math.floor(Math.random() * letters.length)]);
+    
+    // Shuffle
+    const newCode = chars.sort(() => Math.random() - 0.5).join('');
+    
     try {
       const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
       await setDoc(doc(db, 'sync_pairs', newCode), {
         uid: user.uid,
         email: user.email,
+        failures: 0,
         createdAt: serverTimestamp(),
         expiresAt: Date.now() + (5 * 60 * 1000) // 5 minutes
       });
+      
       setCode(newCode);
       setTimeLeft(300);
+      
+      // Auto-copy and Notify
+      try {
+        await navigator.clipboard.writeText(newCode);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } catch (e) {
+        console.warn('Clipboard failed:', e);
+      }
+      
     } catch (err) {
       console.error('[Pairing] Generation failed:', err);
     } finally {
@@ -68,34 +94,55 @@ const PairingTerminal = ({ user }: { user: User }) => {
   }, [timeLeft]);
 
   return (
-    <div className="neo-card bg-black p-4 border-l-4 border-brand-yellow relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-1 opacity-10">
-        <span className="material-symbols-outlined text-2xl">key</span>
-      </div>
-      <h3 className="text-brand-yellow font-black uppercase text-[8px] tracking-widest mb-3">NEURAL_PAIRING_UPLINK</h3>
-      
-      {!code ? (
-        <button 
-          onClick={generateCode}
-          disabled={loading}
-          className="w-full bg-brand-yellow text-black font-black uppercase py-3 text-[10px] hover:bg-white transition-all border-2 border-black"
-        >
-          {loading ? 'GENERATING...' : 'GET_PAIR_CODE'}
-        </button>
-      ) : (
-        <div className="text-center">
-          <div className="text-2xl font-black tracking-widest text-white mb-1 font-mono">
-            {code.slice(0,3)}-{code.slice(3)}
-          </div>
-          <div className="text-[8px] font-black text-brand-pink uppercase animate-pulse">
-            EXPIRES IN {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-          </div>
+    <>
+      <div className="neo-card bg-black p-4 border-l-4 border-brand-yellow relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-1 opacity-10">
+          <span className="material-symbols-outlined text-2xl">key</span>
         </div>
-      )}
-      <p className="text-[7px] font-bold text-gray-500 uppercase mt-3 leading-tight">
-        ENTER CODE IN EXTENSION TO SYNC INSTANTLY.
-      </p>
-    </div>
+        <h3 className="text-brand-yellow font-black uppercase text-[8px] tracking-widest mb-3">NEURAL_PAIRING_UPLINK</h3>
+        
+        {!code ? (
+          <button 
+            onClick={generateCode}
+            disabled={loading}
+            className="w-full bg-brand-yellow text-black font-black uppercase py-3 text-[10px] hover:bg-white transition-all border-2 border-black"
+          >
+            {loading ? 'GENERATING...' : 'GET_PAIR_CODE'}
+          </button>
+        ) : (
+          <div className="text-center">
+            <div className="text-xl font-black tracking-widest text-white mb-1 font-mono">
+              {code}
+            </div>
+            <div className="flex justify-center gap-1 mb-1">
+               {code.split('').map((c, i) => (
+                 <div key={i} className="w-1 h-3 bg-brand-pink/30"></div>
+               ))}
+            </div>
+            <div className="text-[8px] font-black text-brand-pink uppercase animate-pulse">
+              EXPIRES IN {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+            </div>
+          </div>
+        )}
+        <p className="text-[7px] font-bold text-gray-500 uppercase mt-3 leading-tight text-center">
+          {code ? 'CODE COPIED TO CLIPBOARD' : 'ENTER CODE IN EXTENSION TO SYNC'}
+        </p>
+      </div>
+
+      <AnimatePresence>
+        {showToast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-brand-pink text-white font-black uppercase text-[10px] py-4 px-8 border-4 border-black shadow-[8px_8px_0px_#000] flex items-center gap-4"
+          >
+            <span className="material-symbols-outlined">content_copy</span>
+            YOUR KEY IS COPIED, PLEASE PASTE IT ONTO THE WEB EXTENSION TO PAIR
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 import './index.css';

@@ -99,12 +99,30 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 async function executePairing(code) {
   try {
+    // Brute Force Protection: Check local failure count
+    const storage = await chrome.storage.local.get(['pairing_failures', 'lockout_until']);
+    const now = Date.now();
+    
+    if (storage.lockout_until && now < storage.lockout_until) {
+      const remaining = Math.ceil((storage.lockout_until - now) / 60000);
+      return { success: false, error: `TOO_MANY_ATTEMPTS:_LOCKED_FOR_${remaining}_MIN` };
+    }
+
     console.log(`[Background] Attempting neural pairing with code: ${code}`);
     const pairRef = doc(db, 'sync_pairs', code);
     const snap = await getDoc(pairRef);
 
     if (!snap.exists()) {
-      return { success: false, error: 'INVALID_OR_EXPIRED_CODE' };
+      const newFailures = (storage.pairing_failures || 0) + 1;
+      if (newFailures >= 3) {
+        await chrome.storage.local.set({ 
+          pairing_failures: 0, 
+          lockout_until: now + (15 * 60 * 1000) // 15 min lockout
+        });
+        return { success: false, error: 'SECURITY_LOCKOUT:_15_MINUTES' };
+      }
+      await chrome.storage.local.set({ pairing_failures: newFailures });
+      return { success: false, error: `INVALID_CODE:_${3 - newFailures}_ATTEMPTS_REMAINING` };
     }
 
     const data = snap.data();
@@ -128,6 +146,9 @@ async function executePairing(code) {
     // Initial state update across extension
     chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
     
+    // Reset failures on success
+    await chrome.storage.local.set({ pairing_failures: 0, lockout_until: null });
+
     return { success: true };
   } catch (err) {
     console.error('[Background] Pairing error:', err);
