@@ -176,16 +176,28 @@
 
         <!-- Connection Portal (Visible when signed out) -->
         <div id="loginForm" class="inject-form">
-          <p class="auth-desc">Connect to REWIND Cloud to sync your playback history across all your devices instantly.</p>
+          <p class="auth-desc">Establishing a magic handshake was blocked. Use the 100% reliable **NEURAL PAIRING** protocol instead.</p>
           
-          <button id="remoteLoginBtn" class="inject-btn primary">
-            <span class="material-symbols-outlined" style="margin-right: 8px; vertical-align: middle; font-size: 18px;">open_in_new</span>
-            LOGIN / SIGNUP FOR UPDATES
+          <div class="form-group">
+            <label class="form-label">NEURAL LINK CODE</label>
+            <input type="text" id="pairingCode" placeholder="ABC-123-***" class="inject-input text-center" maxlength="10" />
+            <div class="input-glow"></div>
+          </div>
+
+          <button id="syncPairBtn" class="inject-btn primary">
+            <span class="material-symbols-outlined" style="margin-right: 8px; vertical-align: middle; font-size: 18px;">bolt</span>
+            SYNCHRONIZE_ACCOUNTS
           </button>
+
+          <p id="cloudLog" style="margin-top: 1rem; font-size: 10px; color: #e51152; font-weight: 800; text-align: center; height: 1.5em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"></p>
+
+          <p class="auth-desc" style="margin-top: 1rem; font-size: 10px;">
+            DON'T HAVE A CODE? <a href="https://rewind-player.vercel.app/profile" target="_blank" style="color: #e51152; font-weight: 800;">OPEN_PORTAL</a>
+          </p>
           
           <div class="status-box" style="margin-top: 1.5rem; border-color: rgba(229, 17, 82, 0.4);">
-            <div class="status-header" style="color: #e51152;">SYSTEM_ADVISORY</div>
-            <p class="status-text">For security, authentication is now handled via our web portal. Your local history will be synced automatically upon login.</p>
+            <div class="status-header" style="color: #e51152;">PAIRING_GUIDE</div>
+            <p class="status-text">1. Log into Rewind Portal. <br>2. Click 'Get Pair Code' in sidebar. <br>3. Enter the 10-character code above.</p>
           </div>
         </div>
 

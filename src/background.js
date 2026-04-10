@@ -112,7 +112,12 @@ async function executePairing(code) {
 
     console.log(`[Background] Attempting neural pairing with code: ${code}`);
     const pairRef = doc(db, 'sync_pairs', code);
-    const snap = await getDoc(pairRef);
+    
+    // 10-second timeout for database handshake
+    const snap = await Promise.race([
+      getDoc(pairRef),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('NETWORK_TIMEOUT:_PLEASE_TRY_AGAIN')), 10000))
+    ]);
 
     if (!snap.exists()) {
       const newFailures = (storage.pairing_failures || 0) + 1;
