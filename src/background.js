@@ -95,6 +95,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       .then(res => sendResponse(res))
       .catch(err => sendResponse({ success: false, error: err.message || 'INTERNAL_ERROR' }));
     return true; // Keep channel open for async
+  } else if (msg.type === 'FORCE_SYNC' && msg.entry) {
+    console.log('[Background] Received FORCE_SYNC for:', msg.entry.title);
+    syncToCloud(msg.entry);
   }
 });
 
@@ -139,6 +142,12 @@ async function executePairing(code) {
 
     console.log('[Background] Pairing successful for:', data.email);
     
+    // AUTH BRIDGE: Formally sign in the extension with the provided token
+    if (data.token) {
+      console.log('[Background] Auth Bridge: Synchronizing identity token...');
+      await processAuthToken(data.token);
+    }
+
     // Mirror the session into local storage
     await setStorage({
       session_active: true,
@@ -154,6 +163,9 @@ async function executePairing(code) {
     
     // Reset failures on success
     await setStorage({ pairing_failures: 0, lockout_until: null });
+
+    // Migrate any pre-login history immediately
+    setTimeout(() => migrateLocalHistoryToCloud(), 1000);
 
     return { success: true };
   } catch (err) {

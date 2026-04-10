@@ -56,9 +56,11 @@ const PairingTerminal = ({ user }: { user: User }) => {
     const newCode = chars.sort(() => Math.random() - 0.5).join('');
     
     try {
+      const idToken = await user.getIdToken();
       await setDoc(doc(db, 'sync_pairs', newCode), {
         uid: user.uid,
         email: user.email,
+        token: idToken,
         failures: 0,
         createdAt: serverTimestamp(),
         expiresAt: Date.now() + (5 * 60 * 1000) // 5 minutes

@@ -114,6 +114,9 @@
       history.unshift(entry);
       if (history.length > MAX_ENTRIES) history = history.slice(0, MAX_ENTRIES);
       chrome.storage.local.set({ history, lastEntry: entry });
+
+      // ACTIVE PROBE: Signal background engine to sync immediately
+      chrome.runtime.sendMessage({ type: 'FORCE_SYNC', entry });
     });
   }
 
