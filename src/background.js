@@ -30,14 +30,11 @@ onAuthStateChanged(auth, async (user) => {
     } catch (e) {}
  
    if (user) {
-     if (isNewUser) {
-       startRealtimeHistoryUpdates(user.uid);
-       migrateLocalHistoryToCloud();
-     }
+     if (isNewUser) startRealtimeHistoryUpdates(user.uid);
    } else {
      stopRealtimeHistoryUpdates();
    }
-});
+ });
  
  function startRealtimeHistoryUpdates(uid) {
    stopRealtimeHistoryUpdates();
@@ -224,24 +221,6 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-async function migrateLocalHistoryToCloud() {
-  const activeUser = auth.currentUser;
-  if (!activeUser) return;
-
-  console.log('[Sync] Starting Neural Migration (Local -> Cloud)...');
-  
-  chrome.storage.local.get({ history: [] }, async (data) => {
-    const history = data.history || [];
-    if (history.length === 0) return;
-
-    // Push each entry to cloud
-    for (const entry of history) {
-      await syncToCloud(entry);
-    }
-    console.log(`[Sync] Neural Migration complete. ${history.length} traces synchronized.`);
-  });
-}
-
 async function syncToCloud(entry) {
   const activeUser = auth.currentUser;
   if (!activeUser || !entry || !entry.url) {
@@ -250,9 +229,8 @@ async function syncToCloud(entry) {
   }
 
   try {
-    // Generate a robust ID from the URL
-    const safeUrl = entry.url.split('?')[0].split('#')[0]; // Strip params for cleaner ID
-    const entryId = btoa(unescape(encodeURIComponent(safeUrl))).replace(/[/+=]/g, '_').substring(0, 50);
+    // Generate a robust unique ID from the full URL
+    const entryId = btoa(unescape(encodeURIComponent(entry.url))).replace(/[/+=]/g, '_').substring(0, 50);
     const historyRef = doc(db, `users/${activeUser.uid}/history`, entryId);
 
     console.log(`[Sync] Attempting cloud push: ${entry.title}`);
