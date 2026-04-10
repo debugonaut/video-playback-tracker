@@ -114,7 +114,7 @@ const PairingTerminal = ({ user }: { user: User }) => {
               {code}
             </div>
             <div className="flex justify-center gap-1 mb-1">
-               {code.split('').map((c, i) => (
+               {code.split('').map((_, i) => (
                  <div key={i} className="w-1 h-3 bg-brand-pink/30"></div>
                ))}
             </div>
