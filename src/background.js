@@ -92,7 +92,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         });
     });
   } else if (msg.type === 'EXECUTE_PAIRING') {
-    executePairing(msg.code).then(res => sendResponse(res));
+    executePairing(msg.code)
+      .then(res => sendResponse(res))
+      .catch(err => sendResponse({ success: false, error: err.message || 'INTERNAL_ERROR' }));
     return true; // Keep channel open for async
   }
 });
