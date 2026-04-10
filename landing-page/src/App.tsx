@@ -1676,8 +1676,8 @@ function App() {
                   <button 
                     type="button"
                     onClick={() => {
-                      console.log('[Rewind] Triggering Auth View');
-                      setCurrentView('auth');
+                      console.log('[Rewind] Triggering Why-Login Portal');
+                      setCurrentView('why-login');
                     }}
                     className="bg-black dark:bg-white text-white dark:text-black font-black uppercase px-6 py-2.5 border-4 border-black dark:border-white hover:bg-[#e51152] dark:hover:bg-[#e51152] hover:text-white transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
                   >
@@ -1713,7 +1713,7 @@ function App() {
                   <button 
                     onClick={() => {
                         setIsMobileMenuOpen(false);
-                        setShowBenefits(true);
+                        setCurrentView('why-login');
                     }}
                     className="bg-[#e51152] text-white font-black uppercase py-4 text-2xl"
                   >
@@ -1746,7 +1746,7 @@ function App() {
                 <img src="https://cdn.simpleicons.org/googlechrome/white" className="w-6 h-6 md:w-8 md:h-8" alt="Chrome Logo"/>
                 <span className="whitespace-nowrap">Add to Chrome</span>
               </button>
-              <button onClick={() => setShowBenefits(true)} className="mt-4 text-[#e51152] font-black uppercase text-[10px] italic underline decoration-2 underline-offset-4 hover:text-[#f7e600] transition-colors">Know why to login</button>
+              <button onClick={() => setCurrentView('why-login')} className="mt-4 text-[#e51152] font-black uppercase text-[10px] italic underline decoration-2 underline-offset-4 hover:text-[#f7e600] transition-colors">Know why to login</button>
             </div>
             <div className="flex-1 flex flex-col items-center">
               <button 
