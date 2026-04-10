@@ -97,7 +97,7 @@
       progress,
       thumbnail:     getThumbnail(),
       favicon:       `https://www.google.com/s2/favicons?sz=32&domain=${window.location.hostname}`,
-      savedAt:       new Date().toISOString(),
+      savedAt:       Date.now(),
       pinned:        false,
       note:          '',
     };

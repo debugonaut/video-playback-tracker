@@ -223,21 +223,28 @@ chrome.storage.onChanged.addListener((changes, area) => {
 });
 
 async function syncToCloud(entry) {
-  if (!currentUser || !entry || !entry.url) return;
+  const activeUser = auth.currentUser;
+  if (!activeUser || !entry || !entry.url) {
+    if (!activeUser) console.log('[Sync] Pause: No active user session');
+    return;
+  }
 
   try {
-    const safeUrl = encodeURIComponent(entry.url);
-    const entryId = btoa(unescape(safeUrl)).replace(/[/+=]/g, '_').substring(0, 50);
-    const historyRef = doc(db, `users/${currentUser.uid}/history`, entryId);
+    // Generate a robust ID from the URL
+    const safeUrl = entry.url.split('?')[0].split('#')[0]; // Strip params for cleaner ID
+    const entryId = btoa(unescape(encodeURIComponent(safeUrl))).replace(/[/+=]/g, '_').substring(0, 50);
+    const historyRef = doc(db, `users/${activeUser.uid}/history`, entryId);
 
+    console.log(`[Sync] Attempting cloud push: ${entry.title}`);
+    
     await setDoc(historyRef, {
       ...entry,
-      userId: currentUser.uid,
+      userId: activeUser.uid,
       syncedAt: serverTimestamp(),
-      savedAt: entry.savedAt || Date.now()
+      savedAt: entry.savedAt || Date.now() // Ensure number
     }, { merge: true });
 
-    console.log(`[Sync] Cloud success: ${entry.title}`);
+    console.log(`[Sync] Cloud success: ${entry.title} -> users/${activeUser.uid}/history/${entryId}`);
   } catch (err) {
     console.error('[Sync] Firestore error:', err);
   }
