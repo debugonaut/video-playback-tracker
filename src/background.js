@@ -6,9 +6,10 @@ import { doc, setDoc, serverTimestamp, collection, query, orderBy, limit, onSnap
 let currentUser = null;
 let lastCapturedToken = null;
 
-let unsubscribeHistory = null;
- 
- onAuthStateChanged(auth, async (user) => {
+const getStorage = (keys) => new Promise(resolve => chrome.storage.local.get(keys, resolve));
+const setStorage = (data) => new Promise(resolve => chrome.storage.local.set(data, resolve));
+
+onAuthStateChanged(auth, async (user) => {
    const status = user ? 'SYNC_ACTIVE' : 'OFFLINE';
    console.log(`[Background] Neural Auth State: ${status}`);
    
@@ -16,19 +17,17 @@ let unsubscribeHistory = null;
    const isNewUser = !currentUser || (user && user.uid !== currentUser.uid);
    currentUser = user;
  
-   // Persist session info to storage for popup to read instantly
-   chrome.storage.local.set({ 
-     session_active: !!user,
-     user_email: user?.email || null,
-     user_id: user?.uid || null
-   }, () => {
-     // Notify the popup ONLY after storage is confirmed
-     try {
-       chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
-     } catch (e) {
-       // Popup closed - normal
-     }
-   });
+    // Persist session info to storage for popup to read instantly
+    await setStorage({ 
+      session_active: !!user,
+      user_email: user?.email || null,
+      user_id: user?.uid || null
+    });
+
+    // Notify the popup after storage is confirmed
+    try {
+      chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
+    } catch (e) {}
  
    if (user) {
      if (isNewUser) startRealtimeHistoryUpdates(user.uid);
@@ -102,10 +101,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 async function executePairing(code) {
   try {
     // Brute Force Protection: Check local failure count
-    const storage = await chrome.storage.local.get(['pairing_failures', 'lockout_until']);
+    const storage = await getStorage(['pairing_failures', 'lockout_until']);
     const now = Date.now();
     
-    if (storage.lockout_until && now < storage.lockout_until) {
+    if (storage && storage.lockout_until && now < storage.lockout_until) {
       const remaining = Math.ceil((storage.lockout_until - now) / 60000);
       return { success: false, error: `TOO_MANY_ATTEMPTS:_LOCKED_FOR_${remaining}_MIN` };
     }
@@ -120,15 +119,15 @@ async function executePairing(code) {
     ]);
 
     if (!snap.exists()) {
-      const newFailures = (storage.pairing_failures || 0) + 1;
+      const newFailures = ((storage && storage.pairing_failures) || 0) + 1;
       if (newFailures >= 3) {
-        await chrome.storage.local.set({ 
+        await setStorage({ 
           pairing_failures: 0, 
           lockout_until: now + (15 * 60 * 1000) // 15 min lockout
         });
         return { success: false, error: 'SECURITY_LOCKOUT:_15_MINUTES' };
       }
-      await chrome.storage.local.set({ pairing_failures: newFailures });
+      await setStorage({ pairing_failures: newFailures });
       return { success: false, error: `INVALID_CODE:_${3 - newFailures}_ATTEMPTS_REMAINING` };
     }
 
@@ -141,7 +140,7 @@ async function executePairing(code) {
     console.log('[Background] Pairing successful for:', data.email);
     
     // Mirror the session into local storage
-    await chrome.storage.local.set({
+    await setStorage({
       session_active: true,
       user_email: data.email,
       user_id: data.uid
@@ -151,10 +150,10 @@ async function executePairing(code) {
     await deleteDoc(pairRef);
 
     // Initial state update across extension
-    chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+    try { chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' }); } catch(e) {}
     
     // Reset failures on success
-    await chrome.storage.local.set({ pairing_failures: 0, lockout_until: null });
+    await setStorage({ pairing_failures: 0, lockout_until: null });
 
     return { success: true };
   } catch (err) {
