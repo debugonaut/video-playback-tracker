@@ -30,6 +30,74 @@ const SyncPulse = ({ user }: { user: User | null }) => {
     />
   );
 };
+
+// Neural Pairing Terminal
+// Generates a 6-digit code for 100% reliable extension pairing
+const PairingTerminal = ({ user }: { user: User }) => {
+  const [code, setCode] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  const generateCode = async () => {
+    setLoading(true);
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    try {
+      const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+      await setDoc(doc(db, 'sync_pairs', newCode), {
+        uid: user.uid,
+        email: user.email,
+        createdAt: serverTimestamp(),
+        expiresAt: Date.now() + (5 * 60 * 1000) // 5 minutes
+      });
+      setCode(newCode);
+      setTimeLeft(300);
+    } catch (err) {
+      console.error('[Pairing] Generation failed:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setCode(null);
+    }
+  }, [timeLeft]);
+
+  return (
+    <div className="neo-card bg-black p-6 border-l-4 border-brand-yellow relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-2 opacity-10">
+        <span className="material-symbols-outlined text-4xl">key</span>
+      </div>
+      <h3 className="text-brand-yellow font-black uppercase text-[10px] tracking-widest mb-4">NEURAL_PAIRING_UPLINK</h3>
+      
+      {!code ? (
+        <button 
+          onClick={generateCode}
+          disabled={loading}
+          className="w-full bg-brand-yellow text-black font-black uppercase py-4 text-xs hover:bg-white transition-all border-2 border-black"
+        >
+          {loading ? 'GENERATING...' : 'GET_PAIR_CODE'}
+        </button>
+      ) : (
+        <div className="text-center">
+          <div className="text-4xl font-black tracking-[0.2em] text-white mb-2 font-mono">
+            {code.slice(0,3)}-{code.slice(3)}
+          </div>
+          <div className="text-[10px] font-black text-brand-pink uppercase animate-pulse">
+            EXPIRES IN {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+          </div>
+        </div>
+      )}
+      <p className="text-[8px] font-bold text-gray-500 uppercase mt-4 leading-tight">
+        ENTER THIS CODE IN THE BROWSER EXTENSION TO SYNC YOUR ACCOUNT INSTANTLY.
+      </p>
+    </div>
+  );
+};
 import './index.css';
 
 // The Cyber-Rewind / Kinetic Void Dashboard
@@ -409,8 +477,10 @@ const OperatorDashboard = ({
                   </div>
 
                   {/* SIDE PANELS */}
-                  <div className="flex flex-col gap-8">
-                     <div className="neo-card p-6">
+                     <div className="flex flex-col gap-8">
+                      <PairingTerminal user={user} />
+                      
+                      <div className="neo-card p-6">
                         <h3 className="font-black uppercase text-xs tracking-widest mb-6">TOP_STREAMING_NODES</h3>
                        <div className="flex flex-col gap-6">
                           {displayNodes.map(node => (

@@ -1,7 +1,7 @@
 // background.js - Rewind Central Sync Engine
 import { auth, db } from './firebase-config';
 import { onAuthStateChanged, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection, query, orderBy, limit, onSnapshot, getDoc, deleteDoc } from 'firebase/firestore';
 
 let currentUser = null;
 let lastCapturedToken = null;
@@ -91,8 +91,49 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             console.log('[Background] Signed out successfully');
         });
     });
+  } else if (msg.type === 'EXECUTE_PAIRING') {
+    executePairing(msg.code).then(res => sendResponse(res));
+    return true; // Keep channel open for async
   }
 });
+
+async function executePairing(code) {
+  try {
+    console.log(`[Background] Attempting neural pairing with code: ${code}`);
+    const pairRef = doc(db, 'sync_pairs', code);
+    const snap = await getDoc(pairRef);
+
+    if (!snap.exists()) {
+      return { success: false, error: 'INVALID_OR_EXPIRED_CODE' };
+    }
+
+    const data = snap.data();
+    if (Date.now() > data.expiresAt) {
+      await deleteDoc(pairRef);
+      return { success: false, error: 'CODE_EXPIRED' };
+    }
+
+    console.log('[Background] Pairing successful for:', data.email);
+    
+    // Mirror the session into local storage
+    await chrome.storage.local.set({
+      session_active: true,
+      user_email: data.email,
+      user_id: data.uid
+    });
+
+    // Cleanup the code
+    await deleteDoc(pairRef);
+
+    // Initial state update across extension
+    chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+    
+    return { success: true };
+  } catch (err) {
+    console.error('[Background] Pairing error:', err);
+    return { success: false, error: err.message };
+  }
+}
 
 // ─── Firefox URL-Capture Alternative ───────────────────────────────
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {

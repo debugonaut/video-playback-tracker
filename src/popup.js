@@ -45,6 +45,8 @@ const remoteLoginBtn = $('remoteLoginBtn');
 const logoutBtn = $('logoutBtn');
 const settingsBtn = $('settingsBtn');
 const viewProfileBtn = $('viewProfileBtn');
+const syncPairBtn = $('syncPairBtn');
+const pairingCodeInput = $('pairingCode');
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -305,7 +307,7 @@ function checkSession() {
     } else {
       currentUser = null;
       updateAuthState();
-      if (cloudLog) cloudLog.textContent = 'SEARCHING_FOR_NEURAL_PULSE...';
+      if (cloudLog) cloudLog.textContent = 'READY_FOR_NEURAL_LINKING';
     }
   });
 }
@@ -325,18 +327,32 @@ function updateAuthState() {
   }
 }
 
-// ─── Remote Auth Actions ──────────────────────────────────────────
- 
-if (remoteLoginBtn) {
-  remoteLoginBtn.onclick = () => {
-    chrome.tabs.create({ url: 'https://rewind-player.vercel.app/auth?reason=sync' });
-    if (cloudLog) cloudLog.textContent = 'OPENING_NEURAL_PORTAL...';
+// ─── Neural Pairing Flow ─────────────────────────────────────────
+
+if (pairingCodeInput) {
+  pairingCodeInput.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 3) val = val.slice(0, 3) + '-' + val.slice(3, 6);
+    e.target.value = val;
+  });
+}
+
+if (syncPairBtn) {
+  syncPairBtn.onclick = () => {
+    const code = pairingCodeInput.value.replace('-', '');
+    if (code.length !== 6) {
+      if (cloudLog) cloudLog.textContent = 'ERROR: INVALID_CODE_FORMAT';
+      return;
+    }
+    
+    if (cloudLog) cloudLog.textContent = 'EXECUTING_NEURAL_PAIRING...';
+    chrome.runtime.sendMessage({ type: 'EXECUTE_PAIRING', code }, (response) => {
+      if (response && !response.success) {
+        if (cloudLog) cloudLog.textContent = `ERROR: ${response.error || 'PAIRING_FAILED'}`;
+      }
+    });
   };
 }
- 
-logoutBtn.onclick = () => {
-  chrome.runtime.sendMessage({ type: 'LOGOUT_REQUEST' });
-};
 
 if (viewProfileBtn) {
   viewProfileBtn.onclick = (e) => {
