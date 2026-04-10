@@ -1,19 +1,11 @@
-import { db } from './firebase-config';
-import { 
-  collection, 
-  query, 
-  orderBy, 
-  limit, 
-  onSnapshot, 
-  doc, 
-  setDoc, 
-  serverTimestamp 
-} from 'firebase/firestore';
+// popup.js - Pure UI View Layer
+// This file is now completely decoupled from the Firebase SDK to comply with 
+// Firefox's requirement for non-intrusive and performance-optimized extensions.
+// All neural synchronization is handled in the background service worker.
 
 // ─── State ────────────────────────────────────────────────────────
 let allEntries = [];
 let currentUser = null;
-let unsubscribeHistory = null;
 
 // ─── DOM ──────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -52,6 +44,7 @@ const cloudLog = $('cloudLog');
 const remoteLoginBtn = $('remoteLoginBtn');
 const logoutBtn = $('logoutBtn');
 const settingsBtn = $('settingsBtn');
+const viewProfileBtn = $('viewProfileBtn');
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -227,9 +220,6 @@ function updateStats() {
   
   if (statsEntries) statsEntries.textContent = totalEntries;
   if (statsTime) statsTime.textContent = fmt(totalSeconds);
-
-  // Randomize bars for visual wow factor if needed, 
-  // or leave them as coded in HTML for now as placeholders.
 }
 
 // ─── Actions ──────────────────────────────────────────────────────
@@ -254,18 +244,14 @@ saveManualBtn.addEventListener('click', async () => {
     manual: true
   };
 
-  if (currentUser) {
-    const historyRef = doc(db, `users/${currentUser.uid}/history/${entry.id}`);
-    await setDoc(historyRef, {
-      ...entry,
-      userId: currentUser.uid,
-      syncedAt: serverTimestamp(),
-      savedAt: entry.savedAt // Ensure website can order it
-    }, { merge: true });
-  }
-
+  // Update local list
   allEntries = [entry, ...allEntries].slice(0, 42); 
-  chrome.storage.local.set({ history: allEntries }, () => {
+  
+  // Set both history (for UI) and lastEntry (for background sync trigger)
+  chrome.storage.local.set({ 
+    history: allEntries,
+    lastEntry: entry 
+  }, () => {
     manualTitle.value = manualUrl.value = manualTime.value = '';
     renderHistory();
     $q('[data-tab="history"]').click();
@@ -304,29 +290,25 @@ settingsBtn.onclick = () => {
   chrome.tabs.create({ url: 'https://rewind-player.vercel.app' });
 };
 
-// ─── Firebase Auth ────────────────────────────────────────────────
-
 // ─── Sync Status Management ─────────────────────────────────────
  
 function checkSession() {
-  chrome.storage.local.get(['session_active', 'user_email', 'user_id'], (data) => {
+  chrome.storage.local.get(['session_active', 'user_email', 'user_id', 'history'], (data) => {
     if (data.session_active) {
       currentUser = { uid: data.user_id, email: data.user_email };
+      if (data.history && data.history.length > 0) {
+          allEntries = data.history;
+          renderHistory();
+      }
       updateAuthState();
-      startRealtimeHistoryUpdates(currentUser.uid);
       if (cloudLog) cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
     } else {
       currentUser = null;
       updateAuthState();
-      stopRealtimeHistoryUpdates();
-      if (cloudLog) cloudLog.textContent = 'NEURAL_LINK_DROPPED: OFFLINE_MODE';
+      if (cloudLog) cloudLog.textContent = 'SEARCHING_FOR_NEURAL_PULSE...';
     }
   });
 }
-
-chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.type === 'AUTH_STATE_UPDATED') updateAuthState();
-});
 
 function updateAuthState() {
   if (currentUser) {
@@ -356,24 +338,15 @@ logoutBtn.onclick = () => {
   chrome.runtime.sendMessage({ type: 'LOGOUT_REQUEST' });
 };
 
-// ─── sync ─────────────────────────────────────────────────────────
-
-function startRealtimeHistoryUpdates(uid) {
-  stopRealtimeHistoryUpdates();
-  const q = query(collection(db, `users/${uid}/history`), orderBy('savedAt', 'desc'), limit(42));
-  unsubscribeHistory = onSnapshot(q, (snapshot) => {
-    const cloudEntries = [];
-    snapshot.forEach(doc => cloudEntries.push(doc.data()));
-    if (cloudEntries.length > 0) {
-      allEntries = cloudEntries;
-      chrome.storage.local.set({ history: allEntries }, renderHistory);
-    }
-  });
+if (viewProfileBtn) {
+  viewProfileBtn.onclick = (e) => {
+    e.preventDefault();
+    chrome.tabs.create({ url: 'https://rewind-player.vercel.app/profile' });
+  };
 }
 
-function stopRealtimeHistoryUpdates() {
-  if (unsubscribeHistory) unsubscribeHistory();
-}
+// Neural Sync listeners have been moved to the background service worker
+// to ensure persistent connection and security review compliance.
 
 // ─── Init ─────────────────────────────────────────────────────────
 function load() {

@@ -4,6 +4,32 @@ import { auth, db, googleProvider } from './lib/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+
+// Neural Mirror Pulsar
+// This hidden component exposes the authenticated session token to the extension
+const SyncPulse = ({ user }: { user: User | null }) => {
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      user.getIdToken().then(setToken);
+    } else {
+      setToken(null);
+    }
+  }, [user]);
+
+  if (!token) return null;
+
+  return (
+    <div 
+      id="neural-sync-pulse" 
+      style={{ display: 'none' }} 
+      data-token={token}
+      data-email={user?.email || ''}
+      data-user-id={user?.uid || ''}
+    />
+  );
+};
 import './index.css';
 
 // The Cyber-Rewind / Kinetic Void Dashboard
@@ -1642,6 +1668,7 @@ function App() {
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${isDarkMode ? 'dark bg-[#0e0e0e]' : 'bg-white'}`}>
+      <SyncPulse user={user} />
       <AnimatePresence mode="wait">
         {loading ? (
           <div className="min-h-screen flex items-center justify-center bg-[#0e0e0e]">

@@ -187,16 +187,47 @@
   setTimeout(scan, 2000);
   setTimeout(scan, 5000);
 
-  // ─── Auth Bridge (Relay to Background) ───────────────────────────────────
+  // ─── Secure Neural Mirror (Relay & Active Probe) ──────────────────────────
+  // This section handles the secure relay and active probing of auth sessions
   if (window.location.hostname.includes('rewind-player.vercel.app')) {
+    
+    // 1. ACTIVE PROBE: Check for existing session on page load
+    const checkPulse = () => {
+      const pulse = document.getElementById('neural-sync-pulse');
+      if (pulse && pulse.dataset.token) {
+        console.log('[Rewind] Neural pulse detected. Mirroring session...');
+        chrome.runtime.sendMessage({ 
+          type: 'AUTH_TOKEN_UPDATE', 
+          token: pulse.dataset.token 
+        });
+        return true;
+      }
+      return false;
+    };
+
+    // Initial check and periodic scans (for SPA transitions)
+    if (!checkPulse()) {
+      const pulseInterval = setInterval(() => {
+        if (checkPulse()) clearInterval(pulseInterval);
+      }, 2000);
+      setTimeout(() => clearInterval(pulseInterval), 10000);
+    }
+
+    // 2. PASSIVE RELAY: Listen for real-time auth events
     window.addEventListener('message', (event) => {
+      if (event.origin !== 'https://rewind-player.vercel.app') return;
+
       if (event.data?.type === 'REWIND_AUTH_SUCCESS' && event.data?.token) {
-        console.log('[Rewind] Auth token detected, relaying to extension...');
+        console.log('[Rewind] Neural handshake detected. Synchronizing...');
         chrome.runtime.sendMessage({ 
           type: 'AUTH_TOKEN_UPDATE', 
           token: event.data.token 
         });
       }
     });
+
+    // 3. HANDSHAKE: Notify portal that extension is injected and ready
+    // This allows the portal to wait for us before releasing the token.
+    window.postMessage({ type: 'REWIND_EXTENSION_READY' }, '*');
   }
 })();

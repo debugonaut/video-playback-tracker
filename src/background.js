@@ -1,29 +1,65 @@
 // background.js - Rewind Central Sync Engine
 import { auth, db } from './firebase-config';
 import { onAuthStateChanged, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 
 let currentUser = null;
 let lastCapturedToken = null;
 
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  const status = user ? 'SYNC_ACTIVE' : 'OFFLINE';
-  console.log(`[Background] Neural Auth State: ${status}`);
-  
-  // Persist session info to storage for popup to read instantly
-  chrome.storage.local.set({ 
-    session_active: !!user,
-    user_email: user?.email || null,
-    user_id: user?.uid || null
-  });
-
-  try {
-    chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
-  } catch (e) {
-    // Popup is closed — normal.
-  }
-});
+let unsubscribeHistory = null;
+ 
+ onAuthStateChanged(auth, async (user) => {
+   const status = user ? 'SYNC_ACTIVE' : 'OFFLINE';
+   console.log(`[Background] Neural Auth State: ${status}`);
+   
+   // Check if we already have this user in memory to avoid redundant sync starts
+   const isNewUser = !currentUser || (user && user.uid !== currentUser.uid);
+   currentUser = user;
+ 
+   // Persist session info to storage for popup to read instantly
+   chrome.storage.local.set({ 
+     session_active: !!user,
+     user_email: user?.email || null,
+     user_id: user?.uid || null
+   }, () => {
+     // Notify the popup ONLY after storage is confirmed
+     try {
+       chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
+     } catch (e) {
+       // Popup closed - normal
+     }
+   });
+ 
+   if (user) {
+     if (isNewUser) startRealtimeHistoryUpdates(user.uid);
+   } else {
+     stopRealtimeHistoryUpdates();
+   }
+ });
+ 
+ function startRealtimeHistoryUpdates(uid) {
+   stopRealtimeHistoryUpdates();
+   console.log('[Background] Initializing Real-time Cloud Link...');
+   const q = query(collection(db, `users/${uid}/history`), orderBy('savedAt', 'desc'), limit(42));
+   unsubscribeHistory = onSnapshot(q, (snapshot) => {
+     const cloudEntries = [];
+     snapshot.forEach(doc => cloudEntries.push(doc.data()));
+     if (cloudEntries.length > 0) {
+       console.log(`[Background] Synced ${cloudEntries.length} entries from cloud.`);
+       chrome.storage.local.set({ history: cloudEntries });
+     }
+   }, (err) => {
+       console.error('[Background] Cloud link error:', err);
+   });
+ }
+ 
+ function stopRealtimeHistoryUpdates() {
+   if (unsubscribeHistory) {
+       console.log('[Background] Terminating Cloud Link...');
+       unsubscribeHistory();
+       unsubscribeHistory = null;
+   }
+ }
 
 // ─── External Bridge (Direct Web Messaging) ───────────────────────
 // This works in Chrome with manifest.json -> externally_connectable
