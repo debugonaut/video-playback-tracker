@@ -5,6 +5,7 @@ import { doc, setDoc, serverTimestamp, collection, query, orderBy, limit, onSnap
 
 let currentUser = null;
 let lastCapturedToken = null;
+let unsubscribeHistory = null;
 
 const getStorage = (keys) => new Promise(resolve => chrome.storage.local.get(keys, resolve));
 const setStorage = (data) => new Promise(resolve => chrome.storage.local.set(data, resolve));
@@ -234,39 +235,50 @@ chrome.storage.onChanged.addListener((changes, area) => {
 });
 
 async function syncToCloud(entry) {
+  if (!entry || !entry.url) return;
+
+  // NEURAL BRIDGE: ALWAYS broadcast to portal tabs first (before auth check)
+  // This is the reliable fallback that works even without Firebase auth
+  broadcastToPortal(entry);
+
+  // Then attempt direct Firestore write if we have auth
   const activeUser = auth.currentUser;
-  if (!activeUser || !entry || !entry.url) {
-    if (!activeUser) console.log('[Sync] Pause: No active user session');
+  if (!activeUser) {
+    console.log('[Sync] No Firebase auth — relying on Neural Bridge proxy');
     return;
   }
 
   try {
-    // Generate a robust unique ID from the full URL
     const entryId = btoa(unescape(encodeURIComponent(entry.url))).replace(/[/+=]/g, '_').substring(0, 50);
     const historyRef = doc(db, `users/${activeUser.uid}/history`, entryId);
 
-    console.log(`[Sync] Attempting cloud push: ${entry.title}`);
+    console.log(`[Sync] Direct cloud push: ${entry.title}`);
     
     await setDoc(historyRef, {
       ...entry,
       userId: activeUser.uid,
       syncedAt: serverTimestamp(),
-      savedAt: entry.savedAt || Date.now() // Ensure number
+      savedAt: entry.savedAt || Date.now()
     }, { merge: true });
 
-    console.log(`[Sync] Cloud success: ${entry.title} -> users/${activeUser.uid}/history/${entryId}`);
+    console.log(`[Sync] Cloud success: ${entry.title}`);
   } catch (err) {
-    console.error('[Sync] Firestore error:', err);
+    console.error('[Sync] Firestore error (Bridge will handle):', err);
   }
+}
 
-  // NEURAL BRIDGE: Always broadcast to all open tabs as a proxy-sync fallback
+function broadcastToPortal(entry) {
   try {
     chrome.tabs.query({}, (tabs) => {
-      tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id, { type: 'REWIND_PROXY_BROADCAST', entry });
+      (tabs || []).forEach(tab => {
+        if (tab.id) {
+          try {
+            chrome.tabs.sendMessage(tab.id, { type: 'REWIND_PROXY_BROADCAST', entry });
+          } catch (e) { /* restricted tab */ }
+        }
       });
     });
   } catch (e) {
-    // Some tabs might be restricted (chrome://) - ignore
+    console.warn('[Bridge] Broadcast error:', e);
   }
 }
