@@ -9,11 +9,16 @@ let lastCapturedToken = null;
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   console.log(`[Background] Neural Auth State: ${user ? 'SYNC_ACTIVE' : 'OFFLINE'}`);
-  // Broadcast to popup
-  chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
+  // Broadcast to popup — wrapped in try/catch because popup may not be open.
+  // An uncaught error here kills the MV3 service worker entirely.
+  try {
+    chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
+  } catch (e) {
+    // Popup is closed — this is normal, not an error.
+  }
 });
 
-// Proactive Token Capture: Check ALL tabs if requested
+// Proactive Token Capture & Content Script Relay
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'CHECK_AUTH_TAB') {
     // Search ALL windows and tabs for the token
@@ -23,6 +28,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         processTokenUrl(authTab.url, authTab.id);
       }
     });
+  } else if (msg.type === 'AUTH_TOKEN_UPDATE' && msg.token) {
+    // Intercept token routed from App.tsx -> content.js
+    console.log('[Background] Received AUTH_TOKEN_UPDATE from content script');
+    processAuthToken(msg.token);
   }
 });
 
@@ -35,12 +44,23 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-async function processTokenUrl(urlStr, tabId) {
+function processTokenUrl(urlStr, tabId) {
   try {
     const url = new URL(urlStr);
     const params = new URLSearchParams(url.hash.substring(1));
     const token = params.get('token');
     
+    if (token && token !== lastCapturedToken) {
+      // Pass the token and provide the tabId for auto-closure
+      processAuthToken(token, tabId);
+    }
+  } catch (e) {
+    console.error('[Background] URL Parse failure:', e);
+  }
+}
+
+async function processAuthToken(token, tabId = null) {
+  try {
     if (token && token !== lastCapturedToken) {
       lastCapturedToken = token;
       console.log('[Background] Token captured. linking neural account...');
@@ -49,7 +69,11 @@ async function processTokenUrl(urlStr, tabId) {
       await signInWithCredential(auth, credential);
       
       // Update UI across entire extension
-      chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+      try {
+        chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+      } catch (e) {
+        // Popup is closed — normal.
+      }
       
       // Close capture tab after a brief delay for success visibility
       if (tabId) setTimeout(() => chrome.tabs.remove(tabId), 3000);

@@ -113,6 +113,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       targetTab.classList.add('active');
     }
     if (btn.dataset.tab === 'sync') updateAuthState();
+    if (btn.dataset.tab === 'stats') updateStats();
   });
 });
 
@@ -222,6 +223,25 @@ function renderHistory() {
   } else {
     resumeBanner.classList.add('hidden');
   }
+  updateStats();
+}
+
+function updateStats() {
+  const totalEntries = allEntries.length;
+  let totalSeconds = 0;
+  
+  allEntries.forEach(entry => {
+    totalSeconds += (entry.timestamp || 0);
+  });
+
+  const statsEntries = document.getElementById('totalEntries');
+  const statsTime = document.getElementById('totalTime');
+  
+  if (statsEntries) statsEntries.textContent = totalEntries;
+  if (statsTime) statsTime.textContent = fmt(totalSeconds);
+
+  // Randomize bars for visual wow factor if needed, 
+  // or leave them as coded in HTML for now as placeholders.
 }
 
 // ─── Actions ──────────────────────────────────────────────────────
@@ -332,14 +352,17 @@ function updateAuthState() {
 loginBtn.onclick = async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value;
-  if (!email || !password) return;
+  if (!email || !password) {
+    cloudLog.textContent = 'ERROR: PLEASE_ENTER_CREDENTIALS';
+    return;
+  }
 
   cloudLog.textContent = 'AUTHENTICATING_USER...';
   try {
     await signInWithEmailAndPassword(auth, email, password);
     cloudLog.textContent = 'AUTH_SUCCESS: NEURAL_LINK_ESTABLISHED';
   } catch (e) {
-    cloudLog.textContent = `AUTH_ERROR: ${e.code.replace('auth/', '').toUpperCase()}`;
+    cloudLog.textContent = `AUTH_ERROR: ${e.code ? e.code.replace('auth/', '').toUpperCase() : e.message}`;
   }
 };
 

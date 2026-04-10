@@ -1253,7 +1253,28 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
     setLoading(true);
     setError(null);
     try {
-      await signInWithPopup(auth, googleProvider);
+      const { GoogleAuthProvider } = await import('firebase/auth');
+      const result = await signInWithPopup(auth, googleProvider);
+      
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox') {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const accessToken = credential?.accessToken;
+        
+        if (accessToken) {
+          window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: accessToken }, '*');
+          if (params.get('handler') === 'firefox') {
+             window.location.hash = `token=${accessToken}`;
+             console.log('[Rewind] Persistent sync active. Waiting for extension...');
+          }
+          // Show a success state instead of just closing
+          setError(null);
+          setLoading(false);
+          // Custom success flag could be added here if we had a state for it
+          setTimeout(() => { window.close(); }, 5000);
+          return;
+        }
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Failed to sign in');
@@ -1507,79 +1528,48 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [showSetupGuide, setShowSetupGuide] = useState(false);
   const [showBenefits, setShowBenefits] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'landing' | 'auth' | 'dashboard' | 'why-login' | 'profile'>('landing');
   const [onboardingBrowser, setOnboardingBrowser] = useState<'chrome' | 'firefox'>('chrome');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Simple Routing Handler
+  // Centralized App State & Routing Logic
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get('reason');
     const path = window.location.pathname;
-    
-    if (path === '/why-login') setCurrentView('why-login');
-    if (path === '/profile') setCurrentView('profile');
-    if (path === '/sync' || path === '/signup') {
-      setCurrentView('auth');
-    }
-  }, []);
 
-  // Auth Listener
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      console.log('[Rewind] Auth Update:', u?.email || 'GUEST');
+      setUser(u);
       setLoading(false);
-      setUser(user);
-      if (user) {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('reason') === 'extension_auth' || params.get('reason') === 'signup') {
-          try {
-            const token = await user.getIdToken();
-            window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token }, '*');
-            
-            if (params.get('handler') === 'firefox') {
-              window.location.hash = `token=${token}`;
-              console.log('[Rewind] Persistent sync active. Waiting for extension...');
-            }
 
-            // Persistence: Stay on Success screen for 5 seconds to ensure capture
-            if (params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox') {
-              setTimeout(() => {
-                if (params.get('reason') === 'signup') {
-                  setCurrentView('dashboard');
-                } else {
-                  window.close();
-                }
-              }, 5000); 
-              return; 
-            }
-          } catch (err) {
-            console.error('[Rewind] Token relay error:', err);
-          }
+      // 1. Extension Directives (High Priority)
+      if (reason === 'signup' || reason === 'register' || reason === 'login' || reason === 'sync') {
+        setCurrentView('auth');
+        return;
+      }
+
+      // 2. User Authentication State Handling
+      if (u) {
+        // Only auto-redirect to dashboard if not in the middle of a bridge flow
+        if (reason !== 'extension_auth' && params.get('handler') !== 'firefox') {
+          setCurrentView('dashboard');
+        }
+      } else {
+        // 3. Guest Deep Linking & Mode Protection
+        if (path === '/why-login') setCurrentView('why-login');
+        else if (path === '/profile' || path === '/sync') setCurrentView('auth');
+        else if (currentView === 'dashboard' || currentView === 'profile') {
+          // If a guest somehow lands on a protected view, revert to landing
+          setCurrentView('landing');
         }
       }
     });
-    return () => unsubscribe();
-  }, []);
 
-  // Selective Navigation: Only redirect to dashboard if we are on landing/auth and login is confirmed
-  useEffect(() => {
-    if (loading) return;
-    
-    // Auto-redirect to dashboard only if we're on the root landing page or auth bridge
-    const isRootOrAuth = currentView === 'landing' || currentView === 'auth';
-    
-    if (user && isRootOrAuth) {
-      // If it's a signup/sync flow, the sync logic in the other effect handles the wait.
-      // Otherwise, go to dashboard.
-      const params = new URLSearchParams(window.location.search);
-      const isSyncFlow = params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox';
-      
-      if (!isSyncFlow) {
-        setCurrentView('dashboard');
-      }
-    } else if (!user && (currentView === 'dashboard' || currentView === 'profile')) {
-      setCurrentView('landing');
-    }
-  }, [user, loading, currentView]);
+    return () => unsubscribe();
+  }, [currentView]); // Responsive to internal view changes if needed
 
   const openSetup = (browser: 'chrome' | 'firefox') => {
     setOnboardingBrowser(browser);
@@ -1678,27 +1668,60 @@ function App() {
                 <span className="material-symbols-outlined text-[#e51152] text-2xl md:text-3xl hidden sm:block">fast_rewind</span>
                 REWIND
               </button>
-              <nav className="hidden md:flex gap-4 lg:gap-8 items-center">
-                <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#features">Features</a>
-                <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#compatibility">Compatibility</a>
-                <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#how-it-works">Architecture</a>
-                <div className="flex items-center gap-6 ml-4">
+                <div className="hidden md:flex items-center gap-8">
+                  <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#features">FEATURES</a>
+                  <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#compatibility">DEVICES</a>
+                  <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#how-it-works">MACHINA</a>
                   <ThemeToggle />
                   <button 
-                    onClick={() => setShowBenefits(true)}
-                    className="bg-black dark:bg-white text-white dark:text-black font-black uppercase py-2 px-6 border-2 border-black dark:border-white neo-shadow-active hover:bg-[#e51152] dark:hover:bg-[#e51152] hover:text-white active:translate-x-1 active:translate-y-1 transition-all"
+                    type="button"
+                    onClick={() => {
+                      console.log('[Rewind] Triggering Auth View');
+                      setCurrentView('auth');
+                    }}
+                    className="bg-black dark:bg-white text-white dark:text-black font-black uppercase px-6 py-2.5 border-4 border-black dark:border-white hover:bg-[#e51152] dark:hover:bg-[#e51152] hover:text-white transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
                   >
-                    LOGIN / SIGN UP
+                    Login / Sign Up
                   </button>
                 </div>
-              </nav>
-              
-              {/* Mobile controls */}
-              <div className="flex md:hidden items-center gap-4 text-black dark:text-white">
-                <ThemeToggle />
-                <span className="material-symbols-outlined text-3xl">menu</span>
-              </div>
-            </header>
+
+                {/* Mobile controls */}
+                <div className="flex md:hidden items-center gap-4 text-black dark:text-white">
+                  <ThemeToggle />
+                  <button 
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="material-symbols-outlined text-3xl hover:text-[#e51152] transition-colors"
+                  >
+                    {isMobileMenuOpen ? 'close' : 'menu'}
+                  </button>
+                </div>
+              </header>
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+              {isMobileMenuOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, x: "100%" }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: "100%" }}
+                  className="fixed inset-0 z-[90] bg-black text-white p-8 pt-32 flex flex-col gap-8 md:hidden"
+                >
+                  <a onClick={() => { setIsMobileMenuOpen(false); window.location.href = '#features'; }} className="text-4xl font-black italic uppercase tracking-tighter" href="#features">FEATURES</a>
+                  <a onClick={() => { setIsMobileMenuOpen(false); window.location.href = '#compatibility'; }} className="text-4xl font-black italic uppercase tracking-tighter" href="#compatibility">DEVICES</a>
+                  <a onClick={() => { setIsMobileMenuOpen(false); window.location.href = '#how-it-works'; }} className="text-4xl font-black italic uppercase tracking-tighter" href="#how-it-works">MACHINA</a>
+                  <div className="h-[2px] w-full bg-[#e51152] my-4"></div>
+                  <button 
+                    onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        setShowBenefits(true);
+                    }}
+                    className="bg-[#e51152] text-white font-black uppercase py-4 text-2xl"
+                  >
+                    LOGIN_SYNC
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
       <main>
         {/* Hero Section */}
