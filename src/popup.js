@@ -1,12 +1,14 @@
-// popup.js – Rewind Video Tracker (Kinetic Void Edition)
-import { auth, db } from './firebase-config';
+import { db } from './firebase-config';
 import { 
-  onAuthStateChanged, 
-  signInWithEmailAndPassword, 
-  signOut,
-  GoogleAuthProvider,
-  signInWithCredential
-} from 'firebase/auth';
+  collection, 
+  query, 
+  orderBy, 
+  limit, 
+  onSnapshot, 
+  doc, 
+  setDoc, 
+  serverTimestamp 
+} from 'firebase/firestore';
 import { 
   collection, 
   query, 
@@ -57,11 +59,7 @@ const syncStatus = $('syncStatus');
 const userEmail = $('userEmail');
 const cloudLog = $('cloudLog');
 
-const emailInput = $('emailInput');
-const passwordInput = $('passwordInput');
-const loginBtn = $('loginBtn');
-const registerBtn = $('registerBtn');
-const googleBtn = $('googleBtn');
+const remoteLoginBtn = $('remoteLoginBtn');
 const logoutBtn = $('logoutBtn');
 const settingsBtn = $('settingsBtn');
 
@@ -318,17 +316,23 @@ settingsBtn.onclick = () => {
 
 // ─── Firebase Auth ────────────────────────────────────────────────
 
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  updateAuthState();
-  if (user) {
-    startRealtimeHistoryUpdates(user.uid);
-    cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
-  } else {
-    stopRealtimeHistoryUpdates();
-    cloudLog.textContent = 'NEURAL_LINK_DROPPED: OFFLINE_MODE';
-  }
-});
+// ─── Sync Status Management ─────────────────────────────────────
+ 
+function checkSession() {
+  chrome.storage.local.get(['session_active', 'user_email', 'user_id'], (data) => {
+    if (data.session_active) {
+      currentUser = { uid: data.user_id, email: data.user_email };
+      updateAuthState();
+      startRealtimeHistoryUpdates(currentUser.uid);
+      if (cloudLog) cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
+    } else {
+      currentUser = null;
+      updateAuthState();
+      stopRealtimeHistoryUpdates();
+      if (cloudLog) cloudLog.textContent = 'NEURAL_LINK_DROPPED: OFFLINE_MODE';
+    }
+  });
+}
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === 'AUTH_STATE_UPDATED') updateAuthState();
@@ -349,59 +353,18 @@ function updateAuthState() {
   }
 }
 
-loginBtn.onclick = async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-  if (!email || !password) {
-    cloudLog.textContent = 'ERROR: PLEASE_ENTER_CREDENTIALS';
-    return;
-  }
-
-  cloudLog.textContent = 'AUTHENTICATING_USER...';
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    cloudLog.textContent = 'AUTH_SUCCESS: NEURAL_LINK_ESTABLISHED';
-  } catch (e) {
-    cloudLog.textContent = `AUTH_ERROR: ${e.code ? e.code.replace('auth/', '').toUpperCase() : e.message}`;
-  }
+// ─── Remote Auth Actions ──────────────────────────────────────────
+ 
+if (remoteLoginBtn) {
+  remoteLoginBtn.onclick = () => {
+    chrome.tabs.create({ url: 'https://rewind-player.vercel.app/auth?reason=sync' });
+    if (cloudLog) cloudLog.textContent = 'OPENING_NEURAL_PORTAL...';
+  };
+}
+ 
+logoutBtn.onclick = () => {
+  chrome.runtime.sendMessage({ type: 'LOGOUT_REQUEST' });
 };
-
-registerBtn.onclick = () => {
-  chrome.tabs.create({ url: 'https://rewind-player.vercel.app/sync?reason=signup' });
-  cloudLog.textContent = 'OPENING_REGISTRATION_PORTAL...';
-};
-
-googleBtn.onclick = async () => {
-  cloudLog.textContent = 'INITIALIZING_NEURAL_AUTH...';
-  const isFirefox = /Firefox/.test(navigator.userAgent);
-
-  if (isFirefox) {
-    // Firefox Guaranteed: Open in a standard tab. 
-    // The background script watches the address bar for the token.
-    const authUrl = `https://rewind-player.vercel.app/sync?reason=extension_auth&handler=firefox`;
-    chrome.tabs.create({ url: authUrl });
-    cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
-  } else {
-    // Chrome Identity API
-    chrome.identity.getAuthToken({ interactive: true }, async (token) => {
-      if (chrome.runtime.lastError || !token) {
-        cloudLog.textContent = 'AUTH_ERROR: CANNOT_RETRIEVE_TOKEN';
-        return;
-      }
-      try {
-        const credential = GoogleAuthProvider.credential(null, token);
-        await signInWithCredential(auth, credential);
-        cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
-        updateAuthState();
-        chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
-      } catch (e) {
-        cloudLog.textContent = `AUTH_ERROR: ${e.message}`;
-      }
-    });
-  }
-};
-
-logoutBtn.onclick = () => signOut(auth);
 
 // ─── sync ─────────────────────────────────────────────────────────
 
@@ -426,8 +389,7 @@ function stopRealtimeHistoryUpdates() {
 function load() {
   if (chrome.action) chrome.action.setBadgeText({ text: '' });
   
-  // Proactive check: If an auth tab is open, grab the token!
-  chrome.runtime.sendMessage({ type: 'CHECK_AUTH_TAB' });
+  checkSession();
 
   chrome.storage.local.get({ history: [], viewMode: 'grid' }, data => {
     allEntries = data.history || [];
@@ -436,6 +398,10 @@ function load() {
     renderHistory();
   });
 }
+
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.type === 'AUTH_STATE_UPDATED') checkSession();
+});
 
 closeBtn.addEventListener('click', () => window.close());
 load();

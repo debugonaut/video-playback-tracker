@@ -1253,25 +1253,35 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
     setLoading(true);
     setError(null);
     try {
-      const { GoogleAuthProvider } = await import('firebase/auth');
       const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
       
       const params = new URLSearchParams(window.location.search);
-      if (params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox') {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const accessToken = credential?.accessToken;
+      if (params.get('reason') === 'sync' || params.get('reason') === 'extension_auth' || params.get('handler') === 'firefox') {
+        const idToken = await user.getIdToken();
         
-        if (accessToken) {
-          window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: accessToken }, '*');
+        if (idToken) {
+          // 1. Content Script Bridge (Firefox + Backup)
+          window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: idToken }, '*');
+          
+          // 2. Hash-based bridge (Firefox backup)
           if (params.get('handler') === 'firefox') {
-             window.location.hash = `token=${accessToken}`;
-             console.log('[Rewind] Persistent sync active. Waiting for extension...');
+             window.location.hash = `token=${idToken}`;
           }
-          // Show a success state instead of just closing
+          
+          // 3. Chrome Direct Bridge (if ID is known - would require more config, using postMessage for now)
+          
           setError(null);
           setLoading(false);
-          // Custom success flag could be added here if we had a state for it
-          setTimeout(() => { window.close(); }, 5000);
+          // Show success message before closing
+          document.body.innerHTML = `
+            <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif;">
+              <h1 style="color:#e51152; font-size:4rem; margin-bottom:0;">SYNC_SUCCESS</h1>
+              <p style="text-transform:uppercase; letter-spacing:0.2em; color:#fff;">Neural Connection Established</p>
+              <div style="margin-top:20px; color:#555; font-size:10px;">CLOSING PORTAL IN 3s...</div>
+            </div>
+          `;
+          setTimeout(() => { window.close(); }, 3000);
           return;
         }
       }
@@ -1299,12 +1309,28 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
     setLoading(true);
     setError(null);
     try {
+      let userCredential;
       if (mode === 'login') {
         const { signInWithEmailAndPassword } = await import('firebase/auth');
-        await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
         const { createUserWithEmailAndPassword } = await import('firebase/auth');
-        await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('reason') === 'sync' || params.get('reason') === 'extension_auth') {
+        const idToken = await userCredential.user.getIdToken();
+        window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: idToken }, '*');
+        
+        document.body.innerHTML = `
+            <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif;">
+              <h1 style="color:#f7e600; font-size:4rem; margin-bottom:0;">SYNC_SUCCESS</h1>
+              <p style="text-transform:uppercase; letter-spacing:0.2em; color:#fff;">Email Identification Synchronized</p>
+              <div style="margin-top:20px; color:#555; font-size:10px;">CLOSING PORTAL IN 3s...</div>
+            </div>
+        `;
+        setTimeout(() => { window.close(); }, 3000);
       }
     } catch (err: any) {
       setError(err.message || 'Authentication failed');

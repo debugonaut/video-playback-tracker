@@ -174,31 +174,19 @@
 
       <div id="authContent" class="auth-box">
 
-        <!-- Login Form (Visible when signed out) -->
+        <!-- Connection Portal (Visible when signed out) -->
         <div id="loginForm" class="inject-form">
           <p class="auth-desc">Connect to REWIND Cloud to sync your playback history across all your devices instantly.</p>
           
-          <div class="form-group">
-            <label class="form-label">NEURAL_ID (EMAIL)</label>
-            <input type="email" id="emailInput" placeholder="identity@void.kinetic" class="inject-input" />
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">ACCESS_KEY (PASSWORD)</label>
-            <input type="password" id="passwordInput" placeholder="••••••••" class="inject-input" />
-          </div>
-
-          <div class="auth-actions">
-            <button id="loginBtn" class="inject-btn primary">SIGN_IN</button>
-            <button id="registerBtn" class="inject-btn secondary">CREATE_ID</button>
-          </div>
-
-          <div class="divider"><span>OR</span></div>
-
-          <button id="googleBtn" class="google-btn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" />
-            CONTINUE_WITH_GOOGLE
+          <button id="remoteLoginBtn" class="inject-btn primary">
+            <span class="material-symbols-outlined" style="margin-right: 8px; vertical-align: middle; font-size: 18px;">open_in_new</span>
+            LOGIN / SIGNUP FOR UPDATES
           </button>
+          
+          <div class="status-box" style="margin-top: 1.5rem; border-color: rgba(229, 17, 82, 0.4);">
+            <div class="status-header" style="color: #e51152;">SYSTEM_ADVISORY</div>
+            <p class="status-text">For security, authentication is now handled via our web portal. Your local history will be synced automatically upon login.</p>
+          </div>
         </div>
 
         <!-- Profile View (Visible when signed in) -->

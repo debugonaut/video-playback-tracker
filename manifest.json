@@ -7,9 +7,11 @@
     "storage",
     "tabs",
     "notifications",
-    "alarms",
-    "identity"
+    "alarms"
   ],
+  "externally_connectable": {
+    "matches": ["https://rewind-player.vercel.app/*"]
+  },
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com"
   },
@@ -21,14 +23,6 @@
   ],
   "background": {
     "service_worker": "background.js"
-  },
-  "oauth2": {
-    "client_id": "743702437264-peidajr25fgo9285rlu947k8iul50u01.apps.googleusercontent.com",
-    "scopes": [
-      "openid",
-      "email",
-      "profile"
-    ]
   },
   "content_scripts": [
     {

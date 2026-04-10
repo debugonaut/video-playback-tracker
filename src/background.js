@@ -8,20 +8,38 @@ let lastCapturedToken = null;
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
-  console.log(`[Background] Neural Auth State: ${user ? 'SYNC_ACTIVE' : 'OFFLINE'}`);
-  // Broadcast to popup — wrapped in try/catch because popup may not be open.
-  // An uncaught error here kills the MV3 service worker entirely.
+  const status = user ? 'SYNC_ACTIVE' : 'OFFLINE';
+  console.log(`[Background] Neural Auth State: ${status}`);
+  
+  // Persist session info to storage for popup to read instantly
+  chrome.storage.local.set({ 
+    session_active: !!user,
+    user_email: user?.email || null,
+    user_id: user?.uid || null
+  });
+
   try {
     chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
   } catch (e) {
-    // Popup is closed — this is normal, not an error.
+    // Popup is closed — normal.
   }
 });
 
-// Proactive Token Capture & Content Script Relay
+// ─── External Bridge (Direct Web Messaging) ───────────────────────
+// This works in Chrome with manifest.json -> externally_connectable
+if (chrome.runtime.onMessageExternal) {
+  chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
+    console.log('[Background] Received external message from:', sender.url);
+    if (msg.type === 'REWIND_AUTH_SUCCESS' && msg.token) {
+      processAuthToken(msg.token);
+      sendResponse({ success: true, status: 'NEURAL_LINK_ESTABLISHED' });
+    }
+  });
+}
+
+// ─── Internal Bridge (Content Script & Tab Relay) ─────────────────
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'CHECK_AUTH_TAB') {
-    // Search ALL windows and tabs for the token
     chrome.tabs.query({}, (tabs) => {
       const authTab = tabs.find(t => t.url && t.url.includes('#token='));
       if (authTab) {
@@ -29,9 +47,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }
     });
   } else if (msg.type === 'AUTH_TOKEN_UPDATE' && msg.token) {
-    // Intercept token routed from App.tsx -> content.js
     console.log('[Background] Received AUTH_TOKEN_UPDATE from content script');
     processAuthToken(msg.token);
+  } else if (msg.type === 'LOGOUT_REQUEST') {
+    import('firebase/auth').then(({ signOut }) => {
+        signOut(auth).then(() => {
+            console.log('[Background] Signed out successfully');
+        });
+    });
   }
 });
 
