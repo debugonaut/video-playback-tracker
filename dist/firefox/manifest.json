@@ -7,8 +7,7 @@
     "storage",
     "tabs",
     "notifications",
-    "alarms",
-    "identity"
+    "alarms"
   ],
   "content_security_policy": "script-src 'self' 'wasm-unsafe-eval' https://*.googleapis.com https://*.firebaseio.com; object-src 'self';",
   "background": {
@@ -16,14 +15,6 @@
       "background.js"
     ],
     "persistent": true
-  },
-  "oauth2": {
-    "client_id": "743702437264-peidajr25fgo9285rlu947k8iul50u01.apps.googleusercontent.com",
-    "scopes": [
-      "openid",
-      "email",
-      "profile"
-    ]
   },
   "content_scripts": [
     {

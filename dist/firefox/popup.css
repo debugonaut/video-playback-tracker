@@ -371,61 +371,11 @@ body {
 /* ── Stats Tab ─────────────────────────────────────────────────── */
 .tab-title { font-size: 20px; }
 
-.stats-viz-box {
-  background-color: var(--bg-black);
-  border: 1px solid #333;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.viz-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.viz-title { color: var(--neon-yellow); font-size: 12px; }
-.viz-meta { font-size: 8px; color: var(--text-dim); font-weight: 800; font-family: var(--font-display); }
-
-.viz-chart {
-  height: 100px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-}
-
-.bar-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.bar {
-  width: 32px;
-  background-color: #222;
-}
-
-.bar-wrap.active .bar {
-  background-color: var(--neon-pink);
-}
-
-.day {
-  font-family: var(--font-display);
-  font-size: 8px;
-  font-weight: 800;
-  color: var(--text-dim);
-}
-
-.bar-wrap.active .day { color: var(--neon-yellow); }
-
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
+  margin-top: 8px;
 }
 
 .stat-card {
@@ -433,22 +383,115 @@ body {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   border-radius: 12px;
+  border: 1px solid #222;
+  transition: transform 0.2s, border-color 0.2s;
 }
 
-.stat-card.pink { border-left: 4px solid var(--neon-pink); }
-.stat-card.yellow { border-left: 4px solid var(--neon-yellow); }
-
-.stat-label { font-size: 8px; color: var(--text-gray); }
-.stat-value { font-size: 28px; }
-.stat-meta { font-size: 9px; font-weight: 700; }
-.pink .stat-meta { color: var(--neon-pink); }
-.yellow .stat-meta { color: var(--neon-yellow); }
-
-.stat-footer-line {
-  border-top: 4px solid var(--text-white);
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--neon-pink);
 }
+
+.stat-label { 
+  font-size: 8px; 
+  color: var(--text-gray); 
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+}
+
+.stat-value { 
+  font-size: 20px; 
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--neon-pink);
+}
+
+.chart-container {
+  background-color: var(--bg-black);
+  border: 4px solid #000;
+  box-shadow: var(--shadow-neo);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+}
+
+.chart-title { 
+  color: var(--neon-yellow); 
+  font-size: 12px; 
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+.chart-period { 
+  font-size: 8px; 
+  color: var(--text-dim); 
+  font-weight: 800; 
+  font-family: var(--font-display); 
+}
+
+.bar-chart {
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 14px;
+  background-color: #222;
+  border-radius: 2px;
+  transition: height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bar-wrap:nth-child(even) .bar {
+  background-color: #1a1a1a;
+}
+
+.bar-wrap:hover .bar {
+  background-color: var(--neon-pink);
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+
+.bar-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--text-dim);
+}
+
+.badge {
+  padding: 4px 8px;
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  border-radius: 4px;
+}
+
+.badge.yellow { background-color: var(--neon-yellow); color: #000; }
+
 
 /* ── Add Tab / Form ────────────────────────────────────────────── */
 .badge {

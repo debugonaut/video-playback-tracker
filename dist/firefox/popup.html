@@ -58,7 +58,7 @@
                <div class="hero-progress-track">
                   <div id="resumeProgressFill" class="hero-progress-fill" style="width:0%"></div>
                </div>
-               <button id="resumeBtn" class="hero-btn">OPEN & RESUME</button>
+               <button id="resumeBtn" class="hero-btn">OPEN &amp; RESUME</button>
             </div>
           </div>
         </section>
@@ -86,10 +86,8 @@
 
     </div><!-- /tab-history -->
 
-    <!-- Tab Content Container Ends -->
-
     <!-- ══════════════════════════════════════════════════════════════
-         TAB: Add / Settings
+         TAB: Add / Manual Entry
     ══════════════════════════════════════════════════════════════ -->
     <div id="tab-add" class="tab-content hidden">
       <div class="section-header flex-row">
@@ -129,6 +127,43 @@
     </div><!-- /tab-add -->
 
     <!-- ══════════════════════════════════════════════════════════════
+         TAB: Stats / Analytics
+    ══════════════════════════════════════════════════════════════ -->
+    <div id="tab-stats" class="tab-content hidden">
+      <div class="section-header flex-row">
+         <h2 class="tab-title">NEURAL_STATS</h2>
+         <span class="badge yellow">ACTIVE_MONITOR</span>
+      </div>
+
+      <div class="stats-grid">
+          <div class="stat-card">
+              <span class="stat-label">TOTAL_WATCH_TIME</span>
+              <span id="totalTime" class="stat-value">00:00:00</span>
+          </div>
+          <div class="stat-card">
+              <span class="stat-label">NEURAL_ENTRIES</span>
+              <span id="totalEntries" class="stat-value">0</span>
+          </div>
+      </div>
+
+      <div class="chart-container">
+          <div class="chart-header">
+              <span class="chart-title">ACTIVITY_LOG</span>
+              <span class="chart-period">LAST_7_DAYS</span>
+          </div>
+          <div class="bar-chart">
+              <div class="bar-wrap"><div class="bar" style="height: 40%"></div><span class="bar-label">M</span></div>
+              <div class="bar-wrap"><div class="bar" style="height: 70%"></div><span class="bar-label">T</span></div>
+              <div class="bar-wrap"><div class="bar" style="height: 50%"></div><span class="bar-label">W</span></div>
+              <div class="bar-wrap"><div class="bar" style="height: 90%"></div><span class="bar-label">T</span></div>
+              <div class="bar-wrap"><div class="bar" style="height: 60%"></div><span class="bar-label">F</span></div>
+              <div class="bar-wrap"><div class="bar" style="height: 30%"></div><span class="bar-label">S</span></div>
+              <div class="bar-wrap"><div class="bar" style="height: 20%"></div><span class="bar-label">S</span></div>
+          </div>
+      </div>
+    </div><!-- /tab-stats -->
+
+    <!-- ══════════════════════════════════════════════════════════════
          TAB: Sync / Auth
     ══════════════════════════════════════════════════════════════ -->
     <div id="tab-sync" class="tab-content hidden">
@@ -137,32 +172,21 @@
          <span id="syncStatus" class="stat-badge offline">OFFLINE</span>
       </div>
 
-      <!-- Login Form (Visible when signed out) -->
       <div id="authContent" class="auth-box">
+
+        <!-- Connection Portal (Visible when signed out) -->
         <div id="loginForm" class="inject-form">
           <p class="auth-desc">Connect to REWIND Cloud to sync your playback history across all your devices instantly.</p>
           
-          <div class="form-group">
-            <label class="form-label">NEURAL_ID (EMAIL)</label>
-            <input type="email" id="emailInput" placeholder="identity@void.kinetic" class="inject-input" />
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label">ACCESS_KEY (PASSWORD)</label>
-            <input type="password" id="passwordInput" placeholder="••••••••" class="inject-input" />
-          </div>
-
-          <div class="auth-actions">
-            <button id="loginBtn" class="inject-btn primary">SIGN_IN</button>
-            <button id="registerBtn" class="inject-btn secondary">CREATE_ID</button>
-          </div>
-
-          <div class="divider"><span>OR</span></div>
-
-          <button id="googleBtn" class="google-btn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" />
-            CONTINUE_WITH_GOOGLE
+          <button id="remoteLoginBtn" class="inject-btn primary">
+            <span class="material-symbols-outlined" style="margin-right: 8px; vertical-align: middle; font-size: 18px;">open_in_new</span>
+            LOGIN / SIGNUP FOR UPDATES
           </button>
+          
+          <div class="status-box" style="margin-top: 1.5rem; border-color: rgba(229, 17, 82, 0.4);">
+            <div class="status-header" style="color: #e51152;">SYSTEM_ADVISORY</div>
+            <p class="status-text">For security, authentication is now handled via our web portal. Your local history will be synced automatically upon login.</p>
+          </div>
         </div>
 
         <!-- Profile View (Visible when signed in) -->
@@ -188,17 +212,19 @@
             </div>
           </div>
 
-          <div class="status-box">
-            <div class="status-header">CLOUD_LOG</div>
-            <p id="cloudLog" class="status-text">Synchronizing neural pathways... Ready for transmission.</p>
-          </div>
-
           <a id="viewProfileBtn" href="https://rewind-player.vercel.app" target="_blank" class="view-profile-btn">
             <span class="material-symbols-outlined">open_in_new</span>
             VIEW MY PROFILE
           </a>
         </div>
-      </div>
+
+        <!-- Cloud Log: Always visible in sync tab regardless of auth state -->
+        <div class="status-box" style="margin-top: 1rem;">
+          <div class="status-header">CLOUD_LOG</div>
+          <p id="cloudLog" class="status-text">Synchronizing neural pathways... Ready for transmission.</p>
+        </div>
+
+      </div><!-- /authContent -->
     </div><!-- /tab-sync -->
 
   </main>
@@ -208,6 +234,10 @@
     <button class="nav-btn active" data-tab="history">
       <span class="material-symbols-outlined">history</span>
       <span class="nav-label">HISTORY</span>
+    </button>
+    <button class="nav-btn" data-tab="stats">
+      <span class="material-symbols-outlined">bar_chart</span>
+      <span class="nav-label">STATS</span>
     </button>
     <button class="nav-btn" data-tab="add">
       <span class="material-symbols-outlined">add_box</span>

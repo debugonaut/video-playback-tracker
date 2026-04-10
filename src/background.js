@@ -88,7 +88,8 @@ async function processAuthToken(token, tabId = null) {
       lastCapturedToken = token;
       console.log('[Background] Token captured. linking neural account...');
       
-      const credential = GoogleAuthProvider.credential(null, token);
+      // Use the token as a Google ID Token (first argument)
+      const credential = GoogleAuthProvider.credential(token);
       await signInWithCredential(auth, credential);
       
       // Update UI across entire extension

@@ -1261,27 +1261,26 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
         const idToken = await user.getIdToken();
         
         if (idToken) {
-          // 1. Content Script Bridge (Firefox + Backup)
-          window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: idToken }, '*');
+          // Broadcast multiple times to ensure content script capture
+          const broadcast = () => window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: idToken }, '*');
+          broadcast();
+          setTimeout(broadcast, 500); 
+          setTimeout(broadcast, 1000);
           
-          // 2. Hash-based bridge (Firefox backup)
           if (params.get('handler') === 'firefox') {
              window.location.hash = `token=${idToken}`;
           }
           
-          // 3. Chrome Direct Bridge (if ID is known - would require more config, using postMessage for now)
-          
           setError(null);
           setLoading(false);
-          // Show success message before closing
           document.body.innerHTML = `
             <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif;">
               <h1 style="color:#e51152; font-size:4rem; margin-bottom:0;">SYNC_SUCCESS</h1>
               <p style="text-transform:uppercase; letter-spacing:0.2em; color:#fff;">Neural Connection Established</p>
-              <div style="margin-top:20px; color:#555; font-size:10px;">CLOSING PORTAL IN 3s...</div>
+              <div style="margin-top:20px; color:#555; font-size:10px;">CLOSING PORTAL IN 4s...</div>
             </div>
           `;
-          setTimeout(() => { window.close(); }, 3000);
+          setTimeout(() => { window.close(); }, 4000);
           return;
         }
       }
@@ -1321,16 +1320,20 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
       const params = new URLSearchParams(window.location.search);
       if (params.get('reason') === 'sync' || params.get('reason') === 'extension_auth') {
         const idToken = await userCredential.user.getIdToken();
-        window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: idToken }, '*');
+        
+        const broadcast = () => window.postMessage({ type: 'REWIND_AUTH_SUCCESS', token: idToken }, '*');
+        broadcast();
+        setTimeout(broadcast, 500);
+        setTimeout(broadcast, 1000);
         
         document.body.innerHTML = `
             <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif;">
               <h1 style="color:#f7e600; font-size:4rem; margin-bottom:0;">SYNC_SUCCESS</h1>
               <p style="text-transform:uppercase; letter-spacing:0.2em; color:#fff;">Email Identification Synchronized</p>
-              <div style="margin-top:20px; color:#555; font-size:10px;">CLOSING PORTAL IN 3s...</div>
+              <div style="margin-top:20px; color:#555; font-size:10px;">CLOSING PORTAL IN 4s...</div>
             </div>
         `;
-        setTimeout(() => { window.close(); }, 3000);
+        setTimeout(() => { window.close(); }, 4000);
       }
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
