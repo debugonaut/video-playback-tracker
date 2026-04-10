@@ -9,16 +9,6 @@ import {
   setDoc, 
   serverTimestamp 
 } from 'firebase/firestore';
-import { 
-  collection, 
-  query, 
-  orderBy, 
-  limit, 
-  onSnapshot, 
-  doc, 
-  setDoc, 
-  serverTimestamp 
-} from 'firebase/firestore';
 
 // ─── State ────────────────────────────────────────────────────────
 let allEntries = [];
