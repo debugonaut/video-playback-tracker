@@ -1986,6 +1986,7 @@ function App() {
                   <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#features">FEATURES</a>
                   <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#compatibility">DEVICES</a>
                   <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-black dark:text-white font-bold hover:bg-[#e51152] hover:text-white transition-none px-2 py-1" href="#how-it-works">MACHINA</a>
+                  <a className="font-['Space_Grotesk'] uppercase tracking-tighter text-[#e51152] font-black hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-none px-2 py-1" href="/about.html">DEVLOG</a>
                   <ThemeToggle />
                   <button 
                     type="button"
@@ -2023,6 +2024,7 @@ function App() {
                   <a onClick={() => { setIsMobileMenuOpen(false); window.location.href = '#features'; }} className="text-4xl font-black italic uppercase tracking-tighter" href="#features">FEATURES</a>
                   <a onClick={() => { setIsMobileMenuOpen(false); window.location.href = '#compatibility'; }} className="text-4xl font-black italic uppercase tracking-tighter" href="#compatibility">DEVICES</a>
                   <a onClick={() => { setIsMobileMenuOpen(false); window.location.href = '#how-it-works'; }} className="text-4xl font-black italic uppercase tracking-tighter" href="#how-it-works">MACHINA</a>
+                  <a onClick={() => { setIsMobileMenuOpen(false); window.location.href = '/about.html'; }} className="text-4xl font-black italic uppercase tracking-tighter text-[#e51152]" href="/about.html">DEVLOG</a>
                   <div className="h-[2px] w-full bg-[#e51152] my-4"></div>
                   <button 
                     onClick={() => {

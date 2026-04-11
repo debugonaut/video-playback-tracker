@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About - Cyber-Rewind</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Styling -->
+  <style>
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #000;
+      color: #fff;
+    }
+    
+    .neo-border {
+      border: 4px solid #fff;
+    }
+    
+    .neo-shadow {
+      box-shadow: 12px 12px 0px 0px #e51152;
+    }
+    
+    .neo-shadow:hover {
+      transform: translate(6px, 6px);
+      box-shadow: 6px 6px 0px 0px #e51152;
+    }
+    
+    .neo-shadow-graph {
+      box-shadow: 12px 12px 0px 0px #f7e600;
+    }
+    
+    /* Code block styling */
+    pre {
+      background-color: #1a1a1a;
+      border: 2px solid #e51152;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    code {
+      font-family: monospace;
+      color: #f7e600;
+    }
+
+    .marker-box {
+      background-color: #e51152;
+      color: white;
+      padding: 2px 8px;
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+    
+    .cyber-gradient {
+      background: linear-gradient(135deg, #e51152 0%, #f7e600 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="selection:bg-[#e51152] selection:text-white min-h-screen pb-32">
+
+  <!-- Minimal Header -->
+  <header class="w-full border-b-4 border-white p-6 md:p-8 flex items-center justify-between sticky top-0 bg-black z-50">
+    <a href="/" class="text-2xl font-black italic tracking-tighter uppercase flex items-center gap-2 hover:opacity-80 transition-opacity">
+      <span class="material-symbols-outlined text-[#e51152] text-3xl">fast_rewind</span>
+      REWIND
+    </a>
+    <div class="flex items-center gap-4">
+      <span class="bg-[#f7e600] text-black font-black px-3 py-1 text-xs uppercase italic hidden md:block">SYS_DOCS: PUBLIC_READ</span>
+      <a href="/" class="border-2 border-white px-4 py-2 font-black uppercase text-sm hover:bg-white hover:text-black transition-colors">GO_BACK</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto mt-16 px-6">
+
+    <!-- Title Section -->
+    <div class="mb-20">
+      <div class="inline-block bg-[#e51152] text-white px-4 py-1 font-black text-xl mb-4 italic uppercase tracking-widest">A Full DevLog</div>
+      <h1 class="text-6xl md:text-[6rem] font-black uppercase tracking-tighter leading-none mb-8">From Frustration To <br><span class="cyber-gradient underline decoration-[#fff] decoration-8 underline-offset-8">Firefox Approval.</span></h1>
+    </div>
+
+    <!-- Section 1 -->
+    <section class="mb-24">
+      <h2 class="text-4xl font-black uppercase tracking-tighter border-b-4 border-white pb-4 mb-8 flex items-center gap-4">
+        <span class="material-symbols-outlined text-[#e51152] text-4xl">lightbulb</span> 01. The Idea
+      </h2>
+      <p class="text-xl md:text-2xl font-bold text-gray-300 leading-snug mb-6">
+        It started with a simple frustration. Some streaming platforms remember where you left off. Others don't. And none of them talk to each other.
+      </p>
+      <p class="text-lg text-gray-400 mb-6 border-l-4 border-[#f7e600] pl-6 py-2">
+        If you watch something on Netflix, pause halfway through a YouTube documentary, then catch up on a Crunchyroll episode — you're on your own. You're left remembering timestamps in your head, or worse, scrubbing through videos trying to find where you were.
+      </p>
+      <p class="text-xl font-bold bg-[#111] p-6 neo-border neo-shadow transition-all text-white border-white">
+        I wanted one place. A single dashboard where every video I'd ever watched — regardless of platform — showed up with a timestamp and a direct link back. Click it, and you're right where you left off.
+      </p>
+      <p class="text-lg text-gray-400 mt-6 italic">That was the whole idea. It sounds simple. It wasn't.</p>
+    </section>
+
+    <!-- Architecture Visual -->
+    <div class="w-full bg-[#111] p-8 neo-border neo-shadow-graph mb-24 transition-all hover:bg-black">
+      <h3 class="text-2xl font-black uppercase text-[#f7e600] mb-8">Architecture Diagram <span class="bg-[#e51152] text-white px-2 py-1 text-sm float-right">DIAG_v1.0</span></h3>
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8 text-center text-xl font-black">
+        <div class="border-4 border-white p-6 bg-black flex-1 w-full text-white">Browser Extension<br><span class="text-xs text-gray-400">DATA EXTRACTOR</span></div>
+        <span class="material-symbols-outlined text-4xl text-[#f7e600] rotate-90 md:rotate-0">sync_alt</span>
+        <div class="border-4 border-[#e51152] p-6 bg-[#e51152] flex-1 w-full text-white">Sync Pipeline<br><span class="text-xs text-[#ffb3c6]">FIREBASE DB</span></div>
+        <span class="material-symbols-outlined text-4xl text-[#f7e600] rotate-90 md:rotate-0">sync_alt</span>
+        <div class="border-4 border-white p-6 bg-black flex-1 w-full text-white">Web Dashboard<br><span class="text-xs text-gray-400">USER INTERFACE</span></div>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <section class="mb-24">
+      <h2 class="text-4xl font-black uppercase tracking-tighter border-b-4 border-white pb-4 mb-8 flex items-center gap-4">
+        <span class="material-symbols-outlined text-[#e51152] text-4xl">architecture</span> 02. Figuring Out The Architecture
+      </h2>
+      <p class="text-lg text-gray-300 mb-6">
+        The first real question was: how do you even capture a timestamp from a website you don't own? You can't just ask Netflix to give you that data. So the answer was a browser extension — a piece of code that runs inside the browser itself, with access to the page's DOM and all the media elements on it.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div class="border-2 border-white p-6 bg-[#111] hover:bg-[#e51152] transition-colors group">
+          <span class="marker-box group-hover:bg-white group-hover:text-black">1. Extractor</span>
+          <p class="mt-4 font-bold">A browser extension that silently watches for video playback on any site.</p>
+        </div>
+        <div class="border-2 border-white p-6 bg-[#111] hover:bg-[#f7e600] group transition-colors">
+          <span class="marker-box bg-[#f7e600] text-black group-hover:bg-black group-hover:text-white">2. Hub</span>
+          <p class="mt-4 font-bold group-hover:text-black dark:text-white">A web dashboard where all your saved timestamps live.</p>
+        </div>
+        <div class="border-2 border-white p-6 bg-[#111] hover:bg-white group transition-colors">
+          <span class="marker-box bg-white text-black group-hover:bg-black group-hover:text-white">3. Pipeline</span>
+          <p class="mt-4 font-bold group-hover:text-black dark:text-white">A real-time sync pipeline connecting the two environments.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section class="mb-24">
+      <h2 class="text-4xl font-black uppercase tracking-tighter border-b-4 border-white pb-4 mb-8 flex items-center gap-4">
+        <span class="material-symbols-outlined text-[#e51152] text-4xl">code_blocks</span> 03. Building The Extension
+      </h2>
+      
+      <h3 class="text-2xl font-black uppercase mt-12 mb-4 text-[#f7e600]">The SPA Problem</h3>
+      <p class="text-lg text-gray-300 mb-6">
+        The first wall I hit was the nature of modern streaming sites. Netflix and YouTube are Single Page Applications — they don't reload the page when you navigate between videos. They tear down the DOM and rebuild it dynamically. That means the classic <code class="bg-[#333] px-2 py-0.5 text-sm text-white">window.onload</code> listener you'd use to detect a new page? Completely useless here.
+      </p>
+      <p class="text-lg text-gray-300 mb-6">
+        The solution was the <span class="marker-box">MutationObserver API</span>. Instead of waiting for a page load, it binds directly to the root of the document and watches for any structural changes in the DOM tree — in real time. The moment a video element appears or gets swapped out, the extension knows about it.
+      </p>
+
+      <h3 class="text-2xl font-black uppercase mt-12 mb-4 text-[#f7e600]">Handling Multiple Video Elements</h3>
+      <p class="text-lg text-gray-300 mb-6">
+        Another wrinkle: modern streaming sites often have more than one video tag active at once. Netflix uses hidden video elements for hover previews. YouTube pre-buffers the next video in the background. To solve this, I used a <code class="bg-[#333] px-2 py-0.5 text-sm text-white">WeakSet</code> — a memory structure that drops references automatically to prevent memory leaks.
+      </p>
+
+      <h3 class="text-2xl font-black uppercase mt-12 mb-4 text-[#f7e600]">Catching Every Exit</h3>
+      <div class="bg-[#1a1a1a] p-6 border-l-8 border-[#e51152] mb-6">
+        <p class="text-lg font-bold text-white mb-2">Two redundancies built for tab-closures:</p>
+        <ul class="list-disc pl-6 space-y-2 text-gray-300">
+          <li>A <strong>periodic sync loop</strong> that fires every 30 seconds while a video is playing.</li>
+          <li>A <strong>beforeunload hook</strong> — a final save triggered milliseconds before the browser destroys the tab.</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- Deep Dive: Auth -->
+    <section class="mb-24 bg-[#e51152] text-white p-8 md:p-12 neo-border neo-shadow relative">
+      <div class="absolute top-0 right-0 bg-black text-[#f7e600] px-4 py-2 font-black text-sm border-b-4 border-l-4 border-white">HIGH CLEARANCE AREA</div>
+      <h2 class="text-4xl font-black uppercase tracking-tighter mb-8 flex items-center gap-4">
+        <span class="material-symbols-outlined text-white text-4xl">vpn_key</span> 04. The Authentication Problem & Neural Sync
+      </h2>
+      <p class="text-xl font-bold mb-6">
+        Browser extensions are sandboxed. They have no access to your session cookies or HttpOnly tokens from the website. Asking users to log in separately inside the popup creates friction and runs into CORS issues with OAuth flows.
+      </p>
+      <p class="font-bold border-t-2 border-white/30 pt-6 mt-6 mb-4">The Solution: Neural Sync</p>
+      <ol class="list-decimal pl-6 space-y-4 text-lg font-medium">
+        <li>Log into the web dashboard normally via Firebase Auth.</li>
+        <li>Dashboard mounts a hidden div on the page with your embedded token.</li>
+        <li>Extension polls the DOM every 2 seconds looking for it.</li>
+        <li>Extension retrieves the token, terminates polling, and secures the background worker.</li>
+      </ol>
+      <div class="mt-8 bg-black text-white p-4 font-black uppercase text-center border-2 border-white">
+        Zero logins. Zero popups. Completely frictionless.
+      </div>
+    </section>
+
+    <!-- Section 5 -->
+    <section class="mb-24">
+      <h2 class="text-4xl font-black uppercase tracking-tighter border-b-4 border-white pb-4 mb-8 flex items-center gap-4">
+        <span class="material-symbols-outlined text-[#e51152] text-4xl">hub</span> 05. The Dual Bucket System
+      </h2>
+      <p class="text-lg text-gray-300 mb-6">
+        The extension capturing data and the dashboard displaying it are two completely separate systems. If the extension tries to write directly to a secure Firestore database from an unstable environment, you get dropped data and auth failures.
+      </p>
+      <p class="text-lg text-gray-300 mb-6">
+        Instead, it fires payloads into a temporary, loosely permissioned buffer bucket. Think of it as a dropbox. When you open the web dashboard — where you're fully authenticated — it listens to that buffer, cleans the record, moves it to permanent history, and deletes the original.
+      </p>
+      <p class="text-xl font-black uppercase text-[#e51152]">The extension is the messenger. The dashboard is the gatekeeper.</p>
+    </section>
+
+    <!-- Section 6 -->
+    <section class="mb-24">
+      <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter border-b-4 border-white pb-4 mb-12 flex items-center gap-4 text-[#f7e600]">
+        <span class="material-symbols-outlined text-5xl">bug_report</span> 06. The Bugs That Nearly Broke Everything
+      </h2>
+      
+      <!-- BUG: GHOST DELETION -->
+      <div class="mb-12 border-4 border-gray-800 p-6 relative">
+        <span class="absolute top-[-16px] left-8 bg-[#f7e600] text-black px-4 py-1 font-black uppercase text-sm border-2 border-black">BUG: The Ghost Deletion</span>
+        <p class="text-lg text-gray-300 mb-4 mt-4">
+          Deleted items came back on page refresh. The root cause was a JavaScript object spread ordering issue. The ...doc.data() spread was overwriting the true Firestore string document ID with an internal numeric timestamp ID. Firebase deleted non-existent document 1714023456789.
+        </p>
+        <pre><code>// THE BUG
+const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+// THE FIX
+const data = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));</code></pre>
+      </div>
+
+       <!-- BUG: FIREFOX CSP -->
+       <div class="mb-12 border-4 border-gray-800 p-6 relative">
+        <span class="absolute top-[-16px] left-8 bg-[#e51152] text-white px-4 py-1 font-black uppercase text-sm border-2 border-white">BUG: The Firefox Blackout</span>
+        <p class="text-lg text-gray-300 mt-4">
+          Firefox Manifest V2 strictly enforces CSP. Firebase relies on WebSockets and long-polling. Firefox silently blocked it all. Added a <code class="bg-[#333] px-2 py-0.5 text-sm">connect-src</code> whitelist for Firebase endpoints. Fixed.
+        </p>
+      </div>
+
+      <!-- BUG: TYPE SORTING -->
+      <div class="mb-12 border-4 border-gray-800 p-6 relative">
+        <span class="absolute top-[-16px] left-8 bg-white text-black px-4 py-1 font-black uppercase text-sm border-2 border-black">BUG: Top-Rank Refusal</span>
+        <p class="text-lg text-gray-300 mt-4">
+           Firestore's descending sort puts strings above numbers. Manual entries saved timestamps as ISO strings; the extension used Unix integers. Result? "Modern Family" (manual) sat above thousands of newer extension traces forever. Standardized all outputs to integers.
+        </p>
+      </div>
+
+       <!-- BUG: VITE CHUNKS -->
+       <div class="mb-12 border-4 border-gray-800 p-6 relative">
+        <span class="absolute top-[-16px] left-8 bg-[#555] text-white px-4 py-1 font-black uppercase text-sm border-2 border-black">BUG: Vite Prod Crash</span>
+        <p class="text-lg text-gray-300 mt-4">
+          Dynamic import <code class="bg-[#333] px-2 py-0.5 text-sm">await import('firebase/firestore')</code> caused race conditions in Vercel deployed chunks. Stripped all dynamic imports and reverted to synchronous module loading.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- Grid Image / Screenshots layout idea -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-24 hidden md:grid">
+      <div class="h-32 bg-[#1a1a1a] flex items-center justify-center border-2 border-[#333] grayscale hover:grayscale-0 transition-all font-black text-white text-2xl">CSS</div>
+      <div class="h-32 bg-[#1a1a1a] flex items-center justify-center border-2 border-[#333] grayscale hover:grayscale-0 transition-all font-black text-[#e51152] text-2xl">REACT</div>
+      <div class="h-32 bg-[#1a1a1a] flex items-center justify-center border-2 border-[#333] grayscale hover:grayscale-0 transition-all font-black text-[#f7e600] text-2xl">VITE</div>
+      <div class="h-32 bg-[#1a1a1a] flex items-center justify-center border-2 border-[#333] grayscale hover:grayscale-0 transition-all font-black text-white text-2xl">FIREBASE</div>
+    </div>
+
+    <!-- Final Sections -->
+    <div class="flex flex-col lg:flex-row gap-12 mb-24">
+      <div class="flex-1">
+        <h2 class="text-3xl font-black uppercase tracking-tighter border-b-2 border-white pb-2 mb-6">07. The Dashboard</h2>
+        <p class="text-gray-400 mb-4">
+          Built with React, Vite, and Framer Motion. The design language is strictly Neo-Brutalism: hard borders, heavy shadows, stark contrast, and spring-physics animations that give the interface real physical weight. It is not a sterile SaaS tool. It has personality.
+        </p>
+      </div>
+      <div class="flex-1">
+        <h2 class="text-3xl font-black uppercase tracking-tighter border-b-2 border-white pb-2 mb-6">08. Cross-Browser Manifest</h2>
+        <p class="text-gray-400 mb-4">
+          Chrome (Manifest V3) and Firefox (Manifest V2) utilize entirely different security models. Maintaining two manifest files with shared core logic was non-negotiable. Bound natively through build scripts to handle structural deployment variances.
+        </p>
+      </div>
+    </div>
+
+    <!-- Outro -->
+    <section class="mb-32 text-center bg-white text-black p-12 neo-border neo-shadow">
+      <h2 class="text-5xl font-black uppercase tracking-tighter mb-6">What's Next.</h2>
+      <p class="text-xl font-bold max-w-2xl mx-auto mb-8">
+        Client-side filtering, domain blacklists, CSV/JSON offline backups, and predictive pre-fetching built on view habits.
+      </p>
+      <div class="inline-block bg-black text-white px-8 py-4 font-black uppercase tracking-widest border-4 border-black">
+        BUILT BY HAND. FIXED BY STUBBORNNESS.
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
