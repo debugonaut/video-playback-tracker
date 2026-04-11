@@ -102,16 +102,19 @@
 
     const progress = duration ? Math.min(100, Math.round((timestamp / duration) * 100)) : null;
 
+    // Extract correct URL (Use parent URL if inside iframe, prevents piracy site hotlink redirects)
+    const topUrl = (window !== window.top && document.referrer) ? document.referrer : window.location.href;
+
     const entry = {
       id: Date.now(),
       title:         getTitle(),
-      url:           window.location.href,
+      url:           topUrl,
       timestamp,
       formattedTime: formatTime(timestamp),
       duration,
       progress,
       thumbnail:     getThumbnail(),
-      favicon:       `https://www.google.com/s2/favicons?sz=32&domain=${window.location.hostname}`,
+      favicon:       `https://www.google.com/s2/favicons?sz=32&domain=${new URL(topUrl).hostname}`,
       savedAt:       Date.now(),
       pinned:        false,
       note:          '',
@@ -153,11 +156,32 @@
       if (hasAutoSeeked) return;
       chrome.storage.local.get({ history: [] }, (data) => {
         const history = data.history || [];
-        const entry = history.find(e => e.url === window.location.href);
+        
+        // Match by exact URL OR by parent URL (for dynamic iframes)
+        const currentUrl = window.location.href;
+        const parentUrl = (window !== window.top) ? document.referrer : null;
+        
+        const entry = history.find(e => {
+          if (e.url === currentUrl) return true;
+          // Substring/Fuzzy match for parent URL to handle "?play=true" noise
+          if (parentUrl && e.url.includes(parentUrl.split('?')[0])) return true;
+          if (e.url.includes(currentUrl.split('?')[0])) return true;
+          return false;
+        });
+
         if (entry && entry.timestamp > 5) {
           console.log('[Rewind] Auto-resuming to:', entry.timestamp);
+          
+          // Forcefully override custom players that reset time on load
           video.currentTime = entry.timestamp;
           hasAutoSeeked = true;
+          
+          // Double tap to override aggressive custom players
+          setTimeout(() => { 
+            if (Math.abs(video.currentTime - entry.timestamp) > 5) {
+              video.currentTime = entry.timestamp; 
+            }
+          }, 1500);
         }
       });
     };
