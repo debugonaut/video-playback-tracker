@@ -355,6 +355,28 @@ if (viewProfileBtn) {
   };
 }
 
+if (logoutBtn) {
+  logoutBtn.onclick = () => {
+    if (!confirm('TERMINATE_NEURAL_LINK? You will need to re-pair to sync again.')) return;
+    
+    // Clear paired session from local storage
+    chrome.storage.local.set({
+      session_active: false,
+      user_email: null,
+      user_id: null
+    }, () => {
+      // Tell background to sign out of Firebase (if it has auth)
+      chrome.runtime.sendMessage({ type: 'LOGOUT_REQUEST' });
+      
+      // Reset UI
+      currentUser = null;
+      updateAuthState();
+      if (pairingCodeInput) pairingCodeInput.value = '';
+      if (cloudLog) cloudLog.textContent = 'SESSION_TERMINATED: RE-PAIR_TO_RECONNECT';
+    });
+  };
+}
+
 // Neural Sync listeners have been moved to the background service worker
 // to ensure persistent connection and security review compliance.
 
