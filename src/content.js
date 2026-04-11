@@ -31,7 +31,20 @@
       if (nfTitle && nfTitle.textContent.trim()) return nfTitle.textContent.trim();
     }
 
-    // 3. Generic Meta Tags
+    // 3. Twitch Specific
+    if (window.location.hostname.includes('twitch.tv')) {
+      const twitchStreamTitle = document.querySelector('[data-a-target="stream-title"]');
+      const twitchVODTitle = document.querySelector('[data-a-target="video-title"]');
+      const broadcaster = document.querySelector('h1.tw-title') || document.querySelector('[data-a-target="user-channel-header-item"] h1');
+      
+      const streamEl = twitchStreamTitle || twitchVODTitle;
+      if (streamEl && streamEl.textContent.trim()) {
+        const bName = (broadcaster && broadcaster.textContent) ? broadcaster.textContent.trim() : window.location.pathname.split('/')[1];
+        return bName ? `${bName} - ${streamEl.textContent.trim()}` : streamEl.textContent.trim();
+      }
+    }
+
+    // 4. Generic Meta Tags
     const og    = getMeta(['meta[property="og:title"]', 'meta[name="twitter:title"]']);
     if (og) return og;
     
