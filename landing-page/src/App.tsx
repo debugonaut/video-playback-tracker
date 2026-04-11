@@ -183,7 +183,12 @@ const OperatorDashboard = ({
       
       const unsubHistory = onSnapshot(q, (snapshot) => {
         const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        setHistory(data);
+        setHistory(prev => {
+          // Merge: permanent entries take priority
+          const permIds = new Set(data.map(e => e.id));
+          const extOnly = prev.filter(e => (e as any)._fromExt && !permIds.has(e.id));
+          return [...data, ...extOnly];
+        });
       }, (err) => {
         console.warn('[Dashboard] History sync error:', err.message);
       });
@@ -205,7 +210,7 @@ const OperatorDashboard = ({
                 ...entry,
                 userId: user.uid,
                 syncedAt: serverTimestamp(),
-                savedAt: Date.now()
+                savedAt: entry.savedAt || Date.now()
               }, { merge: true });
               
               // Clean up from extension_sync after copying
