@@ -33,20 +33,15 @@
 
     // 3. Twitch Specific
     if (window.location.hostname.includes('twitch.tv')) {
-      const twitchStreamTitle = document.querySelector('[data-a-target="stream-title"]');
-      const twitchVODTitle = document.querySelector('[data-a-target="video-title"]');
-      const broadcaster = document.querySelector('h1.tw-title') || document.querySelector('[data-a-target="user-channel-header-item"] h1');
-      
-      const streamEl = twitchStreamTitle || twitchVODTitle;
-      if (streamEl && streamEl.textContent.trim()) {
-        const bName = (broadcaster && broadcaster.textContent) ? broadcaster.textContent.trim() : window.location.pathname.split('/')[1];
-        return bName ? `${bName} - ${streamEl.textContent.trim()}` : streamEl.textContent.trim();
+      // Twitch SPAs often have "Twitch" as the og:title. document.title is much more reliable.
+      if (document.title && document.title.trim() !== "Twitch") {
+         return document.title.trim().replace(/\s*[-–—]\s*Twitch$/i, '').trim();
       }
     }
 
     // 4. Generic Meta Tags
     const og    = getMeta(['meta[property="og:title"]', 'meta[name="twitter:title"]']);
-    if (og) return og;
+    if (og && og.toLowerCase() !== 'twitch') return og;
     
     // 4. Document Title Sanitization
     if (document.title && document.title.trim()) {
@@ -97,7 +92,14 @@
     const timestamp = video.currentTime;
     if (!timestamp || timestamp < 5) return;
 
-    const duration = video.duration && isFinite(video.duration) ? video.duration : null;
+    let duration = video.duration && isFinite(video.duration) ? video.duration : null;
+    
+    // Safety cap: Twitch livestreams often bubble Infinity or Epoch timestamps as duration (e.g. 9 billion seconds).
+    // If duration exceeds 24 hours (86400s), cap it to null so the UI treats it as an ongoing broadcast.
+    if (duration > 86400) {
+      duration = null;
+    }
+
     const progress = duration ? Math.min(100, Math.round((timestamp / duration) * 100)) : null;
 
     const entry = {
