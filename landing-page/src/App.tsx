@@ -271,8 +271,9 @@ const OperatorDashboard = ({
       // Force delete from both permanent storage AND the sync queue to prevent ghosts
       await deleteDoc(doc(db, 'users', user.uid, 'history', id));
       await deleteDoc(doc(db, 'extension_sync', user.uid, 'entries', id));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Delete error:', err);
+      alert(`Deletion Failed: ${err.message || err}`);
     }
   };
 
@@ -285,8 +286,9 @@ const OperatorDashboard = ({
         batch.delete(doc(db, 'extension_sync', user.uid, 'entries', item.id));
       });
       await batch.commit();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Clear error:', err);
+      alert(`Clear Failed: ${err.message || err}`);
     }
   };
 
