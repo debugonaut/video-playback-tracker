@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Video Playback Tracker",
-  "version": "2.0.4",
+  "version": "2.1.2",
   "description": "Automatically tracks your last watched video timestamp on any streaming site and reminds you when you return.",
   "permissions": [
     "storage",
