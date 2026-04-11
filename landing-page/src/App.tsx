@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db, googleProvider } from './lib/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { collection, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 // Neural Mirror Pulsar
 // This hidden component exposes the authenticated session token to the extension
@@ -177,41 +177,57 @@ const OperatorDashboard = ({
     }
 
     try {
+      // 1. Listen to permanent history (auth-protected)
       const historyRef = collection(db, 'users', user.uid, 'history');
       const q = query(historyRef, orderBy('savedAt', 'desc'));
       
-      // NEURAL BRIDGE: Listen for proxy-sync requests from the extension
-      const handleProxySync = async (event: MessageEvent) => {
-        if (event.data?.type === 'REWIND_PROXY_SYNC' && event.data?.entry) {
-          const entry = event.data.entry;
-          const entryId = btoa(unescape(encodeURIComponent(entry.url))).replace(/[/+=]/g, '_').substring(0, 50);
-          console.log('[Neural Bridge] Proxying sync for:', entry.title);
-          
-          try {
-            await setDoc(doc(db, 'users', user.uid, 'history', entryId), {
-              ...entry,
-              userId: user.uid,
-              syncedAt: serverTimestamp(),
-              savedAt: entry.savedAt || Date.now()
-            }, { merge: true });
-          } catch (e) {
-            console.error('[Neural Bridge] Proxy failure:', e);
+      const unsubHistory = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        setHistory(prev => {
+          // Merge: permanent entries take priority
+          const permIds = new Set(data.map(e => e.id));
+          const extOnly = prev.filter(e => (e as any)._fromExt && !permIds.has(e.id));
+          return [...data, ...extOnly];
+        });
+      }, (err) => {
+        console.warn('[Dashboard] History sync error:', err.message);
+      });
+
+      // 2. Listen to extension_sync (public, no auth needed)
+      const extRef = collection(db, 'extension_sync', user.uid, 'entries');
+      const extQ = query(extRef, orderBy('savedAt', 'desc'));
+      
+      const unsubExt = onSnapshot(extQ, async (snapshot) => {
+        for (const change of snapshot.docChanges()) {
+          if (change.type === 'added' || change.type === 'modified') {
+            const entry = change.doc.data();
+            const entryId = change.doc.id;
+            console.log('[Extension Sync] New entry:', entry.title);
+            
+            // Copy to permanent collection (we have auth here)
+            try {
+              await setDoc(doc(db, 'users', user.uid, 'history', entryId), {
+                ...entry,
+                userId: user.uid,
+                syncedAt: serverTimestamp(),
+                savedAt: entry.savedAt || Date.now()
+              }, { merge: true });
+              
+              // Clean up from extension_sync after copying
+              await deleteDoc(doc(db, 'extension_sync', user.uid, 'entries', entryId));
+              console.log('[Extension Sync] ✅ Copied and cleaned:', entry.title);
+            } catch (e) {
+              console.error('[Extension Sync] Copy error:', e);
+            }
           }
         }
-      };
-
-      window.addEventListener('message', handleProxySync);
-      
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setHistory(data);
       }, (err) => {
-        console.warn('[Dashboard] Sync interrupted:', err.message);
+        console.warn('[Extension Sync] Listener error:', err.message);
       });
       
       return () => {
-        unsubscribe();
-        window.removeEventListener('message', handleProxySync);
+        unsubHistory();
+        unsubExt();
       };
     } catch (err) {
       console.error('[Dashboard] Initialization failure:', err);

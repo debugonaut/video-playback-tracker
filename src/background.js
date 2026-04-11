@@ -224,61 +224,57 @@ async function processAuthToken(token, tabId = null) {
   }
 }
 
-// ─── Sync Logic ──────────────────────────────────────────────────
+// ─── Sync Logic (Extension Sync Collection) ─────────────────────
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'local' && (changes.history || changes.lastEntry)) {
-    if (changes.lastEntry?.newValue) {
-      syncToCloud(changes.lastEntry.newValue);
-    }
+  if (area === 'local' && changes.lastEntry?.newValue) {
+    syncToCloud(changes.lastEntry.newValue);
   }
 });
 
 async function syncToCloud(entry) {
   if (!entry || !entry.url) return;
 
-  // NEURAL BRIDGE: ALWAYS broadcast to portal tabs first (before auth check)
-  // This is the reliable fallback that works even without Firebase auth
-  broadcastToPortal(entry);
+  // Get the paired user_id from local storage (set during pairing)
+  const storage = await getStorage(['user_id']);
+  const userId = storage?.user_id;
 
-  // Then attempt direct Firestore write if we have auth
-  const activeUser = auth.currentUser;
-  if (!activeUser) {
-    console.log('[Sync] No Firebase auth — relying on Neural Bridge proxy');
+  if (!userId) {
+    console.log('[Sync] No paired user — skipping cloud sync');
     return;
   }
 
   try {
     const entryId = btoa(unescape(encodeURIComponent(entry.url))).replace(/[/+=]/g, '_').substring(0, 50);
-    const historyRef = doc(db, `users/${activeUser.uid}/history`, entryId);
+    const syncRef = doc(db, 'extension_sync', userId, 'entries', entryId);
 
-    console.log(`[Sync] Direct cloud push: ${entry.title}`);
+    console.log(`[Sync] Pushing to extension_sync: ${entry.title}`);
     
-    await setDoc(historyRef, {
+    await setDoc(syncRef, {
       ...entry,
-      userId: activeUser.uid,
+      userId: userId,
       syncedAt: serverTimestamp(),
       savedAt: entry.savedAt || Date.now()
     }, { merge: true });
 
-    console.log(`[Sync] Cloud success: ${entry.title}`);
+    console.log(`[Sync] ✅ Cloud success: ${entry.title}`);
   } catch (err) {
-    console.error('[Sync] Firestore error (Bridge will handle):', err);
+    console.error('[Sync] Firestore error:', err);
   }
 }
 
-function broadcastToPortal(entry) {
-  try {
-    chrome.tabs.query({}, (tabs) => {
-      (tabs || []).forEach(tab => {
-        if (tab.id) {
-          try {
-            chrome.tabs.sendMessage(tab.id, { type: 'REWIND_PROXY_BROADCAST', entry });
-          } catch (e) { /* restricted tab */ }
-        }
-      });
-    });
-  } catch (e) {
-    console.warn('[Bridge] Broadcast error:', e);
+async function migrateLocalHistoryToCloud() {
+  const storage = await getStorage(['user_id', 'history']);
+  const userId = storage?.user_id;
+  const history = storage?.history || [];
+
+  if (!userId || history.length === 0) return;
+
+  console.log(`[Sync] Migrating ${history.length} local entries to cloud...`);
+  for (const entry of history) {
+    if (entry && entry.url) {
+      await syncToCloud(entry);
+    }
   }
+  console.log('[Sync] Migration complete.');
 }
