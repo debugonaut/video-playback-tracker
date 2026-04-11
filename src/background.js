@@ -18,12 +18,20 @@ onAuthStateChanged(auth, async (user) => {
    const isNewUser = !currentUser || (user && user.uid !== currentUser.uid);
    currentUser = user;
  
-    // Persist session info to storage for popup to read instantly
-    await setStorage({ 
-      session_active: !!user,
-      user_email: user?.email || null,
-      user_id: user?.uid || null
-    });
+    // Persist session info — but NEVER overwrite an existing pairing session
+    if (user) {
+      await setStorage({ 
+        session_active: true,
+        user_email: user.email || null,
+        user_id: user.uid || null
+      });
+    } else {
+      // Only clear if there's no existing pairing session
+      const existing = await getStorage(['session_active']);
+      if (!existing || !existing.session_active) {
+        await setStorage({ session_active: false, user_email: null, user_id: null });
+      }
+    }
 
     // Notify the popup after storage is confirmed
     try {
