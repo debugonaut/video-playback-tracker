@@ -838,24 +838,50 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
           <div className="relative flex flex-col md:flex-row gap-8 items-start md:items-center">
             <div className="w-12 h-12 bg-[#e51152] text-white font-black flex items-center justify-center text-xl neo-border relative z-10 md:absolute md:left-1/2 md:-translate-x-1/2">01</div>
             <div className="flex-1 md:pr-24 text-left md:text-right">
-              <h3 className="text-2xl md:text-4xl font-black text-[#e51152] uppercase mb-4 tracking-tighter">STEP 1: GET THE FILES</h3>
+              <h3 className="text-2xl md:text-4xl font-black text-[#e51152] uppercase mb-4 tracking-tighter">
+                {selectedBrowser === 'chrome' ? 'STEP 1: GET THE FILES' : 'STEP 1: FIND THE EXTENSION'}
+              </h3>
               <p className="text-sm md:text-lg font-bold text-gray-400 font-['Manrope'] max-w-md md:ml-auto">
-                First, head over to this link <a href="https://github.com/debugonaut/video-playback-tracker" target="_blank" rel="noreferrer" className="text-white underline hover:text-[#e51152]">GitHub</a>.
+                {selectedBrowser === 'chrome' ? (
+                  <>
+                    First, head over to this link <a href="https://github.com/debugonaut/video-playback-tracker" target="_blank" rel="noreferrer" className="text-white underline hover:text-[#e51152]">GitHub</a>.
+                  </>
+                ) : (
+                  <>
+                    Open Firefox and search for <span className="text-white font-black italic">"Rewind - Video Playback Tracker"</span> in the Firefox Add-ons store, or click the button below.
+                  </>
+                )}
               </p>
-              <div className="mt-6 flex flex-col items-start md:items-end gap-3">
-                <span className="text-[10px] font-black uppercase text-[#e51152] tracking-widest leading-none">Download via:</span>
-                <div className="relative group">
-                  <img 
-                    src="/github_code.png" 
-                    alt="GitHub Code Button" 
-                    className="h-12 md:h-16 border-2 border-white/20 group-hover:border-[#e51152] transition-colors"
-                  />
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#e51152] animate-ping"></div>
+              {selectedBrowser === 'chrome' ? (
+                <div className="mt-6 flex flex-col items-start md:items-end gap-3">
+                  <span className="text-[10px] font-black uppercase text-[#e51152] tracking-widest leading-none">Download via:</span>
+                  <div className="relative group">
+                    <img 
+                      src="/github_code.png" 
+                      alt="GitHub Code Button" 
+                      className="h-12 md:h-16 border-2 border-white/20 group-hover:border-[#e51152] transition-colors"
+                    />
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#e51152] animate-ping"></div>
+                  </div>
                 </div>
-              </div>
-              <p className="mt-6 text-sm font-bold text-gray-500 font-['Manrope'] max-w-md md:ml-auto">
-                Once downloaded, right-click the <span className="text-white font-black italic underline decoration-[#e51152]">ZIP file</span> and select "Extract All" to get the operational folder.
-              </p>
+              ) : (
+                <div className="mt-6 flex flex-col items-start md:items-end gap-3">
+                  <a 
+                    href="https://addons.mozilla.org/en-US/firefox/addon/rewind-video-playback-tracker/" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="bg-[#e51152] text-white font-black text-xs md:text-sm px-6 py-4 uppercase border-2 border-black neo-shadow-white hover:bg-white hover:text-black transition-all flex items-center gap-3"
+                  >
+                    <span className="material-symbols-outlined">open_in_new</span>
+                    OPEN_FIREFOX_ADD-ONS_STORE
+                  </a>
+                </div>
+              )}
+              {selectedBrowser === 'chrome' && (
+                <p className="mt-6 text-sm font-bold text-gray-500 font-['Manrope'] max-w-md md:ml-auto">
+                  Once downloaded, right-click the <span className="text-white font-black italic underline decoration-[#e51152]">ZIP file</span> and select "Extract All" to get the operational folder.
+                </p>
+              )}
             </div>
             <div className="flex-1 md:pl-24">
               <div className="bg-[#111] p-6 border-4 border-white neo-shadow-white relative overflow-hidden group">
@@ -864,11 +890,22 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
                    <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 </div>
-                <div className="flex flex-col items-center py-8">
-                   <span className="material-symbols-outlined text-4xl text-[#e51152] mb-4">folder_zip</span>
-                   <div className="text-[10px] font-black uppercase text-gray-500 mb-6">REWIND_GEN_2.0.ZIP</div>
-                   <button className="bg-white text-black font-black text-[10px] px-6 py-2 uppercase border-2 border-black hover:bg-[#e51152] hover:text-white transition-colors">EXTRACT TO FOLDER</button>
-                </div>
+                {selectedBrowser === 'chrome' ? (
+                  <div className="flex flex-col items-center py-8">
+                     <span className="material-symbols-outlined text-4xl text-[#e51152] mb-4">folder_zip</span>
+                     <div className="text-[10px] font-black uppercase text-gray-500 mb-6">REWIND_GEN_2.0.ZIP</div>
+                     <button className="bg-white text-black font-black text-[10px] px-6 py-2 uppercase border-2 border-black hover:bg-[#e51152] hover:text-white transition-colors">EXTRACT TO FOLDER</button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center py-8">
+                     <span className="material-symbols-outlined text-4xl text-[#e51152] mb-4">search</span>
+                     <div className="bg-black border-2 border-white/30 px-4 py-3 flex items-center gap-3 w-full max-w-xs mb-4">
+                       <span className="material-symbols-outlined text-sm text-gray-500">search</span>
+                       <span className="text-xs font-mono text-[#f7e600]">Rewind - Video Playback Tracker</span>
+                     </div>
+                     <div className="text-[8px] font-black uppercase text-gray-600 tracking-widest">SEARCH_IN_ADD-ONS_STORE</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -877,43 +914,67 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
           <div className="relative flex flex-col-reverse md:flex-row gap-8 items-start md:items-center">
             <div className="flex-1 md:pr-24">
               <div className="bg-[#111] p-6 border-4 border-[#f7e600] neo-shadow-yellow text-left relative overflow-hidden group">
-                <div className="flex items-center gap-3 border-b border-white/20 pb-4 mb-6">
-                   <span className="material-symbols-outlined text-[#f7e600]">search</span>
-                   <span className="text-xs font-black uppercase text-gray-400">Browser / Address Bar</span>
-                </div>
-                <div className="bg-black border-2 border-white p-4 flex items-center justify-between group-hover:border-[#f7e600] transition-colors">
-                   <code className="text-[#f7e600] font-mono text-[10px] md:text-sm font-bold">
-                     {selectedBrowser === 'chrome' ? 'chrome://extensions' : 'about:debugging'}
-                   </code>
-                   <span className="material-symbols-outlined text-sm text-gray-500 animate-pulse">input</span>
-                </div>
-                <div className="mt-4 text-[8px] font-black text-gray-600 uppercase tracking-[0.2em]">
-                  PRESS_ENTER_TO_EXECUTE
-                </div>
+                {selectedBrowser === 'chrome' ? (
+                  <>
+                    <div className="flex items-center gap-3 border-b border-white/20 pb-4 mb-6">
+                       <span className="material-symbols-outlined text-[#f7e600]">search</span>
+                       <span className="text-xs font-black uppercase text-gray-400">Browser / Address Bar</span>
+                    </div>
+                    <div className="bg-black border-2 border-white p-4 flex items-center justify-between group-hover:border-[#f7e600] transition-colors">
+                       <code className="text-[#f7e600] font-mono text-[10px] md:text-sm font-bold">chrome://extensions</code>
+                       <span className="material-symbols-outlined text-sm text-gray-500 animate-pulse">input</span>
+                    </div>
+                    <div className="mt-4 text-[8px] font-black text-gray-600 uppercase tracking-[0.2em]">
+                      PRESS_ENTER_TO_EXECUTE
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-3 border-b border-white/20 pb-4 mb-6">
+                       <span className="material-symbols-outlined text-[#f7e600]">download</span>
+                       <span className="text-xs font-black uppercase text-gray-400">ONE-CLICK_INSTALL</span>
+                    </div>
+                    <div className="flex items-center gap-4 py-4">
+                       <div className="w-12 h-12 bg-[#e51152] flex items-center justify-center border-2 border-white">
+                          <span className="material-symbols-outlined text-white">play_circle</span>
+                       </div>
+                       <div className="flex-1">
+                          <div className="text-xs font-black text-white uppercase">REWIND - VIDEO PLAYBACK TRACKER</div>
+                          <div className="text-[10px] text-gray-500 font-bold mt-1">by debugonaut</div>
+                       </div>
+                       <div className="bg-[#f7e600] text-black font-black text-[10px] px-4 py-2 border-2 border-black">ADD</div>
+                    </div>
+                    <div className="mt-2 text-[8px] font-black text-gray-600 uppercase tracking-[0.2em]">
+                      CLICK_ADD_TO_FIREFOX
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <div className="w-12 h-12 bg-[#f7e600] text-black font-black flex items-center justify-center text-xl neo-border relative z-10 md:absolute md:left-1/2 md:-translate-x-1/2">02</div>
             <div className="flex-1 md:pl-24 text-left">
-              <h3 className="text-2xl md:text-4xl font-black text-[#f7e600] uppercase mb-4 tracking-tighter">STEP 2: OPEN EXTENSIONS</h3>
+              <h3 className="text-2xl md:text-4xl font-black text-[#f7e600] uppercase mb-4 tracking-tighter">
+                {selectedBrowser === 'chrome' ? 'STEP 2: OPEN EXTENSIONS' : 'STEP 2: INSTALL IT'}
+              </h3>
               <p className="text-sm md:text-lg font-bold text-gray-400 font-['Manrope'] max-w-md">
-                Now, open your browser's extension settings.
-                <br/><br/>
-                For {selectedBrowser === 'chrome' ? 'Chrome' : 'Firefox'}: {selectedBrowser === 'chrome' ? 'Click the 🧩 icon or type ' : 'Type '} 
-                <span className="bg-gray-800 text-white px-2 py-0.5 font-mono text-[10px] md:text-xs border border-white/20">
-                  {selectedBrowser === 'chrome' ? 'chrome://extensions' : 'about:debugging'}
-                </span>
-                {selectedBrowser === 'chrome' ? ' in your address bar.' : ' in the search bar to access developer dashboard'}
+                {selectedBrowser === 'chrome' ? (
+                  <>
+                    Now, open your browser's extension settings.
+                    <br/><br/>
+                    Click the 🧩 icon or type{' '} 
+                    <span className="bg-gray-800 text-white px-2 py-0.5 font-mono text-[10px] md:text-xs border border-white/20">
+                      chrome://extensions
+                    </span>
+                    {' '}in your address bar.
+                  </>
+                ) : (
+                  <>
+                    Click the <span className="text-white font-black italic">"Add to Firefox"</span> button on the add-ons page. A permission prompt will appear — click <span className="text-white font-black italic">"Add"</span> to confirm.
+                    <br/><br/>
+                    The Rewind icon will appear in your toolbar instantly!
+                  </>
+                )}
               </p>
-              {selectedBrowser === 'firefox' && (
-                <div className="mt-4 p-3 bg-[#e51152]/10 border-l-4 border-[#e51152] flex items-start gap-3">
-                  <span className="material-symbols-outlined text-[#e51152] text-sm">warning</span>
-                  <div className="text-[10px] font-bold text-gray-400 uppercase leading-tight">
-                    <span className="text-white">Note:</span> Firefox temporary add-ons reset after restart. 
-                    <br/>
-                    <span className="text-[#e51152] cursor-help" title="To stay permanent, use Firefox Developer Edition and set xpinstall.signatures.required to false in about:config">Learn how to make it permanent.</span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -922,7 +983,7 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
             <div className="w-12 h-12 bg-[#e51152] text-white font-black flex items-center justify-center text-xl neo-border relative z-10 md:absolute md:left-1/2 md:-translate-x-1/2">03</div>
             <div className="flex-1 md:pr-24 text-left md:text-right">
               <h3 className="text-2xl md:text-4xl font-black text-[#e51152] uppercase mb-4 tracking-tighter">
-                {selectedBrowser === 'chrome' ? 'STEP 3: THE SECRET TOGGLE' : 'STEP 3: ACCESS SYSTEM'}
+                {selectedBrowser === 'chrome' ? 'STEP 3: THE SECRET TOGGLE' : 'STEP 3: PAIR YOUR ACCOUNT'}
               </h3>
               <p className="text-sm md:text-lg font-bold text-gray-400 font-['Manrope'] max-w-md md:ml-auto uppercase">
                 {selectedBrowser === 'chrome' ? (
@@ -931,7 +992,7 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
                   </>
                 ) : (
                   <>
-                    <span className="text-[#f7e600] font-black">CRITICAL STEP:</span> Look at the left sidebar menu. You <span className="italic">must</span> select <span className="text-white">This Firefox</span> (or This Nightly). This will unlock the developer loading tools.
+                    Log in to <a href="https://rewind-player.vercel.app" target="_blank" rel="noreferrer" className="text-white underline hover:text-[#e51152]">rewind-player.vercel.app</a> and click <span className="text-white font-black">"GET_PAIRING_CODE"</span> in the sidebar. Copy the 10-character code and paste it into the extension's <span className="text-white font-black">SYNC</span> tab.
                   </>
                 )}
               </p>
@@ -946,11 +1007,19 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
                       </div>
                    </div>
                  ) : (
-                   <div className="relative w-full aspect-square md:aspect-video">
-                      <img src="/firefox_guide.png" alt="Firefox Debugging Guide" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
-                      <div className="absolute bottom-4 left-4 right-4 bg-[#e51152] text-white p-2 text-[10px] font-black uppercase italic border border-white">
-                        Access "This Firefox" in the sidebar
+                   <div className="p-6 w-full">
+                      <div className="flex items-center gap-3 mb-4">
+                         <span className="material-symbols-outlined text-[#f7e600] text-sm">key</span>
+                         <span className="text-[10px] font-black text-gray-400 uppercase">PAIRING_CODE</span>
+                      </div>
+                      <div className="bg-black border-2 border-white/30 p-4 flex items-center justify-center gap-1 mb-4">
+                        {['4','8','@','7','T','7','8','*','3','Y'].map((c, i) => (
+                          <span key={i} className="text-lg md:text-xl font-mono font-black text-white">{c}</span>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] font-black text-gray-600 uppercase">PASTE_IN_EXTENSION</span>
+                        <div className="bg-[#e51152] text-white font-black text-[8px] px-3 py-1 border border-white/30">CONNECT_ACCOUNT</div>
                       </div>
                    </div>
                  )}
@@ -963,35 +1032,56 @@ const SetupGuide = ({ onClose, browser }: { onClose: () => void, browser: 'chrom
           <div className="relative flex flex-col-reverse md:flex-row gap-8 items-start md:items-center mb-16">
             <div className="flex-1 md:pr-24">
                <div className="bg-[#111] border-4 border-[#f7e600] neo-shadow-yellow overflow-hidden relative group">
-                  <img src="/manifest_select.png" alt="Manifest Selection" className="w-full h-48 object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-transparent transition-colors">
-                     <div className="bg-[#f7e600] text-black font-black p-4 neo-border uppercase text-xs italic scale-110">TARGET: manifest.json</div>
-                  </div>
+                 {selectedBrowser === 'chrome' ? (
+                   <>
+                     <img src="/manifest_select.png" alt="Manifest Selection" className="w-full h-48 object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-transparent transition-colors">
+                        <div className="bg-[#f7e600] text-black font-black p-4 neo-border uppercase text-xs italic scale-110">TARGET: manifest.json</div>
+                     </div>
+                   </>
+                 ) : (
+                   <div className="h-48 flex flex-col items-center justify-center gap-4 p-6">
+                     <span className="material-symbols-outlined text-5xl text-[#f7e600]">check_circle</span>
+                     <div className="text-sm font-black text-white uppercase tracking-wider">ALL_SET!</div>
+                     <div className="text-[10px] font-bold text-gray-500 text-center uppercase">YOUR_VIDEOS_ARE_NOW_BEING_TRACKED_AUTOMATICALLY</div>
+                   </div>
+                 )}
                   <div className="p-4 bg-black/80 flex gap-4">
                     <button className="flex-1 bg-[#e51152] text-white font-black text-[10px] md:text-xs py-4 border-2 border-black dark:border-white shadow-[4px_4px_0px_white]">
-                      {selectedBrowser === 'chrome' ? 'LOAD UNPACKED' : 'LOAD TEMPORARY ADD-ON'}
+                      {selectedBrowser === 'chrome' ? 'LOAD UNPACKED' : 'START_WATCHING'}
                     </button>
-                    <button className="flex-1 bg-transparent text-gray-500 font-black text-[10px] md:text-xs py-4 border-2 border-gray-700 cursor-not-allowed">PACK EXTENSION</button>
+                    <button className="flex-1 bg-transparent text-gray-500 font-black text-[10px] md:text-xs py-4 border-2 border-gray-700 cursor-not-allowed">
+                      {selectedBrowser === 'chrome' ? 'PACK EXTENSION' : 'VIEW_PROFILE'}
+                    </button>
                   </div>
                </div>
             </div>
             <div className="w-12 h-12 bg-[#f7e600] text-black font-black flex items-center justify-center text-xl neo-border relative z-10 md:absolute md:left-1/2 md:-translate-x-1/2">04</div>
             <div className="flex-1 md:pl-24 text-left">
-              <h3 className="text-2xl md:text-4xl font-black text-[#f7e600] uppercase mb-4 tracking-tighter">STEP 4: LOAD IT UP</h3>
+              <h3 className="text-2xl md:text-4xl font-black text-[#f7e600] uppercase mb-4 tracking-tighter">
+                {selectedBrowser === 'chrome' ? 'STEP 4: LOAD IT UP' : 'STEP 4: START TRACKING'}
+              </h3>
               <p className="text-sm md:text-lg font-bold text-gray-400 font-['Manrope'] max-w-md">
-                Click the <span className="text-white font-black italic">'{selectedBrowser === 'chrome' ? 'Load Unpacked' : 'Load Temporary Add-on'}'</span> button. A folder window (or file selector) will pop up. 
-                <br/><br/>
                 {selectedBrowser === 'chrome' ? (
-                  <>Find the <span className="text-white font-black italic underline underline-offset-4 decoration-[#f7e600]">unzipped folder</span> and click <span className="text-white font-black italic">'Select Folder'</span>.</>
+                  <>
+                    Click the <span className="text-white font-black italic">'Load Unpacked'</span> button. A folder window (or file selector) will pop up. 
+                    <br/><br/>
+                    Find the <span className="text-white font-black italic underline underline-offset-4 decoration-[#f7e600]">unzipped folder</span> and click <span className="text-white font-black italic">'Select Folder'</span>.
+                    <br/><br/>
+                    The extension should appear instantly in your browser!
+                  </>
                 ) : (
-                  <>Navigate to the <span className="text-white font-black italic underline underline-offset-4 decoration-[#f7e600]">unzipped folder</span> and select the <span className="font-mono text-xs text-white">manifest.json</span> file.</>
+                  <>
+                    That's it! Open any video on <span className="text-white font-black italic">YouTube</span>, <span className="text-white font-black italic">Netflix</span>, or any streaming site. Rewind will automatically save your progress when you pause.
+                    <br/><br/>
+                    Click the <span className="text-white font-black italic">Rewind icon</span> in your toolbar to see your watch history anytime.
+                  </>
                 )}
-                <br/><br/>
-                The extension should appear instantly in your browser!
               </p>
             </div>
           </div>
         </div>
+
 
         {/* FAQ Section */}
         <div className="mt-32 p-8 md:p-12 border-4 border-white bg-[#0e0e0e] neo-shadow-white relative transition-all">
