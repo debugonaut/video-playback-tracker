@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Rewind: Video Playback Tracker",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "Automatically tracks your last watched video timestamp on any streaming site and keeps your history synced across devices.",
   "permissions": [
     "storage",
