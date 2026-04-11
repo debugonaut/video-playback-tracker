@@ -110,6 +110,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === 'GET_TAB_URL' && sender && sender.tab) {
+    sendResponse({ url: sender.tab.url });
+    return true;
+  }
+});
+
 async function executePairing(code) {
   try {
     // Brute Force Protection: Check local failure count

@@ -7,6 +7,19 @@
 
   const MAX_ENTRIES = 20;
 
+  // ─── Secure Global Context ────────────────────────────────────────────────
+  let absoluteTopUrl = window.location.href;
+  try {
+      chrome.runtime.sendMessage({ type: 'GET_TAB_URL' }, (response) => {
+          if (response && response.url) {
+              absoluteTopUrl = response.url;
+              console.log('[Rewind] Secured explicit top-level anchor:', absoluteTopUrl);
+          }
+      });
+  } catch (e) {
+      /* Connection may fail in generic non-extension sandbox frames */
+  }
+
   // ─── Extractors ───────────────────────────────────────────────────────────
 
   function getMeta(selectors) {
@@ -102,8 +115,8 @@
 
     const progress = duration ? Math.min(100, Math.round((timestamp / duration) * 100)) : null;
 
-    // Extract correct URL (Use parent URL if inside iframe, prevents piracy site hotlink redirects)
-    const topUrl = (window !== window.top && document.referrer) ? document.referrer : window.location.href;
+    // Extract correct URL (Guaranteed top-level via background fetch)
+    const topUrl = absoluteTopUrl || window.location.href;
 
     const entry = {
       id: Date.now(),
@@ -157,13 +170,12 @@
       chrome.storage.local.get({ history: [] }, (data) => {
         const history = data.history || [];
         
-        // Match by exact URL OR by parent URL (for dynamic iframes)
+        // Match by exact URL OR by secure absolute Top URL (for deep dynamic iframes)
         const currentUrl = window.location.href;
-        const parentUrl = (window !== window.top) ? document.referrer : null;
+        const parentUrl = absoluteTopUrl !== window.location.href ? absoluteTopUrl : ((window !== window.top) ? document.referrer : null);
         
         const entry = history.find(e => {
           if (e.url === currentUrl) return true;
-          // Substring/Fuzzy match for parent URL to handle "?play=true" noise
           if (parentUrl && e.url.includes(parentUrl.split('?')[0])) return true;
           if (e.url.includes(currentUrl.split('?')[0])) return true;
           return false;
