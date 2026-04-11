@@ -182,7 +182,7 @@ const OperatorDashboard = ({
       const q = query(historyRef, orderBy('savedAt', 'desc'));
       
       const unsubHistory = onSnapshot(q, (snapshot) => {
-        const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const data = snapshot.docs.map(d => ({ ...d.data(), id: d.id }));
         setHistory(prev => {
           // Merge: permanent entries take priority
           const permIds = new Set(data.map(e => e.id));
