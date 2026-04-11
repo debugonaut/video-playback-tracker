@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db, googleProvider } from './lib/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { collection, query, orderBy, onSnapshot, doc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, setDoc, deleteDoc, serverTimestamp, writeBatch } from 'firebase/firestore';
 
 // Neural Mirror Pulsar
 // This hidden component exposes the authenticated session token to the extension
@@ -251,7 +251,7 @@ const OperatorDashboard = ({
         url: addForm.url || null,
         formattedTime: addForm.timestamp || '0:00:00',
         progress: 0,
-        savedAt: new Date().toISOString(),
+        savedAt: Date.now(),
         thumbnail: null,
       });
       setAddStatus('done');
@@ -279,7 +279,6 @@ const OperatorDashboard = ({
   const handleClearAllHistory = async () => {
     if (!confirm('CLEAR_ENTIRE_NEURAL_LOG? THIS CANNOT BE UNDONE.')) return;
     try {
-      const { writeBatch } = await import('firebase/firestore');
       const batch = writeBatch(db);
       history.forEach(item => {
         batch.delete(doc(db, 'users', user.uid, 'history', item.id));
