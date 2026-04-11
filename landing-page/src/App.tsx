@@ -268,7 +268,6 @@ const OperatorDashboard = ({
   const handleDeleteHistoryItem = async (id: string) => {
     if (!confirm('DELETE_THIS_TRACE?')) return;
     try {
-      const { deleteDoc, doc } = await import('firebase/firestore');
       await deleteDoc(doc(db, 'users', user.uid, 'history', id));
     } catch (err) {
       console.error('Delete error:', err);
@@ -278,7 +277,7 @@ const OperatorDashboard = ({
   const handleClearAllHistory = async () => {
     if (!confirm('CLEAR_ENTIRE_NEURAL_LOG? THIS CANNOT BE UNDONE.')) return;
     try {
-      const { writeBatch, doc } = await import('firebase/firestore');
+      const { writeBatch } = await import('firebase/firestore');
       const batch = writeBatch(db);
       history.forEach(item => {
         batch.delete(doc(db, 'users', user.uid, 'history', item.id));
