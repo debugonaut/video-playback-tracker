@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+import re
+
+with open("landing-page/public/about.html", "r", encoding="utf-8") as f:
+    html = f.read()
+
+# I will write the complete updated DOM here.
+new_html = """<!DOCTYPE html>
 <html lang="en" class="dark scroll-smooth cursor-none">
 <head>
   <meta charset="UTF-8" />
@@ -731,3 +737,7 @@
   </script>
 </body>
 </html>
+"""
+
+with open("landing-page/public/about.html", "w", encoding="utf-8") as f:
+    f.write(new_html)
