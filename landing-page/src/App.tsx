@@ -268,7 +268,9 @@ const OperatorDashboard = ({
   const handleDeleteHistoryItem = async (id: string) => {
     if (!confirm('DELETE_THIS_TRACE?')) return;
     try {
+      // Force delete from both permanent storage AND the sync queue to prevent ghosts
       await deleteDoc(doc(db, 'users', user.uid, 'history', id));
+      await deleteDoc(doc(db, 'extension_sync', user.uid, 'entries', id));
     } catch (err) {
       console.error('Delete error:', err);
     }
@@ -281,6 +283,7 @@ const OperatorDashboard = ({
       const batch = writeBatch(db);
       history.forEach(item => {
         batch.delete(doc(db, 'users', user.uid, 'history', item.id));
+        batch.delete(doc(db, 'extension_sync', user.uid, 'entries', item.id));
       });
       await batch.commit();
     } catch (err) {

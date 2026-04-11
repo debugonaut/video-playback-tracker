@@ -9,7 +9,7 @@
     "notifications",
     "alarms"
   ],
-  "content_security_policy": "script-src 'self' https://*.googleapis.com https://*.firebaseio.com; object-src 'self';",
+  "content_security_policy": "script-src 'self' https://*.googleapis.com https://*.firebaseio.com; object-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com;",
   "background": {
     "scripts": [
       "background.js"
