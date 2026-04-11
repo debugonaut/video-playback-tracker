@@ -100,7 +100,7 @@ const PairingTerminal = ({ user }: { user: User }) => {
         <div className="absolute top-0 right-0 p-1 opacity-10">
           <span className="material-symbols-outlined text-2xl">key</span>
         </div>
-        <h3 className="text-brand-yellow font-black uppercase text-[8px] tracking-widest mb-3">NEURAL_PAIRING_UPLINK</h3>
+        <h3 className="text-brand-yellow font-black uppercase text-[8px] tracking-widest mb-3">EXTENSION_PAIRING</h3>
         
         {!code ? (
           <button 
@@ -108,7 +108,7 @@ const PairingTerminal = ({ user }: { user: User }) => {
             disabled={loading}
             className="w-full bg-brand-yellow text-black font-black uppercase py-3 text-[10px] hover:bg-white transition-all border-2 border-black"
           >
-            {loading ? 'GENERATING...' : 'GET_PAIR_CODE'}
+            {loading ? 'GENERATING...' : 'GET_PAIRING_CODE'}
           </button>
         ) : (
           <div className="text-center">
@@ -126,7 +126,7 @@ const PairingTerminal = ({ user }: { user: User }) => {
           </div>
         )}
         <p className="text-[7px] font-bold text-gray-500 uppercase mt-3 leading-tight text-center">
-          {code ? 'CODE COPIED TO CLIPBOARD' : 'ENTER CODE IN EXTENSION TO SYNC'}
+          {code ? 'CODE_COPIED_TO_CLIPBOARD' : 'ENTER_THIS_CODE_IN_THE_EXTENSION'}
         </p>
       </div>
 

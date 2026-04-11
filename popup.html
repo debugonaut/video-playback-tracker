@@ -39,7 +39,7 @@
       <div id="resumeSection" class="section-wrap">
         <div class="section-header">
            <span class="section-indicator"></span>
-           <span class="section-title">RESUME_WHERE_YOU_LEFT_OFF</span>
+           <span class="section-title">RESUME_WATCHING</span>
         </div>
         
         <section id="resumeBanner" class="hero-card hidden">
@@ -67,7 +67,7 @@
       <!-- History List Section -->
       <div id="historySection" class="section-wrap">
         <div class="section-header flex-row">
-           <span class="section-title">HISTORY_LOG</span>
+           <span class="section-title">WATCH_HISTORY</span>
            <div class="section-actions flex-row gap-4">
               <span id="gridToggle" class="material-symbols-outlined action-icon" title="Toggle Grid/List">grid_view</span>
               <span id="clearAllBtn" class="material-symbols-outlined action-icon" title="Clear All History">delete_sweep</span>
@@ -76,7 +76,7 @@
         </div>
         
         <div id="emptyState" class="empty-state hidden">
-          <p>NO_TRACKS_FOUND</p>
+          <p>NO_VIDEOS_TRACKED_YET</p>
         </div>
         
         <ul id="historyList" class="history-list">
@@ -91,21 +91,21 @@
     ══════════════════════════════════════════════════════════════ -->
     <div id="tab-add" class="tab-content hidden">
       <div class="section-header flex-row">
-         <h2 class="tab-title">MANUAL_INJECT</h2>
-         <span class="badge neon-pink">LIVE_LINK</span>
+         <h2 class="tab-title">ADD_MANUALLY</h2>
+         <span class="badge neon-pink">MANUAL_ENTRY</span>
       </div>
 
       <div class="inject-form">
         <div class="form-group relative">
           <label class="form-label">VIDEO TITLE</label>
-          <input type="text" id="manualTitle" placeholder="ENTER_NAME_SEQUENCE" class="inject-input" />
+          <input type="text" id="manualTitle" placeholder="ENTER_VIDEO_TITLE" class="inject-input" />
           <div class="input-glow"></div>
         </div>
         
         <div class="form-group">
           <label class="form-label">URL</label>
           <div class="input-with-icon">
-            <input type="url" id="manualUrl" placeholder="HTTPS://VOID.KINETIC/DATA" class="inject-input" />
+            <input type="url" id="manualUrl" placeholder="HTTPS://EXAMPLE.COM/VIDEO" class="inject-input" />
             <span class="material-symbols-outlined input-icon">link</span>
           </div>
         </div>
@@ -122,7 +122,7 @@
           <p class="status-text">Injection point ready. Buffer cleared at 23ms. Metadata synchronization required after 'SAVE_OBJECT'.</p>
         </div>
 
-        <button id="saveManualBtn" class="inject-btn">SAVE_OBJECT</button>
+        <button id="saveManualBtn" class="inject-btn">SAVE_ENTRY</button>
       </div>
     </div><!-- /tab-add -->
 
@@ -131,8 +131,8 @@
     ══════════════════════════════════════════════════════════════ -->
     <div id="tab-stats" class="tab-content hidden">
       <div class="section-header flex-row">
-         <h2 class="tab-title">NEURAL_STATS</h2>
-         <span class="badge yellow">ACTIVE_MONITOR</span>
+         <h2 class="tab-title">YOUR_STATS</h2>
+         <span class="badge yellow">TRACKING_ACTIVE</span>
       </div>
 
       <div class="stats-grid">
@@ -141,7 +141,7 @@
               <span id="totalTime" class="stat-value">00:00:00</span>
           </div>
           <div class="stat-card">
-              <span class="stat-label">NEURAL_ENTRIES</span>
+              <span class="stat-label">VIDEOS_TRACKED</span>
               <span id="totalEntries" class="stat-value">0</span>
           </div>
       </div>
@@ -168,7 +168,7 @@
     ══════════════════════════════════════════════════════════════ -->
     <div id="tab-sync" class="tab-content hidden">
       <div class="section-header flex-row">
-         <h2 class="tab-title">CLOUD_NEURAL_SYNC</h2>
+         <h2 class="tab-title">CLOUD_SYNC</h2>
          <span id="syncStatus" class="stat-badge offline">OFFLINE</span>
       </div>
 
@@ -176,27 +176,27 @@
 
         <!-- Connection Portal (Visible when signed out) -->
         <div id="loginForm" class="inject-form">
-          <p class="auth-desc">Establishing a magic handshake was blocked. Use the 100% reliable **NEURAL PAIRING** protocol instead.</p>
+          <p class="auth-desc">CONNECT_YOUR_ACCOUNT_USING_A_PAIRING_CODE_FROM_THE_WEBSITE.</p>
           
           <div class="form-group">
-            <label class="form-label">NEURAL LINK CODE</label>
+            <label class="form-label">PAIRING_CODE</label>
             <input type="text" id="pairingCode" placeholder="ABC-123-***" class="inject-input text-center" maxlength="10" />
             <div class="input-glow"></div>
           </div>
 
           <button id="syncPairBtn" class="inject-btn primary">
             <span class="material-symbols-outlined" style="margin-right: 8px; vertical-align: middle; font-size: 18px;">bolt</span>
-            SYNCHRONIZE_ACCOUNTS
+            CONNECT_ACCOUNT
           </button>
 
           <p id="cloudLog" style="margin-top: 1rem; font-size: 10px; color: #e51152; font-weight: 800; text-align: center; height: 1.5em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"></p>
 
           <p class="auth-desc" style="margin-top: 1rem; font-size: 10px;">
-            DON'T HAVE A CODE? <a href="https://rewind-player.vercel.app/profile" target="_blank" style="color: #e51152; font-weight: 800;">OPEN_PORTAL</a>
+            DON'T HAVE A CODE? <a href="https://rewind-player.vercel.app/profile" target="_blank" style="color: #e51152; font-weight: 800;">OPEN_WEBSITE</a>
           </p>
           
           <div class="status-box" style="margin-top: 1.5rem; border-color: rgba(229, 17, 82, 0.4);">
-            <div class="status-header" style="color: #e51152;">PAIRING_GUIDE</div>
+            <div class="status-header" style="color: #e51152;">HOW_TO_CONNECT</div>
             <p class="status-text">1. Log into Rewind Portal. <br>2. Click 'Get Pair Code' in sidebar. <br>3. Enter the 10-character code above.</p>
           </div>
         </div>
@@ -206,7 +206,7 @@
           <div class="user-card">
             <div class="user-info">
               <span id="userEmail" class="user-email">identity@void.kinetic</span>
-              <span class="user-status">SYNC_STABLE</span>
+              <span class="user-status">CONNECTED</span>
             </div>
             <button id="logoutBtn" class="logout-btn">LOGOUT</button>
           </div>
@@ -214,7 +214,7 @@
           <div class="sync-settings">
             <div class="setting-item">
               <div class="setting-info">
-                <span class="setting-name">REALTIME_LINK</span>
+                <span class="setting-name">REALTIME_SYNC</span>
                 <span class="setting-desc">Push updates immediately on pause</span>
               </div>
               <label class="toggle">

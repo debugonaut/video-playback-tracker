@@ -266,7 +266,7 @@ function deleteEntry(id) {
 }
 
 clearAllBtn.onclick = () => {
-  if (confirm('CLEAR_ALL_NEURAL_HISTORY?')) {
+  if (confirm('CLEAR_ALL_HISTORY?')) {
     allEntries = [];
     chrome.storage.local.set({ history: [] }, renderHistory);
   }
@@ -303,11 +303,11 @@ function checkSession() {
           renderHistory();
       }
       updateAuthState();
-      if (cloudLog) cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED: SYNC_READY';
+      if (cloudLog) cloudLog.textContent = 'CONNECTED:_SYNC_IS_ACTIVE';
     } else {
       currentUser = null;
       updateAuthState();
-      if (cloudLog) cloudLog.textContent = 'READY_FOR_NEURAL_LINKING';
+      if (cloudLog) cloudLog.textContent = 'ENTER_A_PAIRING_CODE_TO_CONNECT';
     }
   });
 }
@@ -333,16 +333,16 @@ if (syncPairBtn) {
   syncPairBtn.onclick = () => {
     const code = pairingCodeInput.value.trim();
     if (code.length !== 10) {
-      if (cloudLog) cloudLog.textContent = 'ERROR: INVALID_KEY_LENGTH_(10_CHARS_REQUIRED)';
+      if (cloudLog) cloudLog.textContent = 'ERROR:_INVALID_CODE_LENGTH_(10_CHARS_REQUIRED)';
       return;
     }
     
-    if (cloudLog) cloudLog.textContent = 'EXECUTING_NEURAL_PAIRING...';
+    if (cloudLog) cloudLog.textContent = 'CONNECTING...';
     chrome.runtime.sendMessage({ type: 'EXECUTE_PAIRING', code }, (response) => {
       if (response && !response.success) {
         if (cloudLog) cloudLog.textContent = `ERROR: ${response.error || 'PAIRING_FAILED'}`;
       } else if (response && response.success) {
-        if (cloudLog) cloudLog.textContent = 'NEURAL_LINK_ESTABLISHED';
+        if (cloudLog) cloudLog.textContent = 'CONNECTED_SUCCESSFULLY';
       }
     });
   };
@@ -357,7 +357,7 @@ if (viewProfileBtn) {
 
 if (logoutBtn) {
   logoutBtn.onclick = () => {
-    if (!confirm('TERMINATE_NEURAL_LINK? You will need to re-pair to sync again.')) return;
+    if (!confirm('LOG_OUT?_YOU_WILL_NEED_TO_RE-PAIR_TO_SYNC_AGAIN.')) return;
     
     // Clear paired session from local storage
     chrome.storage.local.set({
@@ -372,7 +372,7 @@ if (logoutBtn) {
       currentUser = null;
       updateAuthState();
       if (pairingCodeInput) pairingCodeInput.value = '';
-      if (cloudLog) cloudLog.textContent = 'SESSION_TERMINATED: RE-PAIR_TO_RECONNECT';
+      if (cloudLog) cloudLog.textContent = 'LOGGED_OUT._ENTER_A_NEW_CODE_TO_RECONNECT.';
     });
   };
 }
