@@ -99,6 +99,100 @@
       : `${m}:${String(s).padStart(2, '0')}`;
   }
 
+  function getVideoPermalink(video) {
+    const defaultUrl = absoluteTopUrl || window.location.href;
+
+    try {
+      const host = window.location.hostname;
+      const path = window.location.pathname;
+
+      // Ensure we DO NOT override known dedicated player pages
+      const dedicatedPlayers = ['netflix.com', 'hulu.com', 'primevideo.com', 'hbomax.com', 'disneyplus.com', 'crunchyroll.com'];
+      if (dedicatedPlayers.some(d => host.includes(d))) return defaultUrl;
+
+      // 1. Youtube
+      if (host.includes('youtube.com')) {
+        if (path.startsWith('/watch')) return defaultUrl;
+        const container = video.closest('ytd-rich-item-renderer, ytd-video-renderer, ytd-compact-video-renderer');
+        if (container) {
+          const anchor = container.querySelector('a#thumbnail, a.yt-simple-endpoint');
+          if (anchor && anchor.href && anchor.href.includes('/watch')) return anchor.href;
+        }
+      }
+
+      // 2. Twitter / X
+      if (host.includes('twitter.com') || host.includes('x.com')) {
+        if (path.includes('/status/')) return defaultUrl;
+        const article = video.closest('article');
+        if (article) {
+          const anchor = Array.from(article.querySelectorAll('a')).find(a => a.href.includes('/status/'));
+          if (anchor) return anchor.href;
+        }
+      }
+
+      // 3. Reddit
+      if (host.includes('reddit.com')) {
+        if (path.includes('/comments/')) return defaultUrl;
+        const post = video.closest('shreddit-post, .Post, div[data-testid="post-container"]');
+        if (post) {
+          const permalink = post.getAttribute('permalink');
+          if (permalink) return new URL(permalink, window.location.origin).href;
+          const anchor = Array.from(post.querySelectorAll('a')).find(a => a.href.includes('/comments/'));
+          if (anchor) return anchor.href;
+        }
+      }
+
+      // 4. TikTok
+      if (host.includes('tiktok.com')) {
+        if (path.includes('/video/')) return defaultUrl;
+        const container = video.closest('[data-e2e="recommend-list-item-container"], .video-feed-item');
+        if (container) {
+          const anchor = Array.from(container.querySelectorAll('a')).find(a => a.href.includes('/video/'));
+          if (anchor) return anchor.href;
+        }
+      }
+
+      // 5. Instagram
+      if (host.includes('instagram.com')) {
+        if (path.includes('/p/') || path.includes('/reel/')) return defaultUrl;
+        const article = video.closest('article');
+        if (article) {
+          const anchor = Array.from(article.querySelectorAll('a')).find(a => a.href.includes('/p/') || a.href.includes('/reel/'));
+          if (anchor) return anchor.href;
+        }
+      }
+
+      // 6. LinkedIn
+      if (host.includes('linkedin.com')) {
+        if (path.includes('/posts/') || path.includes('/feed/update/')) return defaultUrl;
+        const post = video.closest('.feed-shared-update-v2, [data-urn]');
+        if (post) {
+          const anchor = Array.from(post.querySelectorAll('a')).find(a => a.href.includes('/posts/') || a.href.includes('/urn:li:activity:'));
+          if (anchor) return anchor.href;
+        }
+      }
+
+      // 7. Universal Fallback for unknown architectures (Path Agnostic)
+      const container = video.closest('article, [role="article"], .post, .feed-item, li, [class*="post"], [class*="item"]');
+      if (container) {
+          const signatures = ['/video/', '/post/', '/p/', '/status/', '/watch', '/reel/', '/v/', '/view/'];
+          const anchor = Array.from(container.querySelectorAll('a')).find(a => 
+              signatures.some(sig => a.href.includes(sig))
+          );
+          if (anchor) return anchor.href;
+      }
+      
+      // Absolute direct wrapper fallback
+      const parentAnchor = video.closest('a');
+      if (parentAnchor && parentAnchor.href) return parentAnchor.href;
+
+    } catch (e) {
+      // Safely ignore traversal errors and fallback
+    }
+
+    return defaultUrl;
+  }
+
   // ─── Storage ──────────────────────────────────────────────────────────────
 
   function saveEntry(video) {
@@ -115,8 +209,8 @@
 
     const progress = duration ? Math.min(100, Math.round((timestamp / duration) * 100)) : null;
 
-    // Extract correct URL (Guaranteed top-level via background fetch)
-    const topUrl = absoluteTopUrl || window.location.href;
+    // Extract contextual permalink (solves Infinite Feed Paradox)
+    const topUrl = getVideoPermalink(video);
 
     const entry = {
       id: Date.now(),
@@ -178,6 +272,21 @@
           if (e.url === currentUrl) return true;
           if (parentUrl && e.url.includes(parentUrl.split('?')[0])) return true;
           if (e.url.includes(currentUrl.split('?')[0])) return true;
+          
+          // Omni-Match: Compare core URL components to defeat domain redirects (x.com vs twitter.com)
+          try {
+            const eUrl = new URL(e.url);
+            const cUrl = new URL(currentUrl);
+            const isMatch = eUrl.pathname === cUrl.pathname && eUrl.pathname.length > 5;
+            
+            // Special handler for YouTube (query params matter)
+            if (eUrl.hostname.includes('youtube.com')) {
+              return eUrl.searchParams.get('v') === cUrl.searchParams.get('v');
+            }
+            
+            return isMatch;
+          } catch(err) {}
+
           return false;
         });
 

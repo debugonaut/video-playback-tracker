@@ -1,4 +1,4 @@
-# Video Playback Tracker (v2.0.4)
+# Video Playback Tracker (v2.1.3)
 
 A professional playback tracking extension for Chrome and Firefox that automatically saves your video progress.
 

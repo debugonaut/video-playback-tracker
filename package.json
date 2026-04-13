@@ -1,6 +1,6 @@
 {
   "name": "video-playback-tracker",
-  "version": "1.0.0",
+  "version": "2.1.3",
   "description": "A cross-browser extension for **Chrome** and **Firefox** that automatically tracks your video playback timestamps on any streaming website — so you never lose your place again.",
   "main": "background.js",
   "scripts": {
