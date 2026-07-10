@@ -267,7 +267,7 @@
 
       // ACTIVE PROBE: Signal background engine to sync immediately
       try {
-        chrome.runtime.sendMessage({ type: 'FORCE_SYNC', entry });
+        chrome.runtime.sendMessage({ type: 'FORCE_SYNC', entry }).catch(() => {});
       } catch (e) {}
     });
   }
@@ -450,7 +450,7 @@
         chrome.runtime.sendMessage({ 
           type: 'AUTH_TOKEN_UPDATE', 
           token: pulse.dataset.token 
-        });
+        }).catch(() => {});
         return true;
       }
       return false;
@@ -473,7 +473,7 @@
         chrome.runtime.sendMessage({ 
           type: 'AUTH_TOKEN_UPDATE', 
           token: event.data.token 
-        });
+        }).catch(() => {});
       }
     });
 

@@ -35,7 +35,7 @@ onAuthStateChanged(auth, async (user) => {
 
     // Notify the popup after storage is confirmed
     try {
-      chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user });
+      chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED', user: !!user }).catch(() => {});
     } catch (e) {}
  
    if (user) {
@@ -198,7 +198,7 @@ async function executePairing(code) {
     await deleteDoc(pairRef);
 
     // Initial state update across extension
-    try { chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' }); } catch(e) {}
+    try { chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' }).catch(() => {}); } catch(e) {}
     
     // Reset failures on success
     await setStorage({ pairing_failures: 0, lockout_until: null });
@@ -249,7 +249,7 @@ async function processAuthToken(token, tabId = null) {
       
       // Update UI across entire extension
       try {
-        chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' });
+        chrome.runtime.sendMessage({ type: 'AUTH_STATE_UPDATED' }).catch(() => {});
       } catch (e) {
         // Popup is closed — normal.
       }

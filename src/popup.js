@@ -306,7 +306,7 @@ saveManualBtn.addEventListener('click', async () => {
 function deleteEntry(id) {
   const entryToDelete = allEntries.find(e => e.id === id);
   if (entryToDelete && entryToDelete.url) {
-    chrome.runtime.sendMessage({ type: 'DELETE_ENTRY', url: entryToDelete.url });
+    chrome.runtime.sendMessage({ type: 'DELETE_ENTRY', url: entryToDelete.url }).catch(() => {});
   }
   allEntries = allEntries.filter(e => e.id !== id);
   chrome.storage.local.set({ history: allEntries }, renderHistory);
@@ -316,7 +316,7 @@ clearAllBtn.onclick = () => {
   if (confirm('Are you sure you want to clear your entire history? This cannot be undone.')) {
     allEntries = [];
     chrome.storage.local.set({ history: [] }, renderHistory);
-    chrome.runtime.sendMessage({ type: 'CLEAR_ALL_HISTORY' });
+    chrome.runtime.sendMessage({ type: 'CLEAR_ALL_HISTORY' }).catch(() => {});
   }
 };
 
@@ -415,7 +415,7 @@ if (logoutBtn) {
       user_id: null
     }, () => {
       // Tell background to sign out of Firebase (if it has auth)
-      chrome.runtime.sendMessage({ type: 'LOGOUT_REQUEST' });
+      chrome.runtime.sendMessage({ type: 'LOGOUT_REQUEST' }).catch(() => {});
       
       // Reset UI
       currentUser = null;
