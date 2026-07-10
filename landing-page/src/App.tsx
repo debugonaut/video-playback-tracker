@@ -96,11 +96,11 @@ const PairingTerminal = ({ user }: { user: User }) => {
 
   return (
     <>
-      <div className="neo-card bg-black p-4 border-l-4 border-brand-yellow relative overflow-hidden">
+      <div className="neo-card p-4 border-l-4 border-brand-yellow relative overflow-hidden">
         <div className="absolute top-0 right-0 p-1 opacity-10">
           <span className="material-symbols-outlined text-2xl">key</span>
         </div>
-        <h3 className="text-brand-yellow font-black uppercase text-[8px] tracking-widest mb-3">EXTENSION_PAIRING</h3>
+        <h3 className="text-brand-yellow font-black uppercase text-[8px] tracking-widest mb-3">Extension Pairing</h3>
         
         {!code ? (
           <button 
@@ -108,11 +108,11 @@ const PairingTerminal = ({ user }: { user: User }) => {
             disabled={loading}
             className="w-full bg-brand-yellow text-black font-black uppercase py-3 text-[10px] hover:bg-white transition-all border-2 border-black"
           >
-            {loading ? 'GENERATING...' : 'GET_PAIRING_CODE'}
+            {loading ? 'Generating...' : 'Get Pairing Code'}
           </button>
         ) : (
           <div className="text-center">
-            <div className="text-xl font-black tracking-widest text-white mb-1 font-mono">
+            <div className="text-xl font-black tracking-widest text-black dark:text-white mb-1 font-mono">
               {code}
             </div>
             <div className="flex justify-center gap-1 mb-1">
@@ -126,7 +126,7 @@ const PairingTerminal = ({ user }: { user: User }) => {
           </div>
         )}
         <p className="text-[7px] font-bold text-gray-500 uppercase mt-3 leading-tight text-center">
-          {code ? 'CODE_COPIED_TO_CLIPBOARD' : 'ENTER_THIS_CODE_IN_THE_EXTENSION'}
+          {code ? 'Code copied to clipboard!' : 'Enter this code in the extension to connect.'}
         </p>
       </div>
 
@@ -139,7 +139,7 @@ const PairingTerminal = ({ user }: { user: User }) => {
             className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-brand-pink text-white font-black uppercase text-[10px] py-4 px-8 border-4 border-black shadow-[8px_8px_0px_#000] flex items-center gap-4"
           >
             <span className="material-symbols-outlined">content_copy</span>
-            YOUR KEY IS COPIED, PLEASE PASTE IT ONTO THE WEB EXTENSION TO PAIR
+            Pairing code copied to clipboard! Paste it into the extension to sync.
           </motion.div>
         )}
       </AnimatePresence>
@@ -266,7 +266,7 @@ const OperatorDashboard = ({
   };
 
   const handleDeleteHistoryItem = async (id: string | number) => {
-    if (!confirm('DELETE_THIS_TRACE?')) return;
+    if (!confirm('Are you sure you want to delete this item?')) return;
     try {
       // Force delete from both permanent storage AND the sync queue to prevent ghosts
       const docId = String(id);
@@ -279,7 +279,7 @@ const OperatorDashboard = ({
   };
 
   const handleClearAllHistory = async () => {
-    if (!confirm('CLEAR_ENTIRE_NEURAL_LOG? THIS CANNOT BE UNDONE.')) return;
+    if (!confirm('Are you sure you want to clear your entire sync history? This cannot be undone.')) return;
     try {
       const batch = writeBatch(db);
       history.forEach(item => {
@@ -390,7 +390,7 @@ const OperatorDashboard = ({
       <div className={`${isDemo ? 'w-[140px]' : 'w-[200px] md:w-[260px]'} bg-bg-secondary border-r-2 border-brand-pink flex flex-col justify-between py-8 shrink-0`}>
         <div>
           <div className="px-8 mb-12">
-            <h3 className="text-[#e51152] font-black text-xs tracking-widest uppercase mb-1">{isDemo ? 'VOID_SIM' : 'VOID_OPERATOR'}</h3>
+            <h3 className="text-[#e51152] font-black text-xs tracking-widest uppercase mb-1">{isDemo ? 'Demo Mode' : 'User Session'}</h3>
             <p className="text-gray-500 text-[10px] uppercase font-bold">{isDemo ? 'DEMO_NODE' : 'LEVEL 04 ANALYST'}</p>
           </div>
           
@@ -451,7 +451,7 @@ const OperatorDashboard = ({
         {/* TOP NAV BAR */}
         <header className={`${isDemo ? 'h-14 px-4' : 'h-20 px-10'} border-b border-brand-pink/30 flex items-center justify-between shrink-0 bg-bg-secondary/50 backdrop-blur-sm relative z-10`}>
           <div className="flex items-center gap-6">
-            <h1 className={`${isDemo ? 'text-sm' : 'text-xl'} text-[#e51152] font-black italic tracking-tighter uppercase glitch-text`}>CYBER-REWIND</h1>
+            <h1 className={`${isDemo ? 'text-sm' : 'text-xl'} text-[#e51152] font-black italic tracking-tighter uppercase glitch-text`}>REWIND DASHBOARD</h1>
             {!isDemo && (
               <nav className="flex gap-8 text-[11px] font-black tracking-widest uppercase text-text-secondary">
                {['history', 'analytics', 'entry', 'assets'].map(tab => (
@@ -602,7 +602,7 @@ const OperatorDashboard = ({
                              <div className="w-2 h-2 mt-1 shrink-0 bg-brand-yellow"></div>
                              <div>
                                <p className="text-text-primary uppercase">SYNC COMPLETE</p>
-                               <p className="text-gray-500 uppercase">OPERATOR: VOID_04 // TIME: {new Date().toLocaleTimeString()}</p>
+                               <p className="text-gray-500 uppercase">Session: Active // Local Time: {new Date().toLocaleTimeString()}</p>
                              </div>
                           </div>
                           <div className="flex gap-4">
@@ -647,14 +647,14 @@ const OperatorDashboard = ({
                           <label className="text-xs font-black text-gray-500 tracking-[0.2em] uppercase">VIDEO TITLE</label>
                           <input 
                             required value={addForm.title} onChange={e => setAddForm(f=>({...f, title: e.target.value}))}
-                            placeholder="ENTER CORE DESIGNATION" className="input-cyber" 
+                            placeholder="Enter Video Title" className="input-cyber" 
                           />
                         </div>
                         <div className="flex flex-col gap-4">
                           <label className="text-xs font-black text-gray-500 tracking-[0.2em] uppercase">VIDEO URL (OPTIONAL)</label>
                           <input 
                             value={addForm.url} onChange={e => setAddForm(f=>({...f, url: e.target.value}))}
-                            placeholder="HTTPS://VOID.NET/REPLAY/772-X" className="input-cyber" 
+                            placeholder="https://example.com/video/123" className="input-cyber" 
                           />
                         </div>
                         <div className="flex flex-col gap-4">
@@ -672,7 +672,7 @@ const OperatorDashboard = ({
                         >
                           <div className={`absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300`}></div>
                           <span className={`relative z-10 font-black text-3xl italic tracking-tighter uppercase flex items-center justify-center gap-4 ${addStatus === 'saving' || addStatus === 'done' ? 'text-black' : 'text-white group-hover:text-black'}`}>
-                            {addStatus === 'saving' ? 'EXECUTING...' : addStatus === 'done' ? 'ENTRY_LOGGED ✓' : (
+                            {addStatus === 'saving' ? 'SAVING...' : addStatus === 'done' ? 'ENTRY SAVED ✓' : (
                               <>SAVE ENTRY <span className="material-symbols-outlined text-4xl">bolt</span></>
                             )}
                           </span>
@@ -683,9 +683,9 @@ const OperatorDashboard = ({
                    {/* RIGHT SIDEBAR NOTES */}
                    <div className="w-full lg:w-[320px] flex flex-col gap-8">
                       <div className="neo-card bg-bg-secondary p-8 border-l-4 border-brand-pink">
-                         <h3 className="text-brand-yellow font-black text-xs tracking-widest uppercase mb-4">METADATA LOGIC</h3>
+                         <h3 className="text-brand-yellow font-black text-xs tracking-widest uppercase mb-4">Manual Logs</h3>
                          <p className="text-gray-400 text-[10px] font-bold leading-relaxed uppercase">
-                           MANUAL ENTRIES ARE PROCESSED THROUGH THE KINETIC VOID PROTOCOL. ENSURE ALL TIMESTAMPS ALIGN WITH UTC-0 OFFSET TO PREVENT SYNC FRAGMENTATION.
+                           Manual entries are saved directly to your history. Ensure timestamps are formatted as HH:MM:SS or MM:SS.
                          </p>
                       </div>
                       
@@ -1559,9 +1559,9 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
           setLoading(false);
           document.body.innerHTML = `
             <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif;">
-              <h1 style="color:#e51152; font-size:4rem; margin-bottom:0;">SYNC_SUCCESS</h1>
-              <p style="text-transform:uppercase; letter-spacing:0.2em; color:#fff;">Neural Connection Established</p>
-              <div style="margin-top:20px; color:#555; font-size:10px;">CLOSING PORTAL IN 4s...</div>
+              <h1 style="color:#e51152; font-size:4rem; margin-bottom:0;">Sync Successful</h1>
+              <p style="text-transform:uppercase; letter-spacing:0.2em; color:#fff;">Connection Established Successfully</p>
+              <div style="margin-top:20px; color:#555; font-size:10px;">Closing window in 4 seconds...</div>
             </div>
           `;
           setTimeout(() => { window.close(); }, 4000);
@@ -1728,23 +1728,23 @@ const AuthView = ({ onBack }: { onBack: () => void }) => {
                     className="w-full bg-black text-white font-black uppercase py-4 flex items-center justify-center gap-3 hover:bg-[#e51152] transition-all text-[10px] tracking-widest border-2 border-black active:translate-x-1 active:translate-y-1 disabled:opacity-50"
                   >
                      <img src="https://cdn.simpleicons.org/google/fff" className="w-4 h-4" alt="Google" />
-                     {loading ? 'PROCESSING...' : 'CONTINUE_WITH_GOOGLE'}
+                     {loading ? 'Processing...' : 'Continue with Google'}
                   </button>
 
                   <div className="flex items-center gap-4">
                      <div className="h-[1px] flex-1 bg-black/10 dark:bg-white/10"></div>
-                     <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.3em]">OR_USE_TERMINAL</span>
+                     <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.3em]">OR SIGN IN WITH EMAIL</span>
                      <div className="h-[1px] flex-1 bg-black/10 dark:bg-white/10"></div>
                   </div>
 
                   <form className="flex flex-col gap-4" onSubmit={handleEmailSubmit}>
                      <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">IDENTIFIER (EMAIL)</label>
-                        <input ref={emailRef} type="email" placeholder="[EMAIL_ADDRESS]" required className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs uppercase tracking-widest focus:border-[#e51152] outline-none transition-colors placeholder:text-gray-600" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">EMAIL ADDRESS</label>
+                        <input ref={emailRef} type="email" placeholder="email@example.com" required className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs uppercase tracking-widest focus:border-[#e51152] outline-none transition-colors placeholder:text-gray-600" />
                      </div>
                      <div className="flex flex-col gap-2">
                         <div className="flex justify-between items-center">
-                           <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">CREDENTIAL (PASSWORD)</label>
+                           <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">PASSWORD</label>
                            <button type="button" className="text-[8px] font-black text-[#e51152] hover:underline uppercase tracking-widest transition-colors">Forgot Password?</button>
                         </div>
                         <input ref={passwordRef} type="password" placeholder="••••••••" required minLength={6} className="bg-[#1a1a1a] border-2 border-white/20 text-white p-4 font-black text-xs tracking-widest focus:border-[#e51152] outline-none transition-colors" />
@@ -1801,9 +1801,9 @@ const WhyLoginView = ({ onBack, onLogin }: { onBack: () => void, onLogin: () => 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
             {[
               { icon: 'cloud_sync', title: 'Cross-Device Persistence', desc: 'Your video markers follow you from desktop to laptop instantly. Never lose your place again.' },
-              { icon: 'history', title: 'Unlimited Neural Log', desc: 'Extension storage is limited. Cloud Sync unlocks your full historical archive.' },
+              { icon: 'history', title: 'Unlimited History Sync', desc: 'Extension storage is limited. Cloud Sync unlocks your full historical archive.' },
               { icon: 'insights', title: 'Deep Analytics', desc: 'Get weekly reports on your consumption entropy and site-specific focus metrics.' },
-              { icon: 'security', title: 'Data Hardening', desc: 'Securely backup your manual entries and custom bookmarks in our encrypted void.' }
+              { icon: 'security', title: 'Data Hardening', desc: 'Securely backup your manual entries and custom bookmarks in our cloud database.' }
             ].map((item, i) => (
               <div key={i} className="flex gap-6 group">
                 <div className="w-12 h-12 shrink-0 bg-brand-pink flex items-center justify-center neo-border group-hover:bg-brand-yellow group-hover:text-black transition-colors">

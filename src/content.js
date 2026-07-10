@@ -8,17 +8,25 @@
   const MAX_ENTRIES = 20;
 
   // ─── Secure Global Context ────────────────────────────────────────────────
-  let absoluteTopUrl = window.location.href;
-  try {
+  let lastKnownTabUrl = window.location.href;
+
+  function getTabUrl(callback) {
+    try {
       chrome.runtime.sendMessage({ type: 'GET_TAB_URL' }, (response) => {
-          if (response && response.url) {
-              absoluteTopUrl = response.url;
-              console.log('[Rewind] Secured explicit top-level anchor:', absoluteTopUrl);
-          }
+        if (response && response.url) {
+          lastKnownTabUrl = response.url;
+          callback(response.url);
+        } else {
+          callback(lastKnownTabUrl);
+        }
       });
-  } catch (e) {
-      /* Connection may fail in generic non-extension sandbox frames */
+    } catch (e) {
+      callback(lastKnownTabUrl);
+    }
   }
+
+  // Pre-fetch tab URL once at start
+  getTabUrl(() => {});
 
   // ─── Extractors ───────────────────────────────────────────────────────────
 
@@ -99,8 +107,8 @@
       : `${m}:${String(s).padStart(2, '0')}`;
   }
 
-  function getVideoPermalink(video) {
-    const defaultUrl = absoluteTopUrl || window.location.href;
+  function getVideoPermalink(video, topUrl) {
+    const defaultUrl = topUrl || window.location.href;
 
     try {
       const host = window.location.hostname;
@@ -154,10 +162,10 @@
 
       // 5. Instagram
       if (host.includes('instagram.com')) {
-        if (path.includes('/p/') || path.includes('/reel/')) return defaultUrl;
+        if (path.includes('/p/') || path.includes('/reel/') || path.includes('/stories/')) return defaultUrl;
         const article = video.closest('article');
         if (article) {
-          const anchor = Array.from(article.querySelectorAll('a')).find(a => a.href.includes('/p/') || a.href.includes('/reel/'));
+          const anchor = Array.from(article.querySelectorAll('a')).find(a => a.href.includes('/p/') || a.href.includes('/reel/') || a.href.includes('/stories/'));
           if (anchor) return anchor.href;
         }
       }
@@ -195,9 +203,19 @@
 
   // ─── Storage ──────────────────────────────────────────────────────────────
 
-  function saveEntry(video) {
+  function saveEntrySync(video, topUrl) {
     const timestamp = video.currentTime;
     if (!timestamp || timestamp < 5) return;
+
+    // Ignore Instagram stories
+    if (window.location.hostname.includes('instagram.com') && window.location.pathname.includes('/stories/')) {
+      return;
+    }
+
+    // Ignore YouTube previews
+    if (video.closest('ytd-video-preview')) {
+      return;
+    }
 
     let duration = video.duration && isFinite(video.duration) ? video.duration : null;
     
@@ -207,21 +225,28 @@
       duration = null;
     }
 
+    // Ignore short-form content (< 60s)
+    if (duration !== null && duration < 60) {
+      return;
+    }
+
+    const isLive = duration === null;
     const progress = duration ? Math.min(100, Math.round((timestamp / duration) * 100)) : null;
 
     // Extract contextual permalink (solves Infinite Feed Paradox)
-    const topUrl = getVideoPermalink(video);
+    const topUrlPermalink = getVideoPermalink(video, topUrl);
 
     const entry = {
       id: Date.now(),
       title:         getTitle(),
-      url:           topUrl,
+      url:           topUrlPermalink,
       timestamp,
       formattedTime: formatTime(timestamp),
       duration,
       progress,
+      isLive,
       thumbnail:     getThumbnail(),
-      favicon:       `https://www.google.com/s2/favicons?sz=32&domain=${new URL(topUrl).hostname}`,
+      favicon:       `https://www.google.com/s2/favicons?sz=32&domain=${new URL(topUrlPermalink).hostname}`,
       savedAt:       Date.now(),
       pinned:        false,
       note:          '',
@@ -241,7 +266,15 @@
       chrome.storage.local.set({ history, lastEntry: entry });
 
       // ACTIVE PROBE: Signal background engine to sync immediately
-      chrome.runtime.sendMessage({ type: 'FORCE_SYNC', entry });
+      try {
+        chrome.runtime.sendMessage({ type: 'FORCE_SYNC', entry });
+      } catch (e) {}
+    });
+  }
+
+  function saveEntry(video) {
+    getTabUrl((topUrl) => {
+      saveEntrySync(video, topUrl);
     });
   }
 
@@ -257,59 +290,109 @@
       if (!video.ended) saveEntry(video);
     });
 
-    // Universal Auto-Resume logic (FIRST TIME ONLY)
-    let hasAutoSeeked = false;
+    // Universal Auto-Resume logic (FIRST TIME ONLY per video element)
+    let seekSettled = false;
+
     const autoResume = () => {
-      if (hasAutoSeeked) return;
-      chrome.storage.local.get({ history: [] }, (data) => {
-        const history = data.history || [];
-        
-        // Match by exact URL OR by secure absolute Top URL (for deep dynamic iframes)
-        const currentUrl = window.location.href;
-        const parentUrl = absoluteTopUrl !== window.location.href ? absoluteTopUrl : ((window !== window.top) ? document.referrer : null);
-        
-        const entry = history.find(e => {
-          if (e.url === currentUrl) return true;
-          if (parentUrl && e.url.includes(parentUrl.split('?')[0])) return true;
-          if (e.url.includes(currentUrl.split('?')[0])) return true;
-          
-          // Omni-Match: Compare core URL components to defeat domain redirects (x.com vs twitter.com)
-          try {
-            const eUrl = new URL(e.url);
-            const cUrl = new URL(currentUrl);
-            const isMatch = eUrl.pathname === cUrl.pathname && eUrl.pathname.length > 5;
-            
-            // Special handler for YouTube (query params matter)
-            if (eUrl.hostname.includes('youtube.com')) {
-              return eUrl.searchParams.get('v') === cUrl.searchParams.get('v');
-            }
-            
-            return isMatch;
-          } catch(err) {}
+      if (seekSettled) return;
+      getTabUrl((topUrl) => {
+        if (seekSettled) return; // double check
 
-          return false;
+        chrome.storage.local.get({ history: [] }, (data) => {
+          const history = data.history || [];
+
+          const currentUrl = window.location.href;
+          const parentUrl = topUrl !== window.location.href
+            ? topUrl
+            : (window !== window.top ? document.referrer : null);
+
+          // ── URL Matcher ──────────────────────────────────────────────────────
+          // Normalize YouTube URL and return video ID
+          const getYoutubeId = (urlStr) => {
+            if (!urlStr) return null;
+            try {
+              const u = new URL(urlStr);
+              if (u.hostname.includes('youtube.com')) {
+                return u.searchParams.get('v');
+              }
+              if (u.hostname.includes('youtu.be')) {
+                return u.pathname.substring(1).split('/')[0];
+              }
+            } catch (e) {}
+            return null;
+          };
+
+          const checkURLs = (u1str, u2str) => {
+            if (!u1str || !u2str) return false;
+            if (u1str === u2str) return true;
+            try {
+              const u1 = new URL(u1str);
+              const u2 = new URL(u2str);
+
+              // YouTube: only match if video IDs are identical
+              const ytId1 = getYoutubeId(u1str);
+              const ytId2 = getYoutubeId(u2str);
+              if (ytId1 && ytId2) {
+                return ytId1 === ytId2;
+              }
+
+              // Domain equivalence (x.com ↔ twitter.com)
+              const normalize = h => h.replace('twitter.com', 'x.com');
+              if (normalize(u1.hostname) !== normalize(u2.hostname)) return false;
+
+              // Path must match exactly and be non-trivial
+              return u1.pathname === u2.pathname && u1.pathname.length > 1;
+            } catch (_) {
+              return false;
+            }
+          };
+
+          const entry = history.find(e => {
+            if (checkURLs(e.url, currentUrl)) return true;
+            if (parentUrl && checkURLs(e.url, parentUrl)) return true;
+            return false;
+          });
+
+          // Skip autoResume for live streams or very short seeking timestamps
+          if (!entry || entry.isLive || entry.timestamp <= 5) return;
+
+          console.log('[Rewind] Match found — seeking to', entry.timestamp);
+          seekSettled = true;
+
+          const targetTs = entry.timestamp;
+          let attemptCount = 0;
+          const MAX_ATTEMPTS = 8;
+
+          // ── Seek Retry Loop ─────────────────────────────────────────────────
+          // Custom players (YouTube, Vimeo, Twitch) reset currentTime after
+          // loadedmetadata. We recheck on every timeupdate and forcibly re-apply
+          // until the seek holds or we exhaust retries.
+          const verifySeeked = () => {
+            if (video.seeking) return; // Do not count drift attempts while the player is actively seeking
+            if (Math.abs(video.currentTime - targetTs) <= 3) {
+              video.removeEventListener('timeupdate', verifySeeked);
+              return;
+            }
+            attemptCount++;
+            if (attemptCount <= MAX_ATTEMPTS) {
+              console.log(`[Rewind] Seek drifted — re-applying (attempt ${attemptCount})`);
+              video.currentTime = targetTs;
+            } else {
+              video.removeEventListener('timeupdate', verifySeeked);
+            }
+          };
+
+          video.currentTime = targetTs;
+          video.addEventListener('timeupdate', verifySeeked);
+          // Hard cleanup after 12s to prevent zombie listener
+          setTimeout(() => video.removeEventListener('timeupdate', verifySeeked), 12000);
         });
-
-        if (entry && entry.timestamp > 5) {
-          console.log('[Rewind] Auto-resuming to:', entry.timestamp);
-          
-          // Forcefully override custom players that reset time on load
-          video.currentTime = entry.timestamp;
-          hasAutoSeeked = true;
-          
-          // Double tap to override aggressive custom players
-          setTimeout(() => { 
-            if (Math.abs(video.currentTime - entry.timestamp) > 5) {
-              video.currentTime = entry.timestamp; 
-            }
-          }, 1500);
-        }
       });
     };
 
     video.addEventListener('loadedmetadata', autoResume);
+    video.addEventListener('canplay', autoResume);
     video.addEventListener('play', autoResume, { once: true });
-    // Fallback if metadata already loaded
     if (video.readyState >= 1) autoResume();
 
     // Periodic save every 30s while playing (backup for tab-close without pause)
@@ -322,11 +405,14 @@
     video.addEventListener('pause', () => clearInterval(periodicTimer));
     video.addEventListener('ended', () => {
       clearInterval(periodicTimer);
-      // Remove entry when video finishes — user has seen it all
-      chrome.storage.local.get({ history: [] }, (data) => {
-        const history = (data.history || []).filter(e => e.url !== window.location.href);
-        const lastEntry = history[0] || null;
-        chrome.storage.local.set({ history, lastEntry });
+      getTabUrl((topUrl) => {
+        // Use permalink so it matches the URL we actually saved
+        const finishedUrl = getVideoPermalink(video, topUrl);
+        chrome.storage.local.get({ history: [] }, (data) => {
+          const history = (data.history || []).filter(e => e.url !== finishedUrl);
+          const lastEntry = history[0] || null;
+          chrome.storage.local.set({ history, lastEntry });
+        });
       });
     });
   }
@@ -342,7 +428,9 @@
 
   window.addEventListener('beforeunload', () => {
     document.querySelectorAll('video').forEach(video => {
-      if (!video.paused && !video.ended && video.currentTime > 5) saveEntry(video);
+      if (!video.paused && !video.ended && video.currentTime > 5) {
+        saveEntrySync(video, lastKnownTabUrl);
+      }
     });
   });
 

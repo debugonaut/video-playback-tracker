@@ -43,8 +43,9 @@ const cloudLog = $('cloudLog');
 
 const remoteLoginBtn = $('remoteLoginBtn');
 const logoutBtn = $('logoutBtn');
-const settingsBtn = $('settingsBtn');
+const searchInput = $('searchInput');
 const viewProfileBtn = $('viewProfileBtn');
+let searchQuery = '';
 const syncPairBtn = $('syncPairBtn');
 const pairingCodeInput = $('pairingCode');
 
@@ -83,6 +84,19 @@ function parseTs(str) {
   return null;
 }
 
+function getResumeUrl(entry) {
+  if (!entry || !entry.url) return '';
+  try {
+    const url = new URL(entry.url);
+    const seconds = Math.floor(entry.timestamp);
+    if (seconds > 5 && (url.hostname.includes('youtube.com') || url.hostname.includes('youtu.be'))) {
+      url.searchParams.set('t', `${seconds}s`);
+      return url.toString();
+    }
+  } catch (e) {}
+  return entry.url;
+}
+
 // ─── Tabs ─────────────────────────────────────────────────────────
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -105,30 +119,50 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 function renderHistory() {
   while (historyList.firstChild) historyList.removeChild(historyList.firstChild);
 
-  const hasEntries = allEntries.length > 0;
+  // Filter based on search query
+  const filteredEntries = allEntries.filter(entry => {
+    if (!searchQuery) return true;
+    const titleMatch = entry.title && entry.title.toLowerCase().includes(searchQuery);
+    const urlMatch = entry.url && entry.url.toLowerCase().includes(searchQuery);
+    return titleMatch || urlMatch;
+  });
+
+  const hasEntries = filteredEntries.length > 0;
   emptyState.classList.toggle('hidden', hasEntries);
-  entryCount.textContent = allEntries.length;
+  entryCount.textContent = filteredEntries.length;
 
   if (hasEntries) {
-    const top = allEntries[0];
+    const top = filteredEntries[0];
     resumeBanner.classList.remove('hidden');
     resumeTitle.textContent = top.title;
     
     const currentTime = top.timestamp || 0;
     const duration = top.duration || 0;
-    resumeTime.textContent = duration > 0 ? `${fmt(currentTime)} / ${fmt(duration)}` : fmt(currentTime);
+    
+    const isLive = top.isLive || !top.duration;
+    if (isLive) {
+      resumeTime.innerHTML = '<span class="live-badge">LIVE</span>';
+      resumeProgressFill.style.width = '100%';
+      resumeProgressFill.classList.add('live-progress');
+      resumeBtn.textContent = 'JOIN LIVE';
+      resumeBtn.classList.add('live-btn');
+    } else {
+      resumeTime.textContent = duration > 0 ? `${fmt(currentTime)} / ${fmt(duration)}` : fmt(currentTime);
+      const progress = top.progress || (duration > 0 ? Math.round((currentTime / duration) * 100) : 0);
+      resumeProgressFill.style.width = `${progress}%`;
+      resumeProgressFill.classList.remove('live-progress');
+      resumeBtn.textContent = 'RESUME';
+      resumeBtn.classList.remove('live-btn');
+    }
     
     resumeThumb.src = top.thumbnail || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop';
     resumeThumb.onerror = () => {
       resumeThumb.src = 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop';
     };
 
-    const progress = top.progress || (duration > 0 ? Math.round((currentTime / duration) * 100) : 0);
-    resumeProgressFill.style.width = `${progress}%`;
-
     resumeBtn.onclick = (e) => {
       e.stopPropagation();
-      if (top.url) chrome.tabs.create({ url: top.url });
+      if (top.url) chrome.tabs.create({ url: getResumeUrl(top) });
     };
 
     const heroTrash = document.getElementById('heroTrash');
@@ -140,7 +174,7 @@ function renderHistory() {
     }
 
     // List Items
-    allEntries.slice(1).forEach(entry => {
+    filteredEntries.slice(1).forEach(entry => {
       const li = document.createElement('li');
       li.className = 'history-item';
       
@@ -180,15 +214,24 @@ function renderHistory() {
 
       const timestampStr = document.createElement('span');
       timestampStr.className = 'hr-timestamp';
-      timestampStr.textContent = `${fmt(entry.timestamp)}${entry.duration ? ' / ' + fmt(entry.duration) : ''}`;
 
       const progressContainer = document.createElement('div');
       progressContainer.className = 'hr-progress-mini';
       const progressFill = document.createElement('div');
       progressFill.className = 'hr-progress-fill';
-      progressFill.style.width = `${prog}%`;
-      progressContainer.appendChild(progressFill);
 
+      const isItemLive = entry.isLive || !entry.duration;
+      if (isItemLive) {
+        timestampStr.innerHTML = '<span class="live-badge">LIVE</span>';
+        progressFill.style.width = '100%';
+        progressFill.classList.add('live-progress');
+      } else {
+        timestampStr.textContent = `${fmt(entry.timestamp)}${entry.duration ? ' / ' + fmt(entry.duration) : ''}`;
+        progressFill.style.width = `${prog}%`;
+        progressFill.classList.remove('live-progress');
+      }
+
+      progressContainer.appendChild(progressFill);
       timeRow.appendChild(timestampStr);
       timeRow.appendChild(progressContainer);
 
@@ -198,7 +241,7 @@ function renderHistory() {
       li.appendChild(content);
 
       li.addEventListener('click', () => {
-        if (entry.url) chrome.tabs.create({ url: entry.url });
+        if (entry.url) chrome.tabs.create({ url: getResumeUrl(entry) });
       });
 
       historyList.appendChild(li);
@@ -261,14 +304,19 @@ saveManualBtn.addEventListener('click', async () => {
 });
 
 function deleteEntry(id) {
+  const entryToDelete = allEntries.find(e => e.id === id);
+  if (entryToDelete && entryToDelete.url) {
+    chrome.runtime.sendMessage({ type: 'DELETE_ENTRY', url: entryToDelete.url });
+  }
   allEntries = allEntries.filter(e => e.id !== id);
   chrome.storage.local.set({ history: allEntries }, renderHistory);
 }
 
 clearAllBtn.onclick = () => {
-  if (confirm('CLEAR_ALL_HISTORY?')) {
+  if (confirm('Are you sure you want to clear your entire history? This cannot be undone.')) {
     allEntries = [];
     chrome.storage.local.set({ history: [] }, renderHistory);
+    chrome.runtime.sendMessage({ type: 'CLEAR_ALL_HISTORY' });
   }
 };
 
@@ -288,9 +336,10 @@ viewAllBtn.onclick = () => {
   chrome.tabs.create({ url: 'https://rewind-player.vercel.app' });
 };
 
-settingsBtn.onclick = () => {
-  chrome.tabs.create({ url: 'https://rewind-player.vercel.app' });
-};
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  renderHistory();
+});
 
 // ─── Sync Status Management ─────────────────────────────────────
  
@@ -396,6 +445,13 @@ function load() {
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === 'AUTH_STATE_UPDATED') checkSession();
+});
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.history) {
+    allEntries = changes.history.newValue || [];
+    renderHistory();
+  }
 });
 
 closeBtn.addEventListener('click', () => window.close());

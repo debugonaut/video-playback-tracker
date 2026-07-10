@@ -1,0 +1,729 @@
+0 verbose cli /opt/homebrew/Cellar/node/25.9.0_2/bin/node /opt/homebrew/bin/npm
+1 info using npm@11.12.1
+2 info using node@v25.9.0
+3 silly config load:file:/opt/homebrew/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/.npmrc
+5 silly config load:file:/Users/aadeshkhande/.npmrc
+6 silly config load:file:/opt/homebrew/etc/npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" "./npm_cache"
+9 verbose logfile logs-max:10 dir:/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/npm_cache/_logs/2026-07-10T18_25_13_736Z-
+10 verbose logfile /Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/npm_cache/_logs/2026-07-10T18_25_13_736Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+13 silly idealTree buildDeps
+14 silly reify mark retired [
+14 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/ansi-regex'
+14 silly reify ]
+15 silly reify mark retired [
+15 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/ansi-styles'
+15 silly reify ]
+16 silly reify mark retired [
+16 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/cliui'
+16 silly reify ]
+17 silly reify mark retired [
+17 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/color-convert'
+17 silly reify ]
+18 silly reify mark retired [
+18 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/color-name'
+18 silly reify ]
+19 silly reify mark retired [
+19 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/emoji-regex'
+19 silly reify ]
+20 silly reify mark retired [
+20 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/esbuild'
+20 silly reify ]
+21 silly reify mark retired [
+21 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/escalade'
+21 silly reify ]
+22 silly reify mark retired [
+22 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/faye-websocket'
+22 silly reify ]
+23 silly reify mark retired [
+23 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/firebase'
+23 silly reify ]
+24 silly reify mark retired [
+24 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/get-caller-file'
+24 silly reify ]
+25 silly reify mark retired [
+25 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/http-parser-js'
+25 silly reify ]
+26 silly reify mark retired [
+26 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/idb'
+26 silly reify ]
+27 silly reify mark retired [
+27 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/is-fullwidth-code-point'
+27 silly reify ]
+28 silly reify mark retired [
+28 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/lodash.camelcase'
+28 silly reify ]
+29 silly reify mark retired [
+29 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/long'
+29 silly reify ]
+30 silly reify mark retired [
+30 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/protobufjs'
+30 silly reify ]
+31 silly reify mark retired [
+31 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/require-directory'
+31 silly reify ]
+32 silly reify mark retired [
+32 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/safe-buffer'
+32 silly reify ]
+33 silly reify mark retired [
+33 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/string-width'
+33 silly reify ]
+34 silly reify mark retired [
+34 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/strip-ansi'
+34 silly reify ]
+35 silly reify mark retired [
+35 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/tslib'
+35 silly reify ]
+36 silly reify mark retired [
+36 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/undici-types'
+36 silly reify ]
+37 silly reify mark retired [
+37 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/web-vitals'
+37 silly reify ]
+38 silly reify mark retired [
+38 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/websocket-driver'
+38 silly reify ]
+39 silly reify mark retired [
+39 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/websocket-extensions'
+39 silly reify ]
+40 silly reify mark retired [
+40 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/wrap-ansi'
+40 silly reify ]
+41 silly reify mark retired [
+41 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/y18n'
+41 silly reify ]
+42 silly reify mark retired [
+42 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/yargs'
+42 silly reify ]
+43 silly reify mark retired [
+43 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/yargs-parser'
+43 silly reify ]
+44 silly reify mark retired [
+44 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@esbuild/darwin-arm64'
+44 silly reify ]
+45 silly reify mark retired [
+45 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/ai'
+45 silly reify ]
+46 silly reify mark retired [
+46 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/analytics'
+46 silly reify ]
+47 silly reify mark retired [
+47 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/analytics-compat'
+47 silly reify ]
+48 silly reify mark retired [
+48 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/analytics-types'
+48 silly reify ]
+49 silly reify mark retired [
+49 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app'
+49 silly reify ]
+50 silly reify mark retired [
+50 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check'
+50 silly reify ]
+51 silly reify mark retired [
+51 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check-compat'
+51 silly reify ]
+52 silly reify mark retired [
+52 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check-interop-types'
+52 silly reify ]
+53 silly reify mark retired [
+53 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check-types'
+53 silly reify ]
+54 silly reify mark retired [
+54 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-compat'
+54 silly reify ]
+55 silly reify mark retired [
+55 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-types'
+55 silly reify ]
+56 silly reify mark retired [
+56 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth'
+56 silly reify ]
+57 silly reify mark retired [
+57 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth-compat'
+57 silly reify ]
+58 silly reify mark retired [
+58 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth-interop-types'
+58 silly reify ]
+59 silly reify mark retired [
+59 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth-types'
+59 silly reify ]
+60 silly reify mark retired [
+60 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/component'
+60 silly reify ]
+61 silly reify mark retired [
+61 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/data-connect'
+61 silly reify ]
+62 silly reify mark retired [
+62 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/database'
+62 silly reify ]
+63 silly reify mark retired [
+63 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/database-compat'
+63 silly reify ]
+64 silly reify mark retired [
+64 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/database-types'
+64 silly reify ]
+65 silly reify mark retired [
+65 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/firestore'
+65 silly reify ]
+66 silly reify mark retired [
+66 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/firestore-compat'
+66 silly reify ]
+67 silly reify mark retired [
+67 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/firestore-types'
+67 silly reify ]
+68 silly reify mark retired [
+68 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/functions'
+68 silly reify ]
+69 silly reify mark retired [
+69 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/functions-compat'
+69 silly reify ]
+70 silly reify mark retired [
+70 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/functions-types'
+70 silly reify ]
+71 silly reify mark retired [
+71 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/installations'
+71 silly reify ]
+72 silly reify mark retired [
+72 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/installations-compat'
+72 silly reify ]
+73 silly reify mark retired [
+73 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/installations-types'
+73 silly reify ]
+74 silly reify mark retired [
+74 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/logger'
+74 silly reify ]
+75 silly reify mark retired [
+75 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/messaging'
+75 silly reify ]
+76 silly reify mark retired [
+76 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/messaging-compat'
+76 silly reify ]
+77 silly reify mark retired [
+77 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/messaging-interop-types'
+77 silly reify ]
+78 silly reify mark retired [
+78 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/performance'
+78 silly reify ]
+79 silly reify mark retired [
+79 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/performance-compat'
+79 silly reify ]
+80 silly reify mark retired [
+80 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/performance-types'
+80 silly reify ]
+81 silly reify mark retired [
+81 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/remote-config'
+81 silly reify ]
+82 silly reify mark retired [
+82 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/remote-config-compat'
+82 silly reify ]
+83 silly reify mark retired [
+83 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/remote-config-types'
+83 silly reify ]
+84 silly reify mark retired [
+84 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/storage'
+84 silly reify ]
+85 silly reify mark retired [
+85 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/storage-compat'
+85 silly reify ]
+86 silly reify mark retired [
+86 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/storage-types'
+86 silly reify ]
+87 silly reify mark retired [
+87 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/util'
+87 silly reify ]
+88 silly reify mark retired [
+88 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/webchannel-wrapper'
+88 silly reify ]
+89 silly reify mark retired [
+89 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@grpc/grpc-js'
+89 silly reify ]
+90 silly reify mark retired [
+90 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@grpc/proto-loader'
+90 silly reify ]
+91 silly reify mark retired [
+91 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/aspromise'
+91 silly reify ]
+92 silly reify mark retired [
+92 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/base64'
+92 silly reify ]
+93 silly reify mark retired [
+93 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/codegen'
+93 silly reify ]
+94 silly reify mark retired [
+94 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/eventemitter'
+94 silly reify ]
+95 silly reify mark retired [
+95 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/float'
+95 silly reify ]
+96 silly reify mark retired [
+96 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/inquire'
+96 silly reify ]
+97 silly reify mark retired [
+97 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/pool'
+97 silly reify ]
+98 silly reify mark retired [
+98 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/utf8'
+98 silly reify ]
+99 silly reify mark retired [
+99 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/fetch'
+99 silly reify ]
+100 silly reify mark retired [
+100 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/path'
+100 silly reify ]
+101 silly reify mark retired [
+101 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@types/node'
+101 silly reify ]
+102 silly reify moves {
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/ansi-regex': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.ansi-regex-E5ImXPA6',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/ansi-styles': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.ansi-styles-kOJWe6e3',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/cliui': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.cliui-wIknAJB3',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/color-convert': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.color-convert-pjZ1iWjE',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/color-name': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.color-name-cBZx0gaG',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/emoji-regex': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.emoji-regex-MleHc4kR',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/esbuild': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.esbuild-YF8xAILm',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/escalade': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.escalade-Q16Ev9uK',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/faye-websocket': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.faye-websocket-g4FNcNxK',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/firebase': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.firebase-H5ZlL5mj',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/get-caller-file': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.get-caller-file-6ECSB0DT',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/http-parser-js': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.http-parser-js-2Ku3TaSs',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/idb': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.idb-bMU8O4NN',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/is-fullwidth-code-point': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.is-fullwidth-code-point-fIUG8VBV',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/lodash.camelcase': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.lodash.camelcase-3wOoWrp5',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/long': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.long-ILhPoM8F',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/protobufjs': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.protobufjs-IIKVTx1d',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/require-directory': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.require-directory-ZgVYZI5p',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/safe-buffer': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.safe-buffer-nDuy3SPY',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/string-width': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.string-width-EGcyYCD4',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/strip-ansi': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.strip-ansi-EnfcAErm',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/tslib': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.tslib-LCOAhGof',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/undici-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.undici-types-E7H17CMq',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/web-vitals': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.web-vitals-YP9uRgh3',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/websocket-driver': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.websocket-driver-lh3NTheY',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/websocket-extensions': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.websocket-extensions-a7ojke4F',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/wrap-ansi': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.wrap-ansi-38QTPOZi',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/y18n': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.y18n-BJZfyEiy',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/yargs': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.yargs-Mo0gxlBb',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/yargs-parser': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/.yargs-parser-JySBlyRe',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@esbuild/darwin-arm64': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@esbuild/.darwin-arm64-fh66saLE',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/ai': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.ai-3ehB75u4',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/analytics': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.analytics-ssM1LxyL',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/analytics-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.analytics-compat-pgYR4lsa',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/analytics-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.analytics-types-qqMH6Wg4',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.app-fo8vTzGQ',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.app-check-q68ZvlGG',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.app-check-compat-0jH6Vamo',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check-interop-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.app-check-interop-types-Sqhzsi4v',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-check-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.app-check-types-c1gcdFrb',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.app-compat-lzHYFbRI',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/app-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.app-types-7LUikf1d',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.auth-IiUHEHY0',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.auth-compat-rEd6GEmN',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth-interop-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.auth-interop-types-iuTTnSfK',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/auth-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.auth-types-sE1u2E27',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/component': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.component-DqLH04iH',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/data-connect': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.data-connect-Q3XgIadd',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/database': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.database-74a44WzT',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/database-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.database-compat-fFK4ecYz',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/database-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.database-types-jrZYRQyX',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/firestore': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.firestore-Z9bL0wGG',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/firestore-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.firestore-compat-Koe9Asj7',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/firestore-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.firestore-types-lmJN70m4',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/functions': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.functions-FPNu03VN',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/functions-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.functions-compat-SULALZC6',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/functions-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.functions-types-UHE7WUcC',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/installations': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.installations-9pbvnPUU',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/installations-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.installations-compat-IA3jYIyJ',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/installations-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.installations-types-qDfokqQK',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/logger': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.logger-rrkguOUf',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/messaging': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.messaging-mEy0MuGf',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/messaging-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.messaging-compat-gbqsuA1Y',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/messaging-interop-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.messaging-interop-types-HqwtjAsD',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/performance': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.performance-6HrhaCqN',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/performance-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.performance-compat-eqWRVSAV',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/performance-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.performance-types-RHaLWSke',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/remote-config': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.remote-config-RNfWvU0e',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/remote-config-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.remote-config-compat-CXDv571m',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/remote-config-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.remote-config-types-r7KNQaVL',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/storage': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.storage-4jb8hVpq',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/storage-compat': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.storage-compat-kLG2anhD',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/storage-types': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.storage-types-KPswPgz5',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/util': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.util-XiZAC7i0',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/webchannel-wrapper': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@firebase/.webchannel-wrapper-hwup2WQX',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@grpc/grpc-js': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@grpc/.grpc-js-R8md36Xm',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@grpc/proto-loader': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@grpc/.proto-loader-4DOdJ86O',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/aspromise': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.aspromise-4DuZwgaX',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/base64': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.base64-2Ga5VsBu',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/codegen': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.codegen-bglg4D1f',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/eventemitter': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.eventemitter-BLB2d0kD',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/float': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.float-BmHf3QIc',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/inquire': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.inquire-Dxr8ktLk',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/pool': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.pool-smTINaKd',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/utf8': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.utf8-fPwiPUrR',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/fetch': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.fetch-yCJEEWZV',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/path': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@protobufjs/.path-Rl7Jp35S',
+102 silly reify   '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@types/node': '/Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/node_modules/@types/.node-mgdtTY7i'
+102 silly reify }
+103 silly audit bulk request {
+103 silly audit   '@esbuild/aix-ppc64': [ '0.27.5' ],
+103 silly audit   '@esbuild/android-arm': [ '0.27.5' ],
+103 silly audit   '@esbuild/android-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/android-x64': [ '0.27.5' ],
+103 silly audit   '@esbuild/darwin-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/darwin-x64': [ '0.27.5' ],
+103 silly audit   '@esbuild/freebsd-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/freebsd-x64': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-arm': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-ia32': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-loong64': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-mips64el': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-ppc64': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-riscv64': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-s390x': [ '0.27.5' ],
+103 silly audit   '@esbuild/linux-x64': [ '0.27.5' ],
+103 silly audit   '@esbuild/netbsd-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/netbsd-x64': [ '0.27.5' ],
+103 silly audit   '@esbuild/openbsd-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/openbsd-x64': [ '0.27.5' ],
+103 silly audit   '@esbuild/openharmony-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/sunos-x64': [ '0.27.5' ],
+103 silly audit   '@esbuild/win32-arm64': [ '0.27.5' ],
+103 silly audit   '@esbuild/win32-ia32': [ '0.27.5' ],
+103 silly audit   '@esbuild/win32-x64': [ '0.27.5' ],
+103 silly audit   '@firebase/ai': [ '2.10.0' ],
+103 silly audit   '@firebase/analytics': [ '0.10.21' ],
+103 silly audit   '@firebase/analytics-compat': [ '0.2.27' ],
+103 silly audit   '@firebase/analytics-types': [ '0.8.3' ],
+103 silly audit   '@firebase/app': [ '0.14.10' ],
+103 silly audit   '@firebase/app-check': [ '0.11.2' ],
+103 silly audit   '@firebase/app-check-compat': [ '0.4.2' ],
+103 silly audit   '@firebase/app-check-interop-types': [ '0.3.3' ],
+103 silly audit   '@firebase/app-check-types': [ '0.5.3' ],
+103 silly audit   '@firebase/app-compat': [ '0.5.10' ],
+103 silly audit   '@firebase/app-types': [ '0.9.3' ],
+103 silly audit   '@firebase/auth': [ '1.12.2' ],
+103 silly audit   '@firebase/auth-compat': [ '0.6.4' ],
+103 silly audit   '@firebase/auth-interop-types': [ '0.2.4' ],
+103 silly audit   '@firebase/auth-types': [ '0.13.0' ],
+103 silly audit   '@firebase/component': [ '0.7.2' ],
+103 silly audit   '@firebase/data-connect': [ '0.5.0' ],
+103 silly audit   '@firebase/database': [ '1.1.2' ],
+103 silly audit   '@firebase/database-compat': [ '2.1.2' ],
+103 silly audit   '@firebase/database-types': [ '1.0.18' ],
+103 silly audit   '@firebase/firestore': [ '4.13.0' ],
+103 silly audit   '@firebase/firestore-compat': [ '0.4.7' ],
+103 silly audit   '@firebase/firestore-types': [ '3.0.3' ],
+103 silly audit   '@firebase/functions': [ '0.13.3' ],
+103 silly audit   '@firebase/functions-compat': [ '0.4.3' ],
+103 silly audit   '@firebase/functions-types': [ '0.6.3' ],
+103 silly audit   '@firebase/installations': [ '0.6.21' ],
+103 silly audit   '@firebase/installations-compat': [ '0.2.21' ],
+103 silly audit   '@firebase/installations-types': [ '0.5.3' ],
+103 silly audit   '@firebase/logger': [ '0.5.0' ],
+103 silly audit   '@firebase/messaging': [ '0.12.25' ],
+103 silly audit   '@firebase/messaging-compat': [ '0.2.25' ],
+103 silly audit   '@firebase/messaging-interop-types': [ '0.2.3' ],
+103 silly audit   '@firebase/performance': [ '0.7.11' ],
+103 silly audit   '@firebase/performance-compat': [ '0.2.24' ],
+103 silly audit   '@firebase/performance-types': [ '0.2.3' ],
+103 silly audit   '@firebase/remote-config': [ '0.8.2' ],
+103 silly audit   '@firebase/remote-config-compat': [ '0.2.23' ],
+103 silly audit   '@firebase/remote-config-types': [ '0.5.0' ],
+103 silly audit   '@firebase/storage': [ '0.14.2' ],
+103 silly audit   '@firebase/storage-compat': [ '0.4.2' ],
+103 silly audit   '@firebase/storage-types': [ '0.8.3' ],
+103 silly audit   '@firebase/util': [ '1.15.0' ],
+103 silly audit   '@firebase/webchannel-wrapper': [ '1.0.5' ],
+103 silly audit   '@grpc/grpc-js': [ '1.9.15' ],
+103 silly audit   '@grpc/proto-loader': [ '0.7.15' ],
+103 silly audit   '@protobufjs/aspromise': [ '1.1.2' ],
+103 silly audit   '@protobufjs/base64': [ '1.1.2' ],
+103 silly audit   '@protobufjs/codegen': [ '2.0.4' ],
+103 silly audit   '@protobufjs/eventemitter': [ '1.1.0' ],
+103 silly audit   '@protobufjs/fetch': [ '1.1.0' ],
+103 silly audit   '@protobufjs/float': [ '1.0.2' ],
+103 silly audit   '@protobufjs/inquire': [ '1.1.0' ],
+103 silly audit   '@protobufjs/path': [ '1.1.2' ],
+103 silly audit   '@protobufjs/pool': [ '1.1.0' ],
+103 silly audit   '@protobufjs/utf8': [ '1.1.0' ],
+103 silly audit   '@types/node': [ '25.5.0' ],
+103 silly audit   'ansi-regex': [ '5.0.1' ],
+103 silly audit   'ansi-styles': [ '4.3.0' ],
+103 silly audit   cliui: [ '8.0.1' ],
+103 silly audit   'color-convert': [ '2.0.1' ],
+103 silly audit   'color-name': [ '1.1.4' ],
+103 silly audit   'emoji-regex': [ '8.0.0' ],
+103 silly audit   esbuild: [ '0.27.5' ],
+103 silly audit   escalade: [ '3.2.0' ],
+103 silly audit   'faye-websocket': [ '0.11.4' ],
+103 silly audit   firebase: [ '12.11.0' ],
+103 silly audit   'get-caller-file': [ '2.0.5' ],
+103 silly audit   'http-parser-js': [ '0.5.10' ],
+103 silly audit   idb: [ '7.1.1' ],
+103 silly audit   'is-fullwidth-code-point': [ '3.0.0' ],
+103 silly audit   'lodash.camelcase': [ '4.3.0' ],
+103 silly audit   long: [ '5.3.2' ],
+103 silly audit   protobufjs: [ '7.5.4' ],
+103 silly audit   'require-directory': [ '2.1.1' ],
+103 silly audit   'safe-buffer': [ '5.2.1' ],
+103 silly audit   'string-width': [ '4.2.3' ],
+103 silly audit   'strip-ansi': [ '6.0.1' ],
+103 silly audit   tslib: [ '2.8.1' ],
+103 silly audit   'undici-types': [ '7.18.2' ],
+103 silly audit   'web-vitals': [ '4.2.4' ],
+103 silly audit   'websocket-driver': [ '0.7.4' ],
+103 silly audit   'websocket-extensions': [ '0.1.4' ],
+103 silly audit   'wrap-ansi': [ '7.0.0' ],
+103 silly audit   y18n: [ '5.0.8' ],
+103 silly audit   yargs: [ '17.7.2' ],
+103 silly audit   'yargs-parser': [ '21.1.1' ]
+103 silly audit }
+104 http cache @types/node@https://registry.npmjs.org/@types/node/-/node-25.5.0.tgz 1ms (cache hit)
+105 http cache @protobufjs/utf8@https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz 0ms (cache hit)
+106 http cache @protobufjs/pool@https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz 0ms (cache hit)
+107 http cache @protobufjs/path@https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz 0ms (cache hit)
+108 http cache @protobufjs/inquire@https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz 0ms (cache hit)
+109 http cache @protobufjs/float@https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz 0ms (cache hit)
+110 http cache @protobufjs/fetch@https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz 0ms (cache hit)
+111 http cache @protobufjs/eventemitter@https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz 0ms (cache hit)
+112 http cache @protobufjs/codegen@https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz 0ms (cache hit)
+113 http cache @protobufjs/base64@https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz 0ms (cache hit)
+114 http cache @protobufjs/aspromise@https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz 0ms (cache hit)
+115 http cache @grpc/proto-loader@https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.7.15.tgz 0ms (cache hit)
+116 http cache @firebase/webchannel-wrapper@https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.5.tgz 0ms (cache hit)
+117 http cache @grpc/grpc-js@https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.9.15.tgz 0ms (cache hit)
+118 http cache @firebase/util@https://registry.npmjs.org/@firebase/util/-/util-1.15.0.tgz 0ms (cache hit)
+119 http cache @firebase/storage-types@https://registry.npmjs.org/@firebase/storage-types/-/storage-types-0.8.3.tgz 0ms (cache hit)
+120 http cache @firebase/storage-compat@https://registry.npmjs.org/@firebase/storage-compat/-/storage-compat-0.4.2.tgz 0ms (cache hit)
+121 http cache @firebase/storage@https://registry.npmjs.org/@firebase/storage/-/storage-0.14.2.tgz 0ms (cache hit)
+122 http cache @firebase/remote-config-types@https://registry.npmjs.org/@firebase/remote-config-types/-/remote-config-types-0.5.0.tgz 0ms (cache hit)
+123 http cache @firebase/remote-config@https://registry.npmjs.org/@firebase/remote-config/-/remote-config-0.8.2.tgz 0ms (cache hit)
+124 http cache @firebase/remote-config-compat@https://registry.npmjs.org/@firebase/remote-config-compat/-/remote-config-compat-0.2.23.tgz 0ms (cache hit)
+125 http cache @firebase/performance-compat@https://registry.npmjs.org/@firebase/performance-compat/-/performance-compat-0.2.24.tgz 0ms (cache hit)
+126 http cache @firebase/performance-types@https://registry.npmjs.org/@firebase/performance-types/-/performance-types-0.2.3.tgz 0ms (cache hit)
+127 http cache @firebase/performance@https://registry.npmjs.org/@firebase/performance/-/performance-0.7.11.tgz 0ms (cache hit)
+128 http cache @firebase/messaging-interop-types@https://registry.npmjs.org/@firebase/messaging-interop-types/-/messaging-interop-types-0.2.3.tgz 0ms (cache hit)
+129 http cache @firebase/logger@https://registry.npmjs.org/@firebase/logger/-/logger-0.5.0.tgz 0ms (cache hit)
+130 http cache @firebase/messaging-compat@https://registry.npmjs.org/@firebase/messaging-compat/-/messaging-compat-0.2.25.tgz 0ms (cache hit)
+131 http cache @firebase/installations-types@https://registry.npmjs.org/@firebase/installations-types/-/installations-types-0.5.3.tgz 0ms (cache hit)
+132 http cache @firebase/messaging@https://registry.npmjs.org/@firebase/messaging/-/messaging-0.12.25.tgz 0ms (cache hit)
+133 http cache @firebase/installations-compat@https://registry.npmjs.org/@firebase/installations-compat/-/installations-compat-0.2.21.tgz 0ms (cache hit)
+134 http cache @firebase/functions-types@https://registry.npmjs.org/@firebase/functions-types/-/functions-types-0.6.3.tgz 0ms (cache hit)
+135 http cache @firebase/installations@https://registry.npmjs.org/@firebase/installations/-/installations-0.6.21.tgz 0ms (cache hit)
+136 http cache @firebase/firestore-types@https://registry.npmjs.org/@firebase/firestore-types/-/firestore-types-3.0.3.tgz 0ms (cache hit)
+137 http cache @firebase/functions-compat@https://registry.npmjs.org/@firebase/functions-compat/-/functions-compat-0.4.3.tgz 0ms (cache hit)
+138 http cache @firebase/functions@https://registry.npmjs.org/@firebase/functions/-/functions-0.13.3.tgz 0ms (cache hit)
+139 http cache @firebase/firestore-compat@https://registry.npmjs.org/@firebase/firestore-compat/-/firestore-compat-0.4.7.tgz 0ms (cache hit)
+140 http cache @firebase/firestore@https://registry.npmjs.org/@firebase/firestore/-/firestore-4.13.0.tgz 0ms (cache hit)
+141 http cache @firebase/database-types@https://registry.npmjs.org/@firebase/database-types/-/database-types-1.0.18.tgz 0ms (cache hit)
+142 http cache @firebase/database@https://registry.npmjs.org/@firebase/database/-/database-1.1.2.tgz 0ms (cache hit)
+143 http cache @firebase/database-compat@https://registry.npmjs.org/@firebase/database-compat/-/database-compat-2.1.2.tgz 0ms (cache hit)
+144 http cache @firebase/data-connect@https://registry.npmjs.org/@firebase/data-connect/-/data-connect-0.5.0.tgz 0ms (cache hit)
+145 http cache @firebase/component@https://registry.npmjs.org/@firebase/component/-/component-0.7.2.tgz 0ms (cache hit)
+146 http cache @firebase/auth-interop-types@https://registry.npmjs.org/@firebase/auth-interop-types/-/auth-interop-types-0.2.4.tgz 0ms (cache hit)
+147 http cache @firebase/auth-types@https://registry.npmjs.org/@firebase/auth-types/-/auth-types-0.13.0.tgz 0ms (cache hit)
+148 http cache @firebase/app-types@https://registry.npmjs.org/@firebase/app-types/-/app-types-0.9.3.tgz 0ms (cache hit)
+149 http cache @firebase/auth-compat@https://registry.npmjs.org/@firebase/auth-compat/-/auth-compat-0.6.4.tgz 0ms (cache hit)
+150 http cache @firebase/auth@https://registry.npmjs.org/@firebase/auth/-/auth-1.12.2.tgz 0ms (cache hit)
+151 http cache @firebase/app-check-types@https://registry.npmjs.org/@firebase/app-check-types/-/app-check-types-0.5.3.tgz 0ms (cache hit)
+152 http cache @firebase/app-compat@https://registry.npmjs.org/@firebase/app-compat/-/app-compat-0.5.10.tgz 0ms (cache hit)
+153 http cache @firebase/app-check-compat@https://registry.npmjs.org/@firebase/app-check-compat/-/app-check-compat-0.4.2.tgz 0ms (cache hit)
+154 http cache @firebase/app-check@https://registry.npmjs.org/@firebase/app-check/-/app-check-0.11.2.tgz 0ms (cache hit)
+155 http cache @firebase/app-check-interop-types@https://registry.npmjs.org/@firebase/app-check-interop-types/-/app-check-interop-types-0.3.3.tgz 0ms (cache hit)
+156 http cache @firebase/app@https://registry.npmjs.org/@firebase/app/-/app-0.14.10.tgz 0ms (cache hit)
+157 http cache @firebase/analytics-types@https://registry.npmjs.org/@firebase/analytics-types/-/analytics-types-0.8.3.tgz 0ms (cache hit)
+158 http cache @firebase/analytics-compat@https://registry.npmjs.org/@firebase/analytics-compat/-/analytics-compat-0.2.27.tgz 0ms (cache hit)
+159 http cache @esbuild/darwin-arm64@https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.27.5.tgz 0ms (cache hit)
+160 http cache @firebase/ai@https://registry.npmjs.org/@firebase/ai/-/ai-2.10.0.tgz 0ms (cache hit)
+161 http cache yargs-parser@https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.1.1.tgz 0ms (cache hit)
+162 http cache @firebase/analytics@https://registry.npmjs.org/@firebase/analytics/-/analytics-0.10.21.tgz 0ms (cache hit)
+163 http cache yargs@https://registry.npmjs.org/yargs/-/yargs-17.7.2.tgz 0ms (cache hit)
+164 http cache websocket-extensions@https://registry.npmjs.org/websocket-extensions/-/websocket-extensions-0.1.4.tgz 0ms (cache hit)
+165 http cache y18n@https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz 0ms (cache hit)
+166 http cache wrap-ansi@https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz 0ms (cache hit)
+167 http cache websocket-driver@https://registry.npmjs.org/websocket-driver/-/websocket-driver-0.7.4.tgz 0ms (cache hit)
+168 http cache undici-types@https://registry.npmjs.org/undici-types/-/undici-types-7.18.2.tgz 0ms (cache hit)
+169 http cache web-vitals@https://registry.npmjs.org/web-vitals/-/web-vitals-4.2.4.tgz 0ms (cache hit)
+170 http cache tslib@https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz 0ms (cache hit)
+171 http cache string-width@https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz 0ms (cache hit)
+172 http cache strip-ansi@https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz 0ms (cache hit)
+173 http cache safe-buffer@https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz 0ms (cache hit)
+174 http cache protobufjs@https://registry.npmjs.org/protobufjs/-/protobufjs-7.5.4.tgz 0ms (cache hit)
+175 http cache long@https://registry.npmjs.org/long/-/long-5.3.2.tgz 0ms (cache hit)
+176 http cache require-directory@https://registry.npmjs.org/require-directory/-/require-directory-2.1.1.tgz 0ms (cache hit)
+177 http cache lodash.camelcase@https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz 0ms (cache hit)
+178 http cache is-fullwidth-code-point@https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz 0ms (cache hit)
+179 http cache http-parser-js@https://registry.npmjs.org/http-parser-js/-/http-parser-js-0.5.10.tgz 0ms (cache hit)
+180 http cache idb@https://registry.npmjs.org/idb/-/idb-7.1.1.tgz 0ms (cache hit)
+181 http cache get-caller-file@https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz 0ms (cache hit)
+182 http cache faye-websocket@https://registry.npmjs.org/faye-websocket/-/faye-websocket-0.11.4.tgz 0ms (cache hit)
+183 http cache firebase@https://registry.npmjs.org/firebase/-/firebase-12.11.0.tgz 0ms (cache hit)
+184 http cache escalade@https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz 0ms (cache hit)
+185 http cache esbuild@https://registry.npmjs.org/esbuild/-/esbuild-0.27.5.tgz 0ms (cache hit)
+186 http cache color-name@https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz 0ms (cache hit)
+187 http cache emoji-regex@https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz 0ms (cache hit)
+188 http cache color-convert@https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz 0ms (cache hit)
+189 http cache cliui@https://registry.npmjs.org/cliui/-/cliui-8.0.1.tgz 0ms (cache hit)
+190 http cache ansi-styles@https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz 0ms (cache hit)
+191 silly tarball no local data for @types/node@https://registry.npmjs.org/@types/node/-/node-25.5.0.tgz. Extracting by manifest.
+192 silly tarball no local data for @protobufjs/utf8@https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz. Extracting by manifest.
+193 silly tarball no local data for @protobufjs/pool@https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz. Extracting by manifest.
+194 silly tarball no local data for @protobufjs/path@https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz. Extracting by manifest.
+195 silly tarball no local data for @protobufjs/inquire@https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz. Extracting by manifest.
+196 silly tarball no local data for @protobufjs/float@https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz. Extracting by manifest.
+197 silly tarball no local data for @protobufjs/fetch@https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz. Extracting by manifest.
+198 silly tarball no local data for @protobufjs/eventemitter@https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz. Extracting by manifest.
+199 silly tarball no local data for @protobufjs/codegen@https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz. Extracting by manifest.
+200 silly tarball no local data for @protobufjs/base64@https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz. Extracting by manifest.
+201 silly tarball no local data for @protobufjs/aspromise@https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz. Extracting by manifest.
+202 silly tarball no local data for @grpc/proto-loader@https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.7.15.tgz. Extracting by manifest.
+203 silly tarball no local data for @firebase/webchannel-wrapper@https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.5.tgz. Extracting by manifest.
+204 silly tarball no local data for @grpc/grpc-js@https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.9.15.tgz. Extracting by manifest.
+205 silly tarball no local data for @firebase/util@https://registry.npmjs.org/@firebase/util/-/util-1.15.0.tgz. Extracting by manifest.
+206 silly tarball no local data for @firebase/storage-types@https://registry.npmjs.org/@firebase/storage-types/-/storage-types-0.8.3.tgz. Extracting by manifest.
+207 silly tarball no local data for @firebase/storage-compat@https://registry.npmjs.org/@firebase/storage-compat/-/storage-compat-0.4.2.tgz. Extracting by manifest.
+208 silly tarball no local data for @firebase/storage@https://registry.npmjs.org/@firebase/storage/-/storage-0.14.2.tgz. Extracting by manifest.
+209 silly tarball no local data for @firebase/remote-config-types@https://registry.npmjs.org/@firebase/remote-config-types/-/remote-config-types-0.5.0.tgz. Extracting by manifest.
+210 silly tarball no local data for @firebase/remote-config@https://registry.npmjs.org/@firebase/remote-config/-/remote-config-0.8.2.tgz. Extracting by manifest.
+211 http cache ansi-regex@https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz 0ms (cache hit)
+212 silly tarball no local data for @firebase/remote-config-compat@https://registry.npmjs.org/@firebase/remote-config-compat/-/remote-config-compat-0.2.23.tgz. Extracting by manifest.
+213 silly tarball no local data for @firebase/performance-compat@https://registry.npmjs.org/@firebase/performance-compat/-/performance-compat-0.2.24.tgz. Extracting by manifest.
+214 silly tarball no local data for @firebase/performance-types@https://registry.npmjs.org/@firebase/performance-types/-/performance-types-0.2.3.tgz. Extracting by manifest.
+215 silly tarball no local data for @firebase/performance@https://registry.npmjs.org/@firebase/performance/-/performance-0.7.11.tgz. Extracting by manifest.
+216 silly tarball no local data for @firebase/messaging-interop-types@https://registry.npmjs.org/@firebase/messaging-interop-types/-/messaging-interop-types-0.2.3.tgz. Extracting by manifest.
+217 silly tarball no local data for @firebase/logger@https://registry.npmjs.org/@firebase/logger/-/logger-0.5.0.tgz. Extracting by manifest.
+218 silly tarball no local data for @firebase/messaging-compat@https://registry.npmjs.org/@firebase/messaging-compat/-/messaging-compat-0.2.25.tgz. Extracting by manifest.
+219 silly tarball no local data for @firebase/installations-types@https://registry.npmjs.org/@firebase/installations-types/-/installations-types-0.5.3.tgz. Extracting by manifest.
+220 silly tarball no local data for @firebase/messaging@https://registry.npmjs.org/@firebase/messaging/-/messaging-0.12.25.tgz. Extracting by manifest.
+221 silly tarball no local data for @firebase/installations-compat@https://registry.npmjs.org/@firebase/installations-compat/-/installations-compat-0.2.21.tgz. Extracting by manifest.
+222 silly tarball no local data for @firebase/functions-types@https://registry.npmjs.org/@firebase/functions-types/-/functions-types-0.6.3.tgz. Extracting by manifest.
+223 silly tarball no local data for @firebase/installations@https://registry.npmjs.org/@firebase/installations/-/installations-0.6.21.tgz. Extracting by manifest.
+224 silly tarball no local data for @firebase/firestore-types@https://registry.npmjs.org/@firebase/firestore-types/-/firestore-types-3.0.3.tgz. Extracting by manifest.
+225 silly tarball no local data for @firebase/functions-compat@https://registry.npmjs.org/@firebase/functions-compat/-/functions-compat-0.4.3.tgz. Extracting by manifest.
+226 silly tarball no local data for @firebase/functions@https://registry.npmjs.org/@firebase/functions/-/functions-0.13.3.tgz. Extracting by manifest.
+227 silly tarball no local data for @firebase/firestore-compat@https://registry.npmjs.org/@firebase/firestore-compat/-/firestore-compat-0.4.7.tgz. Extracting by manifest.
+228 silly tarball no local data for @firebase/firestore@https://registry.npmjs.org/@firebase/firestore/-/firestore-4.13.0.tgz. Extracting by manifest.
+229 silly tarball no local data for @firebase/database-types@https://registry.npmjs.org/@firebase/database-types/-/database-types-1.0.18.tgz. Extracting by manifest.
+230 silly tarball no local data for @firebase/database@https://registry.npmjs.org/@firebase/database/-/database-1.1.2.tgz. Extracting by manifest.
+231 silly tarball no local data for @firebase/database-compat@https://registry.npmjs.org/@firebase/database-compat/-/database-compat-2.1.2.tgz. Extracting by manifest.
+232 silly tarball no local data for @firebase/data-connect@https://registry.npmjs.org/@firebase/data-connect/-/data-connect-0.5.0.tgz. Extracting by manifest.
+233 silly tarball no local data for @firebase/component@https://registry.npmjs.org/@firebase/component/-/component-0.7.2.tgz. Extracting by manifest.
+234 silly tarball no local data for @firebase/auth-interop-types@https://registry.npmjs.org/@firebase/auth-interop-types/-/auth-interop-types-0.2.4.tgz. Extracting by manifest.
+235 silly tarball no local data for @firebase/auth-types@https://registry.npmjs.org/@firebase/auth-types/-/auth-types-0.13.0.tgz. Extracting by manifest.
+236 silly tarball no local data for @firebase/app-types@https://registry.npmjs.org/@firebase/app-types/-/app-types-0.9.3.tgz. Extracting by manifest.
+237 silly tarball no local data for @firebase/auth-compat@https://registry.npmjs.org/@firebase/auth-compat/-/auth-compat-0.6.4.tgz. Extracting by manifest.
+238 silly tarball no local data for @firebase/auth@https://registry.npmjs.org/@firebase/auth/-/auth-1.12.2.tgz. Extracting by manifest.
+239 silly tarball no local data for @firebase/app-check-types@https://registry.npmjs.org/@firebase/app-check-types/-/app-check-types-0.5.3.tgz. Extracting by manifest.
+240 silly tarball no local data for @firebase/app-compat@https://registry.npmjs.org/@firebase/app-compat/-/app-compat-0.5.10.tgz. Extracting by manifest.
+241 silly tarball no local data for @firebase/app-check-compat@https://registry.npmjs.org/@firebase/app-check-compat/-/app-check-compat-0.4.2.tgz. Extracting by manifest.
+242 silly tarball no local data for @firebase/app-check@https://registry.npmjs.org/@firebase/app-check/-/app-check-0.11.2.tgz. Extracting by manifest.
+243 silly tarball no local data for @firebase/app-check-interop-types@https://registry.npmjs.org/@firebase/app-check-interop-types/-/app-check-interop-types-0.3.3.tgz. Extracting by manifest.
+244 silly tarball no local data for @firebase/app@https://registry.npmjs.org/@firebase/app/-/app-0.14.10.tgz. Extracting by manifest.
+245 silly tarball no local data for @firebase/analytics-types@https://registry.npmjs.org/@firebase/analytics-types/-/analytics-types-0.8.3.tgz. Extracting by manifest.
+246 silly tarball no local data for @firebase/analytics-compat@https://registry.npmjs.org/@firebase/analytics-compat/-/analytics-compat-0.2.27.tgz. Extracting by manifest.
+247 silly tarball no local data for @esbuild/darwin-arm64@https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.27.5.tgz. Extracting by manifest.
+248 silly tarball no local data for @firebase/ai@https://registry.npmjs.org/@firebase/ai/-/ai-2.10.0.tgz. Extracting by manifest.
+249 silly tarball no local data for yargs-parser@https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.1.1.tgz. Extracting by manifest.
+250 silly tarball no local data for @firebase/analytics@https://registry.npmjs.org/@firebase/analytics/-/analytics-0.10.21.tgz. Extracting by manifest.
+251 silly tarball no local data for yargs@https://registry.npmjs.org/yargs/-/yargs-17.7.2.tgz. Extracting by manifest.
+252 silly tarball no local data for websocket-extensions@https://registry.npmjs.org/websocket-extensions/-/websocket-extensions-0.1.4.tgz. Extracting by manifest.
+253 silly tarball no local data for y18n@https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz. Extracting by manifest.
+254 silly tarball no local data for wrap-ansi@https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz. Extracting by manifest.
+255 silly tarball no local data for websocket-driver@https://registry.npmjs.org/websocket-driver/-/websocket-driver-0.7.4.tgz. Extracting by manifest.
+256 silly tarball no local data for undici-types@https://registry.npmjs.org/undici-types/-/undici-types-7.18.2.tgz. Extracting by manifest.
+257 silly tarball no local data for web-vitals@https://registry.npmjs.org/web-vitals/-/web-vitals-4.2.4.tgz. Extracting by manifest.
+258 silly tarball no local data for tslib@https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz. Extracting by manifest.
+259 silly tarball no local data for string-width@https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz. Extracting by manifest.
+260 silly tarball no local data for strip-ansi@https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz. Extracting by manifest.
+261 silly tarball no local data for safe-buffer@https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz. Extracting by manifest.
+262 silly tarball no local data for protobufjs@https://registry.npmjs.org/protobufjs/-/protobufjs-7.5.4.tgz. Extracting by manifest.
+263 silly tarball no local data for long@https://registry.npmjs.org/long/-/long-5.3.2.tgz. Extracting by manifest.
+264 silly tarball no local data for require-directory@https://registry.npmjs.org/require-directory/-/require-directory-2.1.1.tgz. Extracting by manifest.
+265 silly tarball no local data for lodash.camelcase@https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz. Extracting by manifest.
+266 silly tarball no local data for is-fullwidth-code-point@https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz. Extracting by manifest.
+267 silly tarball no local data for http-parser-js@https://registry.npmjs.org/http-parser-js/-/http-parser-js-0.5.10.tgz. Extracting by manifest.
+268 silly tarball no local data for idb@https://registry.npmjs.org/idb/-/idb-7.1.1.tgz. Extracting by manifest.
+269 silly tarball no local data for get-caller-file@https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz. Extracting by manifest.
+270 silly tarball no local data for faye-websocket@https://registry.npmjs.org/faye-websocket/-/faye-websocket-0.11.4.tgz. Extracting by manifest.
+271 silly tarball no local data for firebase@https://registry.npmjs.org/firebase/-/firebase-12.11.0.tgz. Extracting by manifest.
+272 silly tarball no local data for escalade@https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz. Extracting by manifest.
+273 silly tarball no local data for esbuild@https://registry.npmjs.org/esbuild/-/esbuild-0.27.5.tgz. Extracting by manifest.
+274 silly tarball no local data for color-name@https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz. Extracting by manifest.
+275 silly tarball no local data for emoji-regex@https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz. Extracting by manifest.
+276 silly tarball no local data for color-convert@https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz. Extracting by manifest.
+277 silly tarball no local data for cliui@https://registry.npmjs.org/cliui/-/cliui-8.0.1.tgz. Extracting by manifest.
+278 silly tarball no local data for ansi-styles@https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz. Extracting by manifest.
+279 http fetch GET https://registry.npmjs.org/npm attempt 1 failed with ENOTFOUND
+280 silly tarball no local data for ansi-regex@https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz. Extracting by manifest.
+281 verbose audit error FetchError: request to https://registry.npmjs.org/-/npm/v1/security/advisories/bulk failed, reason: getaddrinfo ENOTFOUND registry.npmjs.org
+281 verbose audit error     at ClientRequest.<anonymous> (/opt/homebrew/lib/node_modules/npm/node_modules/minipass-fetch/lib/index.js:130:14)
+281 verbose audit error     at ClientRequest.emit (node:events:509:20)
+281 verbose audit error     at emitErrorEvent (node:_http_client:109:11)
+281 verbose audit error     at _destroy (node:_http_client:993:9)
+281 verbose audit error     at onSocketNT (node:_http_client:1013:5)
+281 verbose audit error     at process.processTicksAndRejections (node:internal/process/task_queues:91:21) {
+281 verbose audit error   code: 'ENOTFOUND',
+281 verbose audit error   errno: 'ENOTFOUND',
+281 verbose audit error   syscall: 'getaddrinfo',
+281 verbose audit error   hostname: 'registry.npmjs.org',
+281 verbose audit error   type: 'system'
+281 verbose audit error }
+282 silly audit error undefined
+283 silly audit report null
+284 http fetch GET https://registry.npmjs.org/@types/node/-/node-25.5.0.tgz attempt 1 failed with ENOTFOUND
+285 http fetch GET https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz attempt 1 failed with ENOTFOUND
+286 http fetch GET https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz attempt 1 failed with ENOTFOUND
+287 http fetch GET https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz attempt 1 failed with ENOTFOUND
+288 http fetch GET https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz attempt 1 failed with ENOTFOUND
+289 http fetch GET https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz attempt 1 failed with ENOTFOUND
+290 http fetch GET https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz attempt 1 failed with ENOTFOUND
+291 http fetch GET https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz attempt 1 failed with ENOTFOUND
+292 http fetch GET https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz attempt 1 failed with ENOTFOUND
+293 http fetch GET https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz attempt 1 failed with ENOTFOUND
+294 http fetch GET https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz attempt 1 failed with ENOTFOUND
+295 http fetch GET https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.7.15.tgz attempt 1 failed with ENOTFOUND
+296 http fetch GET https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.5.tgz attempt 1 failed with ENOTFOUND
+297 http fetch GET https://registry.npmjs.org/@firebase/storage-types/-/storage-types-0.8.3.tgz attempt 1 failed with ENOTFOUND
+298 http fetch GET https://registry.npmjs.org/npm attempt 2 failed with ENOTFOUND
+299 http fetch GET https://registry.npmjs.org/@types/node/-/node-25.5.0.tgz attempt 2 failed with ENOTFOUND
+300 http fetch GET https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz attempt 2 failed with ENOTFOUND
+301 http fetch GET https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz attempt 2 failed with ENOTFOUND
+302 http fetch GET https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz attempt 2 failed with ENOTFOUND
+303 http fetch GET https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz attempt 2 failed with ENOTFOUND
+304 http fetch GET https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz attempt 2 failed with ENOTFOUND
+305 http fetch GET https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz attempt 2 failed with ENOTFOUND
+306 http fetch GET https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz attempt 2 failed with ENOTFOUND
+307 http fetch GET https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz attempt 2 failed with ENOTFOUND
+308 http fetch GET https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz attempt 2 failed with ENOTFOUND
+309 http fetch GET https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz attempt 2 failed with ENOTFOUND
+310 http fetch GET https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.7.15.tgz attempt 2 failed with ENOTFOUND
+311 http fetch GET https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.5.tgz attempt 2 failed with ENOTFOUND
+312 http fetch GET https://registry.npmjs.org/@firebase/storage-types/-/storage-types-0.8.3.tgz attempt 2 failed with ENOTFOUND
+313 http fetch GET https://registry.npmjs.org/npm attempt 3 failed with ENOTFOUND
+314 http fetch GET https://registry.npmjs.org/@types/node/-/node-25.5.0.tgz attempt 3 failed with ENOTFOUND
+315 http fetch GET https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz attempt 3 failed with ENOTFOUND
+316 http fetch GET https://registry.npmjs.org/@protobufjs/pool/-/pool-1.1.0.tgz attempt 3 failed with ENOTFOUND
+317 http fetch GET https://registry.npmjs.org/@protobufjs/path/-/path-1.1.2.tgz attempt 3 failed with ENOTFOUND
+318 http fetch GET https://registry.npmjs.org/@protobufjs/inquire/-/inquire-1.1.0.tgz attempt 3 failed with ENOTFOUND
+319 http fetch GET https://registry.npmjs.org/@protobufjs/float/-/float-1.0.2.tgz attempt 3 failed with ENOTFOUND
+320 http fetch GET https://registry.npmjs.org/@protobufjs/fetch/-/fetch-1.1.0.tgz attempt 3 failed with ENOTFOUND
+321 http fetch GET https://registry.npmjs.org/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz attempt 3 failed with ENOTFOUND
+322 http fetch GET https://registry.npmjs.org/@protobufjs/codegen/-/codegen-2.0.4.tgz attempt 3 failed with ENOTFOUND
+323 http fetch GET https://registry.npmjs.org/@protobufjs/base64/-/base64-1.1.2.tgz attempt 3 failed with ENOTFOUND
+324 http fetch GET https://registry.npmjs.org/@protobufjs/aspromise/-/aspromise-1.1.2.tgz attempt 3 failed with ENOTFOUND
+325 http fetch GET https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.7.15.tgz attempt 3 failed with ENOTFOUND
+326 http fetch GET https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.5.tgz attempt 3 failed with ENOTFOUND
+327 http fetch GET https://registry.npmjs.org/@firebase/storage-types/-/storage-types-0.8.3.tgz attempt 3 failed with ENOTFOUND
+328 verbose cwd /Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker
+329 verbose os Darwin 24.6.0
+330 verbose node v25.9.0
+331 verbose npm  v11.12.1
+332 error Exit handler never called!
+333 error This is an error with npm itself. Please report this error at:
+334 error   <https://github.com/npm/cli/issues>
+335 verbose exit 1
+336 verbose code 1
+337 error A complete log of this run can be found in: /Users/aadeshkhande/Documents/Professional/Own/Video PlayBack Tracker/npm_cache/_logs/2026-07-10T18_25_13_736Z-debug-0.log

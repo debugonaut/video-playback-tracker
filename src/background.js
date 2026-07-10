@@ -1,7 +1,7 @@
 // background.js - Rewind Central Sync Engine
 import { auth, db } from './firebase-config';
 import { onAuthStateChanged, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, collection, query, orderBy, limit, onSnapshot, getDoc, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection, query, orderBy, limit, onSnapshot, getDoc, deleteDoc, writeBatch, getDocs } from 'firebase/firestore';
 
 let currentUser = null;
 let lastCapturedToken = null;
@@ -46,20 +46,18 @@ onAuthStateChanged(auth, async (user) => {
  });
  
  function startRealtimeHistoryUpdates(uid) {
-   stopRealtimeHistoryUpdates();
-   console.log('[Background] Initializing Real-time Cloud Link...');
-   const q = query(collection(db, `users/${uid}/history`), orderBy('savedAt', 'desc'), limit(42));
-   unsubscribeHistory = onSnapshot(q, (snapshot) => {
-     const cloudEntries = [];
-     snapshot.forEach(doc => cloudEntries.push(doc.data()));
-     if (cloudEntries.length > 0) {
-       console.log(`[Background] Synced ${cloudEntries.length} entries from cloud.`);
-       chrome.storage.local.set({ history: cloudEntries });
-     }
-   }, (err) => {
-       console.error('[Background] Cloud link error:', err);
-   });
- }
+    stopRealtimeHistoryUpdates();
+    console.log('[Background] Initializing Real-time Cloud Link...');
+    const q = query(collection(db, `users/${uid}/history`), orderBy('savedAt', 'desc'), limit(42));
+    unsubscribeHistory = onSnapshot(q, (snapshot) => {
+      const cloudEntries = [];
+      snapshot.forEach(doc => cloudEntries.push(doc.data()));
+      console.log(`[Background] Synced ${cloudEntries.length} entries from cloud.`);
+      chrome.storage.local.set({ history: cloudEntries });
+    }, (err) => {
+        console.error('[Background] Cloud link error:', err);
+    });
+  }
  
  function stopRealtimeHistoryUpdates() {
    if (unsubscribeHistory) {
@@ -107,6 +105,31 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   } else if (msg.type === 'FORCE_SYNC' && msg.entry) {
     console.log('[Background] Received FORCE_SYNC for:', msg.entry.title);
     syncToCloud(msg.entry);
+  } else if (msg.type === 'DELETE_ENTRY' && msg.url) {
+    getStorage(['user_id']).then(storage => {
+      const userId = storage?.user_id;
+      if (userId) {
+        const entryId = btoa(unescape(encodeURIComponent(msg.url))).replace(/[/+=]/g, '_').substring(0, 50);
+        console.log(`[Background] Received DELETE_ENTRY for: ${entryId}`);
+        deleteDoc(doc(db, 'users', userId, 'history', entryId)).catch(e => console.error('[Background] users history delete error:', e));
+        deleteDoc(doc(db, 'extension_sync', userId, 'entries', entryId)).catch(e => console.error('[Background] extension_sync delete error:', e));
+      }
+    });
+  } else if (msg.type === 'CLEAR_ALL_HISTORY') {
+    getStorage(['user_id']).then(storage => {
+      const userId = storage?.user_id;
+      if (userId) {
+        console.log('[Background] Received CLEAR_ALL_HISTORY request');
+        const batch = writeBatch(db);
+        getDocs(collection(db, 'users', userId, 'history')).then(histSnap => {
+          histSnap.forEach(d => batch.delete(d.ref));
+          getDocs(collection(db, 'extension_sync', userId, 'entries')).then(syncSnap => {
+            syncSnap.forEach(d => batch.delete(d.ref));
+            batch.commit().then(() => console.log('[Background] Cloud database cleared')).catch(e => console.error('[Background] Batch commit clear error:', e));
+          }).catch(e => console.error('[Background] getDocs sync entries error:', e));
+        }).catch(e => console.error('[Background] getDocs user history error:', e));
+      }
+    });
   }
 });
 
