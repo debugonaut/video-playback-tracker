@@ -7,7 +7,8 @@
     "storage",
     "tabs",
     "notifications",
-    "alarms"
+    "alarms",
+    "identity"
   ],
   "externally_connectable": {
     "matches": ["https://rewind-player.vercel.app/*"]
@@ -27,6 +28,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
+      "exclude_matches": ["*://*.netflix.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle",
       "all_frames": true

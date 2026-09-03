@@ -14,18 +14,22 @@
   <!-- ── Header ─────────────────────────────────────────────────── -->
   <header class="header">
     <div class="header-left">
-      <span class="material-symbols-outlined logo-icon">play_circle</span>
+      <span class="rewind-glyph">◀◀</span>
       <span class="app-name">REWIND</span>
+      <span class="status-pill">STATUS</span>
     </div>
     <div class="header-right">
-      <button id="settingsBtn" class="header-icon" title="Settings / Sync Help">
-        <span class="material-symbols-outlined">settings</span>
-      </button>
-      <button id="closeBtn" class="header-close" title="Close popup">
+      <button id="closeBtn" class="header-close-circle" title="Close popup">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
   </header>
+
+  <!-- ── Search Bar ─────────────────────────────────────────────── -->
+  <div class="search-container">
+    <span class="material-symbols-outlined search-icon">search</span>
+    <input type="text" id="searchInput" placeholder="Search saved videos..." class="search-input" />
+  </div>
 
   <!-- ── Tab Content Container ───────────────────────────────────── -->
   <main class="content-container">
@@ -35,11 +39,32 @@
     ══════════════════════════════════════════════════════════════ -->
     <div id="tab-history" class="tab-content active">
       
+      <!-- Active Video on Current Tab (Google Flow Design) -->
+      <div id="activeTabSection" class="section-wrap hidden">
+        <div class="active-tab-title-row">
+           <span class="green-dot-pulse"></span>
+           <span class="active-tab-header-label">Active Tab Card</span>
+        </div>
+        <section id="activeTabBanner" class="flow-active-card">
+          <div class="flow-thumb-box">
+            <img id="activeTabThumb" class="flow-thumb-img" src="" alt="" />
+            <span class="aspect-badge">16:9</span>
+          </div>
+          <div class="flow-info-col">
+            <h2 id="activeTabTitle" class="flow-video-title">—</h2>
+            <div class="flow-saved-label">SAVED:</div>
+            <div id="activeTabTime" class="flow-saved-time">00:00 / 00:00</div>
+            <button id="activeResumeBtn" class="flow-btn-resume">RESUME AT 00:00</button>
+            <button id="activeResetBtn" class="flow-btn-startover">START OVER</button>
+          </div>
+        </section>
+      </div>
+
       <!-- Resume Banner Section -->
       <div id="resumeSection" class="section-wrap">
         <div class="section-header">
            <span class="section-indicator"></span>
-           <span class="section-title">RESUME_WATCHING</span>
+           <span class="section-title">Resume Watching</span>
         </div>
         
         <section id="resumeBanner" class="hero-card hidden">
@@ -67,16 +92,16 @@
       <!-- History List Section -->
       <div id="historySection" class="section-wrap">
         <div class="section-header flex-row">
-           <span class="section-title">WATCH_HISTORY</span>
+           <span class="section-title">Watch History</span>
            <div class="section-actions flex-row gap-4">
               <span id="gridToggle" class="material-symbols-outlined action-icon" title="Toggle Grid/List">grid_view</span>
               <span id="clearAllBtn" class="material-symbols-outlined action-icon" title="Clear All History">delete_sweep</span>
            </div>
-           <span id="viewAllBtn" class="section-link">VIEW_ALL_<span id="entryCount">0</span></span>
+           <span id="viewAllBtn" class="section-link">VIEW ALL (<span id="entryCount">0</span>)</span>
         </div>
         
         <div id="emptyState" class="empty-state hidden">
-          <p>NO_VIDEOS_TRACKED_YET</p>
+          <p>No videos tracked yet</p>
         </div>
         
         <ul id="historyList" class="history-list">
@@ -179,24 +204,24 @@
           <p class="auth-desc">CONNECT_YOUR_ACCOUNT_USING_A_PAIRING_CODE_FROM_THE_WEBSITE.</p>
           
           <div class="form-group">
-            <label class="form-label">PAIRING_CODE</label>
+            <label class="form-label">Pairing Code</label>
             <input type="text" id="pairingCode" placeholder="ABC-123-***" class="inject-input text-center" maxlength="10" />
             <div class="input-glow"></div>
           </div>
 
           <button id="syncPairBtn" class="inject-btn primary">
             <span class="material-symbols-outlined" style="margin-right: 8px; vertical-align: middle; font-size: 18px;">bolt</span>
-            CONNECT_ACCOUNT
+            CONNECT ACCOUNT
           </button>
 
-          <p id="cloudLog" style="margin-top: 1rem; font-size: 10px; color: #e51152; font-weight: 800; text-align: center; height: 1.5em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"></p>
+          <p id="pairingStatusLog" style="margin-top: 1rem; font-size: 10px; color: #e51152; font-weight: 800; text-align: center; height: 1.5em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"></p>
 
           <p class="auth-desc" style="margin-top: 1rem; font-size: 10px;">
-            DON'T HAVE A CODE? <a href="https://rewind-player.vercel.app/profile" target="_blank" style="color: #e51152; font-weight: 800;">OPEN_WEBSITE</a>
+            DON'T HAVE A CODE? <a href="https://rewind-player.vercel.app/profile" target="_blank" style="color: #e51152; font-weight: 800;">OPEN WEBSITE</a>
           </p>
           
           <div class="status-box" style="margin-top: 1.5rem; border-color: rgba(229, 17, 82, 0.4);">
-            <div class="status-header" style="color: #e51152;">HOW_TO_CONNECT</div>
+            <div class="status-header" style="color: #e51152;">How to Connect</div>
             <p class="status-text">1. Log into Rewind Portal. <br>2. Click 'Get Pair Code' in sidebar. <br>3. Enter the 10-character code above.</p>
           </div>
         </div>
@@ -205,23 +230,10 @@
         <div id="profileView" class="profile-view hidden">
           <div class="user-card">
             <div class="user-info">
-              <span id="userEmail" class="user-email">identity@void.kinetic</span>
-              <span class="user-status">CONNECTED</span>
+              <span id="userEmail" class="user-email">user@example.com</span>
+              <span class="user-status">Connected</span>
             </div>
             <button id="logoutBtn" class="logout-btn">LOGOUT</button>
-          </div>
-
-          <div class="sync-settings">
-            <div class="setting-item">
-              <div class="setting-info">
-                <span class="setting-name">REALTIME_SYNC</span>
-                <span class="setting-desc">Push updates immediately on pause</span>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="realtimeToggle" checked />
-                <span class="slider"></span>
-              </label>
-            </div>
           </div>
 
           <a id="viewProfileBtn" href="https://rewind-player.vercel.app" target="_blank" class="view-profile-btn">
@@ -230,10 +242,46 @@
           </a>
         </div>
 
+        <!-- Global Settings Section -->
+        <div class="sync-settings" style="margin-top: 1.5rem;">
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Auto-Seek on Visit</span>
+              <span class="setting-desc">Automatically seek to saved timestamp on video load</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="autoSeekToggle" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">In-Page Resume Card</span>
+              <span class="setting-desc">Floating prompt card when visiting a video</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="inPagePromptToggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Track Short Videos (&lt;60s)</span>
+              <span class="setting-desc">Record short clips, reels, and feeds</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="trackShortsToggle" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
         <!-- Cloud Log: Always visible in sync tab regardless of auth state -->
         <div class="status-box" style="margin-top: 1rem;">
-          <div class="status-header">CLOUD_LOG</div>
-          <p id="cloudLog" class="status-text">Synchronizing neural pathways... Ready for transmission.</p>
+          <div class="status-header">Cloud Log</div>
+          <p id="cloudLog" class="status-text">Synchronizing history... Ready to sync.</p>
         </div>
 
       </div><!-- /authContent -->

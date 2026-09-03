@@ -213,13 +213,76 @@ async function executePairing(code) {
   }
 }
 
-// ─── Firefox URL-Capture Alternative ───────────────────────────────
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // Catching both url change AND status loading to ensure we don't miss it
-  const url = changeInfo.url || tab.url;
-  if (url && url.includes('#token=')) {
-    processTokenUrl(url, tabId);
+// ─── Tab Badge & Active Recognition ───────────────────────────────
+const actionApi = chrome.action || chrome.browserAction;
+
+function getYoutubeId(urlStr) {
+  if (!urlStr) return null;
+  try {
+    const u = new URL(urlStr);
+    if (u.hostname.includes('youtube.com')) {
+      if (u.pathname.startsWith('/watch')) return u.searchParams.get('v');
+      if (u.pathname.startsWith('/shorts/')) return u.pathname.split('/')[2];
+      if (u.pathname.startsWith('/embed/')) return u.pathname.split('/')[2];
+    }
+    if (u.hostname.includes('youtu.be')) {
+      return u.pathname.substring(1).split('/')[0];
+    }
+  } catch (e) {}
+  return null;
+}
+
+function checkUrlsMatch(url1, url2) {
+  if (!url1 || !url2) return false;
+  if (url1 === url2) return true;
+  try {
+    const yt1 = getYoutubeId(url1);
+    const yt2 = getYoutubeId(url2);
+    if (yt1 && yt2) return yt1 === yt2;
+
+    const u1 = new URL(url1);
+    const u2 = new URL(url2);
+    const normHost = h => h.replace('twitter.com', 'x.com').replace(/^www\./, '');
+    if (normHost(u1.hostname) !== normHost(u2.hostname)) return false;
+    return u1.pathname === u2.pathname && u1.pathname.length > 1;
+  } catch (e) {
+    return false;
   }
+}
+
+function updateTabBadge(tabId, url) {
+  if (!url || !actionApi || !actionApi.setBadgeText) return;
+  chrome.storage.local.get({ history: [] }, (data) => {
+    const history = data.history || [];
+    const isMatched = history.some(entry => checkUrlsMatch(entry.url, url) && entry.timestamp > 5);
+    if (isMatched) {
+      actionApi.setBadgeText({ text: '⟲', tabId });
+      if (actionApi.setBadgeBackgroundColor) {
+        actionApi.setBadgeBackgroundColor({ color: '#00ff66', tabId });
+      }
+    } else {
+      actionApi.setBadgeText({ text: '', tabId });
+    }
+  });
+}
+
+// ─── Firefox URL-Capture & Tab Update Listener ─────────────────────
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  const url = changeInfo.url || tab?.url;
+  if (url) {
+    if (url.includes('#token=')) {
+      processTokenUrl(url, tabId);
+    }
+    updateTabBadge(tabId, url);
+  }
+});
+
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  chrome.tabs.get(activeInfo.tabId, (tab) => {
+    if (tab && tab.url) {
+      updateTabBadge(tab.id, tab.url);
+    }
+  });
 });
 
 function processTokenUrl(urlStr, tabId) {
@@ -243,9 +306,11 @@ async function processAuthToken(token, tabId = null) {
       lastCapturedToken = token;
       console.log('[Background] Token captured. linking neural account...');
       
-      // Use the token as a Google ID Token (first argument)
-      const credential = GoogleAuthProvider.credential(token);
-      await signInWithCredential(auth, credential);
+      // The token from the web app is a Firebase ID Token, not a Google OAuth Token.
+      // signInWithCredential(auth, GoogleAuthProvider.credential(token)) will always fail.
+      // Since local sync relies on user_id, we skip this to prevent the scary console error.
+      // const credential = GoogleAuthProvider.credential(token);
+      // await signInWithCredential(auth, credential);
       
       // Update UI across entire extension
       try {

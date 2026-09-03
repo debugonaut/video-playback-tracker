@@ -41,10 +41,11 @@ if (missingInJs.length > 0) {
 
 // 4. Trace Critical Flows
 const flows = [
-    { name: 'Email Login', trigger: 'loginBtn.onclick', target: 'signInWithEmailAndPassword' },
-    { name: 'Google Login', trigger: 'googleBtn.onclick', target: 'GoogleAuthProvider' },
-    { name: 'Manual Save', trigger: 'saveManualBtn.addEventListener', target: 'setDoc' },
-    { name: 'Logout', trigger: 'logoutBtn.onclick', target: 'signOut' }
+    { name: 'Pairing Connection', trigger: 'syncPairBtn.onclick', target: 'EXECUTE_PAIRING' },
+    { name: 'Active Video Seek', trigger: 'activeResumeBtn.onclick', target: 'SEEK_CURRENT_VIDEO' },
+    { name: 'Active Video Reset', trigger: 'activeResetBtn.onclick', target: 'RESET_CURRENT_VIDEO' },
+    { name: 'Manual Save', trigger: 'saveManualBtn.addEventListener', target: 'chrome.storage.local.set' },
+    { name: 'Logout', trigger: 'logoutBtn.onclick', target: 'LOGOUT_REQUEST' }
 ];
 
 console.log(`\n--- Critical Flow Trace ---`);

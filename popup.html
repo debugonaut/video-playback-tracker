@@ -14,11 +14,12 @@
   <!-- ── Header ─────────────────────────────────────────────────── -->
   <header class="header">
     <div class="header-left">
-      <span class="material-symbols-outlined logo-icon">play_circle</span>
+      <span class="rewind-glyph">◀◀</span>
       <span class="app-name">REWIND</span>
+      <span class="status-pill">STATUS</span>
     </div>
     <div class="header-right">
-      <button id="closeBtn" class="header-close" title="Close popup">
+      <button id="closeBtn" class="header-close-circle" title="Close popup">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
@@ -38,6 +39,27 @@
     ══════════════════════════════════════════════════════════════ -->
     <div id="tab-history" class="tab-content active">
       
+      <!-- Active Video on Current Tab (Google Flow Design) -->
+      <div id="activeTabSection" class="section-wrap hidden">
+        <div class="active-tab-title-row">
+           <span class="green-dot-pulse"></span>
+           <span class="active-tab-header-label">Active Tab Card</span>
+        </div>
+        <section id="activeTabBanner" class="flow-active-card">
+          <div class="flow-thumb-box">
+            <img id="activeTabThumb" class="flow-thumb-img" src="" alt="" />
+            <span class="aspect-badge">16:9</span>
+          </div>
+          <div class="flow-info-col">
+            <h2 id="activeTabTitle" class="flow-video-title">—</h2>
+            <div class="flow-saved-label">SAVED:</div>
+            <div id="activeTabTime" class="flow-saved-time">00:00 / 00:00</div>
+            <button id="activeResumeBtn" class="flow-btn-resume">RESUME AT 00:00</button>
+            <button id="activeResetBtn" class="flow-btn-startover">START OVER</button>
+          </div>
+        </section>
+      </div>
+
       <!-- Resume Banner Section -->
       <div id="resumeSection" class="section-wrap">
         <div class="section-header">
@@ -192,7 +214,7 @@
             CONNECT ACCOUNT
           </button>
 
-          <p id="cloudLog" style="margin-top: 1rem; font-size: 10px; color: #e51152; font-weight: 800; text-align: center; height: 1.5em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"></p>
+          <p id="pairingStatusLog" style="margin-top: 1rem; font-size: 10px; color: #e51152; font-weight: 800; text-align: center; height: 1.5em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"></p>
 
           <p class="auth-desc" style="margin-top: 1rem; font-size: 10px;">
             DON'T HAVE A CODE? <a href="https://rewind-player.vercel.app/profile" target="_blank" style="color: #e51152; font-weight: 800;">OPEN WEBSITE</a>
@@ -214,23 +236,46 @@
             <button id="logoutBtn" class="logout-btn">LOGOUT</button>
           </div>
 
-          <div class="sync-settings">
-            <div class="setting-item">
-              <div class="setting-info">
-                <span class="setting-name">Realtime Sync</span>
-                <span class="setting-desc">Push updates immediately on pause</span>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="realtimeToggle" checked />
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-
           <a id="viewProfileBtn" href="https://rewind-player.vercel.app" target="_blank" class="view-profile-btn">
             <span class="material-symbols-outlined">open_in_new</span>
             VIEW MY PROFILE
           </a>
+        </div>
+
+        <!-- Global Settings Section -->
+        <div class="sync-settings" style="margin-top: 1.5rem;">
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Auto-Seek on Visit</span>
+              <span class="setting-desc">Automatically seek to saved timestamp on video load</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="autoSeekToggle" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">In-Page Resume Card</span>
+              <span class="setting-desc">Floating prompt card when visiting a video</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="inPagePromptToggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-name">Track Short Videos (&lt;60s)</span>
+              <span class="setting-desc">Record short clips, reels, and feeds</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="trackShortsToggle" />
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
 
         <!-- Cloud Log: Always visible in sync tab regardless of auth state -->

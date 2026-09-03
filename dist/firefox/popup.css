@@ -56,46 +56,76 @@ body {
   letter-spacing: -0.02em;
 }
 
-/* ── Header ────────────────────────────────────────────────────── */
+/* ── Header (Google Flow Design) ────────────────────────────────── */
 .header {
-  height: 64px;
+  height: 56px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 16px;
   background-color: var(--bg-black);
-  border-bottom: 4px solid var(--neon-pink);
+  border-bottom: 2px solid #1c1c1e;
   flex-shrink: 0;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
-.logo-icon {
-  color: var(--neon-pink);
-  font-size: 28px;
+.rewind-glyph {
+  color: #e51152;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  user-select: none;
 }
 
 .app-name {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 20px;
+  font-weight: 900;
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+  color: #ffffff;
 }
 
-.header-close {
-  background: none;
-  border: none;
-  color: var(--text-white);
-  cursor: pointer;
+.status-pill {
+  background: #1c1c1e;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  margin-left: 6px;
+  border: 1px solid #333338;
+  letter-spacing: 0.05em;
+  font-family: var(--font-display);
+}
+
+.header-close-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
   display: flex;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.header-close:hover {
-  color: var(--neon-pink);
+.header-close-circle:hover {
+  background: #e51152;
+  border-color: #e51152;
 }
+
+.header-close-circle .material-symbols-outlined {
+  font-size: 16px;
+}
+
 
 /* ── Content Container ─────────────────────────────────────────── */
 .content-container {
@@ -596,39 +626,53 @@ body {
   color: var(--bg-black);
 }
 
-/* ── Bottom Nav ────────────────────────────────────────────────── */
+/* ── Bottom Nav (Google Flow Design) ────────────────────────────── */
 .bottom-nav {
   position: fixed;
   bottom: 0;
   width: 100%;
-  height: 64px;
+  height: 50px;
   background-color: var(--bg-black);
   display: flex;
-  border-top: 2px solid var(--bg-panel);
+  border-top: 2px solid #1c1c1e;
+  z-index: 100;
 }
 
 .nav-btn {
   flex: 1;
   background: none;
   border: none;
-  color: var(--text-white);
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
   cursor: pointer;
-  border-right: 1px solid var(--bg-panel);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.15s;
 }
 
-.nav-btn:last-child { border-right: none; }
+.nav-btn .material-symbols-outlined {
+  display: none; /* Flow mockup uses clean text tabs */
+}
 
-.nav-btn .material-symbols-outlined { font-size: 24px; }
-.nav-label { font-size: 9px; }
+.nav-label {
+  font-size: 11px;
+  font-weight: 800;
+}
 
-.nav-btn.active[data-tab="history"] { background-color: var(--neon-pink); }
-.nav-btn.active[data-tab="stats"], .nav-btn.active[data-tab="add"] { background-color: var(--neon-yellow); color: var(--bg-black); }
-.nav-btn.active[data-tab="sync"] { background-color: var(--text-white); color: var(--bg-black); }
+.nav-btn.active {
+  background-color: var(--neon-pink) !important;
+  color: #000000 !important;
+}
+
+.nav-btn.active .nav-label {
+  color: #000000 !important;
+}
 
 /* Utilities */
 .hidden { display: none !important; }
@@ -999,3 +1043,272 @@ input:checked + .slider:before {
     background: var(--bg-black);
     border: 1px solid #333;
 }
+
+/* ── Live Stream UI Styling ────────────────────────────────────── */
+.live-badge {
+  background-color: #ff0000;
+  color: #ffffff;
+  padding: 2px 6px;
+  font-size: 9px;
+  font-weight: 800;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  animation: pulse-live 1.5s infinite;
+}
+
+@keyframes pulse-live {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.live-progress {
+  background-color: #ff0000 !important;
+}
+
+.live-btn {
+  background-color: #ff0000 !important;
+  color: #ffffff !important;
+  box-shadow: 4px 4px 0px 0px var(--bg-black);
+}
+
+.live-btn:hover {
+  background-color: #ffffff !important;
+  color: #ff0000 !important;
+}
+
+/* ── Search Bar Styling ─────────────────────────────────────── */
+.search-container {
+  padding: 10px 20px;
+  background-color: var(--bg-black);
+  border-bottom: 2px solid var(--bg-panel);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.search-icon {
+  color: var(--text-gray);
+  font-size: 18px;
+  user-select: none;
+}
+
+.search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-white);
+  font-family: var(--font-body);
+  font-size: 12px;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-dim);
+}
+
+/* ── Auth & Settings Views ─────────────────────────────────────── */
+.auth-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inject-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Active Tab Video Hero (Google Flow Mockup Design) ────────── */
+.active-tab-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.green-dot-pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #00ff66;
+  box-shadow: 0 0 10px #00ff66;
+  display: inline-block;
+}
+
+.active-tab-header-label {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.flow-active-card {
+  border: 2px solid #00ff66;
+  border-radius: 12px;
+  background: #070c08;
+  padding: 12px;
+  display: flex;
+  gap: 14px;
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.22);
+  position: relative;
+  align-items: center;
+}
+
+.flow-thumb-box {
+  width: 140px;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: #111111;
+  border: 1px solid #16241a;
+}
+
+.flow-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aspect-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+.flow-info-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.flow-video-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e0e0e0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.flow-saved-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+}
+
+.flow-saved-time {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.flow-btn-resume {
+  background: #00ff66;
+  color: #000000;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: transform 0.1s, background 0.15s;
+}
+
+.flow-btn-resume:hover {
+  background: #33ff88;
+  transform: translateY(-1px);
+}
+
+.flow-btn-startover {
+  background: #101014;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
+}
+
+.flow-btn-startover:hover {
+  background: #202028;
+  border-color: #e51152;
+  color: #e51152;
+}
+
+/* ── Flow Watch History Yellow Progress Bar ───────────────────── */
+.hr-progress-fill {
+  background-color: #f7e600 !important;
+}
+
+.history-item {
+  background-color: #111116;
+  border: 1px solid #1c1c28;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.history-item:hover {
+  background-color: #161620;
+  border-color: #2c2c40;
+}
+
+.hr-trash {
+  color: #ffffff;
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.history-item:hover .hr-trash {
+  opacity: 1;
+}
+
+.hr-trash:hover {
+  color: #e51152 !important;
+}
+
+
