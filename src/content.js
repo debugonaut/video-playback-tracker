@@ -92,15 +92,79 @@
     return false;
   }
 
+  // ─── Universal Media Discovery & Candidate Scoring Engine ────────────────
+
+  function findAllVideos(root = document) {
+    const videos = [];
+    try {
+      if (!root) return videos;
+      // 1. Direct video elements in this root
+      if (root.querySelectorAll) {
+        videos.push(...Array.from(root.querySelectorAll('video')));
+      }
+
+      // 2. Recursively inspect all child custom elements with open shadowRoot
+      const allElements = root.querySelectorAll ? root.querySelectorAll('*') : [];
+      for (let i = 0; i < allElements.length; i++) {
+        const el = allElements[i];
+        if (el.shadowRoot) {
+          videos.push(...findAllVideos(el.shadowRoot));
+        }
+      }
+    } catch (e) {}
+    return videos;
+  }
+
   function isPrimaryVideo(video) {
     if (!video) return false;
+
+    // 1. Exclude Camera/Mic/WebRTC MediaStream previews (Case 17 & 18)
+    if (video.srcObject) {
+      return false;
+    }
+
+    // 2. Exclude decorative background loops (Case 31)
+    if (video.hasAttribute('loop') && video.muted && video.autoplay && !video.controls) {
+      if (!video.duration || video.duration < 20) {
+        return false;
+      }
+    }
+
+    // 3. Exclude microscopic tracking or audio pixels (<60px)
     const width = video.clientWidth || video.videoWidth || 0;
     const height = video.clientHeight || video.videoHeight || 0;
-    // Only filter out microscopic tracking pixels (<60px)
     if (width > 0 && width < 60 && height > 0 && height < 60) {
       return false;
     }
+
     return true;
+  }
+
+  function getBestVideoCandidate(videos = findAllVideos().filter(isPrimaryVideo)) {
+    if (!videos || videos.length === 0) return null;
+    if (videos.length === 1) return videos[0];
+
+    // Score candidates based on browser playback signals (Case 28 Disambiguation)
+    const scored = videos.map(video => {
+      let score = 0;
+      // Active playback is the strongest signal
+      if (!video.paused && !video.ended) score += 100;
+      // Unmuted audio
+      if (!video.muted && video.volume > 0) score += 40;
+      // Substantial duration
+      if (video.duration && isFinite(video.duration) && video.duration > 30) score += 30;
+      // Prominent screen footprint
+      const width = video.clientWidth || video.videoWidth || 0;
+      const height = video.clientHeight || video.videoHeight || 0;
+      score += Math.min(50, Math.floor((width * height) / 10000));
+      // Native or custom controls
+      if (video.controls) score += 20;
+
+      return { video, score };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+    return scored[0].video;
   }
 
   // ─── Extractors ───────────────────────────────────────────────────────────
@@ -412,10 +476,10 @@
     let attempts = 0;
     const interval = setInterval(() => {
       attempts++;
-      const videos = Array.from(document.querySelectorAll('video')).filter(isPrimaryVideo);
-      if (videos.length > 0) {
+      const best = getBestVideoCandidate();
+      if (best) {
         clearInterval(interval);
-        callback(videos[0]);
+        callback(best);
       } else if (attempts >= maxAttempts) {
         clearInterval(interval);
       }
@@ -822,9 +886,9 @@
   }
 
   function scanAndAttach() {
-    const videos = document.querySelectorAll('video');
+    const videos = findAllVideos();
     if (videos.length > 0) {
-      console.log(`[Rewind v2.2] 🔍 Found ${videos.length} <video> element(s) on page`);
+      console.log(`[Rewind v2.2] 🔍 Found ${videos.length} <video> element(s) (including Shadow DOM)`);
     }
     videos.forEach(attachToVideo);
   }
@@ -833,7 +897,7 @@
 
   function handleNavigationStart() {
     removeInPagePrompt();
-    document.querySelectorAll('video').forEach(v => {
+    findAllVideos().forEach(v => {
       if (!v.paused && v.currentTime > 2) {
         saveCurrentPlayback(v);
       }
@@ -843,7 +907,7 @@
   function handleNavigationEnd() {
     currentCanonicalUrl = getCleanCanonicalUrl();
     removeInPagePrompt();
-    document.querySelectorAll('video').forEach(v => {
+    findAllVideos().forEach(v => {
       v._rewindPrompted = false;
       v._rewindResumed = false;
     });
@@ -878,6 +942,15 @@
     return result;
   };
 
+  // 3. SPA Polling Heartbeat (Catches silent router navigation)
+  let lastObservedHref = window.location.href;
+  setInterval(() => {
+    if (window.location.href !== lastObservedHref) {
+      lastObservedHref = window.location.href;
+      handleNavigationEnd();
+    }
+  }, 1000);
+
   const observer = new MutationObserver(() => {
     scanAndAttach();
   });
@@ -888,14 +961,14 @@
   });
 
   window.addEventListener('beforeunload', () => {
-    document.querySelectorAll('video').forEach(v => {
+    findAllVideos().forEach(v => {
       if (v.currentTime > 2) saveCurrentPlayback(v);
     });
   });
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
-      document.querySelectorAll('video').forEach(v => {
+      findAllVideos().forEach(v => {
         if (v.currentTime > 2) saveCurrentPlayback(v);
       });
     }
@@ -911,8 +984,7 @@
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     // 1. Get active video details for the current tab
     if (msg.type === 'GET_ACTIVE_VIDEO_INFO') {
-      const allVideos = Array.from(document.querySelectorAll('video')).filter(isPrimaryVideo);
-      const primary = allVideos.find(v => !v.paused) || allVideos[0];
+      const primary = getBestVideoCandidate();
 
       if (primary) {
         const canonical = getCleanCanonicalUrl(primary);
@@ -923,7 +995,7 @@
           currentTime: Math.floor(primary.currentTime || 0),
           duration: primary.duration && isFinite(primary.duration) ? Math.floor(primary.duration) : null,
           thumbnail: getThumbnail(canonical),
-          isLive: !primary.duration || !isFinite(primary.duration),
+          isLive: !primary.duration || !isFinite(primary.duration) || primary.duration > 86400,
           isAd: isAdActive(primary)
         });
       } else {
@@ -934,8 +1006,7 @@
 
     // 2. Seek active video directly from popup
     if (msg.type === 'SEEK_CURRENT_VIDEO' && typeof msg.timestamp === 'number') {
-      const allVideos = Array.from(document.querySelectorAll('video')).filter(isPrimaryVideo);
-      const primary = allVideos.find(v => !v.paused) || allVideos[0];
+      const primary = getBestVideoCandidate();
       if (primary) {
         performSeek(primary, msg.timestamp, true);
         sendResponse({ success: true });
@@ -947,8 +1018,7 @@
 
     // 3. Reset/Start Over active video
     if (msg.type === 'RESET_CURRENT_VIDEO') {
-      const allVideos = Array.from(document.querySelectorAll('video')).filter(isPrimaryVideo);
-      const primary = allVideos.find(v => !v.paused) || allVideos[0];
+      const primary = getBestVideoCandidate();
       if (primary) {
         performSeek(primary, 0, true);
         sendResponse({ success: true });
