@@ -43,25 +43,17 @@
   function isAdActive(video) {
     try {
       const host = window.location.hostname;
-      // 1. YouTube Ads
+      // 1. YouTube Ads (only when player has ad-showing or ad-interrupting class)
       if (host.includes('youtube.com')) {
-        if (document.querySelector('.ad-showing, .ad-interrupting, ytd-player.ad-showing, .ytp-ad-player-overlay')) {
+        const player = video ? video.closest('.html5-video-player, #movie_player') : document.querySelector('.html5-video-player, #movie_player');
+        if (player && (player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting'))) {
           return true;
         }
-        if (video && video.closest('.ad-showing, .ad-interrupting')) {
-          return true;
-        }
-        const adModule = document.querySelector('.video-ads.ytp-ad-module');
-        if (adModule && adModule.childElementCount > 0) {
-          return true;
-        }
+        return false;
       }
 
-      // 2. Generic Video Ad Networks & Wrappers (IMA, VideoJS, custom overlays)
-      if (document.querySelector('.ima-ad-container, .vjs-ad-playing, [id*="ad-container"]:not(:empty), .jw-flag-ads')) {
-        return true;
-      }
-      if (video && video.closest('.ima-ad-container, .vjs-ad-playing, .jw-flag-ads')) {
+      // 2. Generic Video Ad Networks (check if video element itself is inside an active ad container)
+      if (video && video.closest('.ad-showing, .vjs-ad-playing, .ima-ad-container, .jw-flag-ads')) {
         return true;
       }
     } catch (e) {}
@@ -88,7 +80,6 @@
 
       // Twitter / X previews in timeline
       if ((host.includes('twitter.com') || host.includes('x.com')) && !path.includes('/status/')) {
-        // Allow tracking only if video is actively playing and clicked
         if (video.paused) return true;
       }
     } catch (e) {}
@@ -97,10 +88,10 @@
 
   function isPrimaryVideo(video) {
     if (!video) return false;
-    // Discard hidden or tiny ad/tracking pixels
     const width = video.clientWidth || video.videoWidth || 0;
     const height = video.clientHeight || video.videoHeight || 0;
-    if (width > 0 && width < 220 && height > 0 && height < 140) {
+    // Only filter out microscopic tracking pixels (<60px)
+    if (width > 0 && width < 60 && height > 0 && height < 60) {
       return false;
     }
     return true;
@@ -275,8 +266,8 @@
       return;
     }
 
-    // Require at least 5s of watch time unless completed
-    if (timestamp < 5 && !isCompleted) return;
+    // Require at least 2s of watch time unless completed
+    if (timestamp < 2 && !isCompleted) return;
 
     if (duration > 86400) duration = null; // Cap live broadcasts > 24h
     const isLive = duration === null;
@@ -302,26 +293,34 @@
       note: ''
     };
 
+    console.log('[Rewind] 💾 Saving playback:', entry.title, `${entry.timestamp}s`, entry.url);
+
     try {
-      let history = [...localHistoryCache];
-      const existing = history.find(e => checkUrlsMatch(e.url, canonicalUrl));
-      if (existing) {
-        entry.pinned = existing.pinned || false;
-        entry.note = existing.note || '';
-      }
+      chrome.storage.local.get({ history: [] }, (data) => {
+        let history = data.history || [];
+        const existing = history.find(e => checkUrlsMatch(e.url, canonicalUrl));
+        if (existing) {
+          entry.pinned = existing.pinned || false;
+          entry.note = existing.note || '';
+        }
 
-      history = history.filter(e => !checkUrlsMatch(e.url, canonicalUrl));
-      history.unshift(entry);
-      if (history.length > MAX_ENTRIES) history = history.slice(0, MAX_ENTRIES);
+        history = history.filter(e => !checkUrlsMatch(e.url, canonicalUrl));
+        history.unshift(entry);
+        if (history.length > MAX_ENTRIES) history = history.slice(0, MAX_ENTRIES);
 
-      localHistoryCache = history;
-      chrome.storage.local.set({ history, lastEntry: entry });
+        localHistoryCache = history;
+        chrome.storage.local.set({ history, lastEntry: entry }, () => {
+          console.log('[Rewind] ✅ Saved to storage! Count:', history.length);
+        });
 
-      // Notify background to update active badge
-      try {
-        chrome.runtime.sendMessage({ type: 'FORCE_SYNC', entry }).catch(() => {});
-      } catch (e) {}
-    } catch (e) {}
+        // Notify background to update active badge
+        try {
+          chrome.runtime.sendMessage({ type: 'FORCE_SYNC', entry }).catch(() => {});
+        } catch (e) {}
+      });
+    } catch (e) {
+      console.error('[Rewind] Storage error:', e);
+    }
   }
 
   // ─── In-Page Seeking & Verification Engine ────────────────────────────────
@@ -706,15 +705,22 @@
     });
   }
 
-  // ─── Single Video Session Controller ──────────────────────────────────────
+  // ─── Direct Video Tracker Engine ──────────────────────────────────────────
+  const trackedVideos = new WeakSet();
 
-  function createVideoSession(video) {
-    let periodicTimer = null;
-    let hasResumedThisSession = false;
-    let hasPromptedThisSession = false;
+  function attachToVideo(video) {
+    if (!video || trackedVideos.has(video)) return;
+    if (!isPrimaryVideo(video) || isFeedPreview(video)) return;
 
-    function checkAndShowPrompt() {
-      if (hasPromptedThisSession || hasResumedThisSession) return;
+    trackedVideos.add(video);
+    console.log('[Rewind] 🎥 Attached tracker to video element', video);
+
+    let hasResumed = false;
+    let hasPrompted = false;
+    let throttleTimer = null;
+
+    function tryPrompt() {
+      if (hasPrompted || hasResumed) return;
       if (userSettings.autoSeek) return;
       if (userSettings.showInPagePrompt === false) return;
       if (video.currentTime >= 5) return;
@@ -723,99 +729,80 @@
       const canonical = getCleanCanonicalUrl(video);
       const match = localHistoryCache.find(e => checkUrlsMatch(e.url, canonical));
       if (match && match.timestamp > 5) {
-        hasPromptedThisSession = true;
+        hasPrompted = true;
         showInPageResumePrompt(video, match);
       }
     }
 
-    const onPlay = () => {
-      if (isAdActive(video)) return;
-      if (isFeedPreview(video)) return;
+    video.addEventListener('play', () => {
+      if (isAdActive(video) || isFeedPreview(video)) return;
+      console.log('[Rewind] ▶ Video play event');
 
-      // Auto-seek check (only if enabled by user and not already resumed)
-      if (userSettings.autoSeek && !hasResumedThisSession && video.currentTime < 5) {
+      // Auto-seek check (if user enabled autoSeek)
+      if (userSettings.autoSeek && !hasResumed && video.currentTime < 5) {
         const canonical = getCleanCanonicalUrl(video);
         const match = localHistoryCache.find(e => checkUrlsMatch(e.url, canonical));
         if (match && match.timestamp > 5 && !match.completed) {
-          hasResumedThisSession = true;
+          hasResumed = true;
           performSeek(video, match.timestamp, true);
+          return;
         }
-      } else {
-        checkAndShowPrompt();
       }
 
-      if (!periodicTimer) {
-        periodicTimer = setInterval(() => {
-          if (!video.paused && !video.ended) {
+      tryPrompt();
+    });
+
+    video.addEventListener('pause', () => {
+      console.log('[Rewind] ⏸ Video pause event at', video.currentTime);
+      if (video.ended) return;
+      saveCurrentPlayback(video);
+    });
+
+    video.addEventListener('ended', () => {
+      console.log('[Rewind] ⏹ Video ended event');
+      if (isAdActive(video)) return;
+      saveCurrentPlayback(video, true);
+    });
+
+    video.addEventListener('timeupdate', () => {
+      if (video.paused || video.ended || isAdActive(video)) return;
+      // Periodic save every 15s during playback
+      if (!throttleTimer) {
+        throttleTimer = setTimeout(() => {
+          throttleTimer = null;
+          if (!video.paused && !video.ended && video.currentTime > 2) {
             saveCurrentPlayback(video);
           }
-        }, 30000);
+        }, 15000);
       }
-    };
+    });
 
-    const onPause = () => {
-      if (!video.ended) {
-        saveCurrentPlayback(video);
-      }
-    };
-
-    const onEnded = () => {
-      if (periodicTimer) clearInterval(periodicTimer);
-
-      // CRITICAL: If an ad ended, do NOT mark the real video completed!
-      if (isAdActive(video)) {
-        console.log('[Rewind] Ad finished — waiting for main content stream to start.');
-        return;
-      }
-
-      // Mark the video as completed (100%) rather than deleting it
-      saveCurrentPlayback(video, true);
-    };
-
-    video.addEventListener('play', onPlay);
-    video.addEventListener('pause', onPause);
-    video.addEventListener('ended', onEnded);
-    video.addEventListener('loadedmetadata', checkAndShowPrompt);
-    video.addEventListener('canplay', checkAndShowPrompt);
+    video.addEventListener('loadedmetadata', tryPrompt);
+    video.addEventListener('canplay', tryPrompt);
 
     if (video.readyState >= 1) {
-      setTimeout(checkAndShowPrompt, 500);
+      setTimeout(tryPrompt, 500);
     }
+  }
 
-    return {
-      flush: () => {
-        if (periodicTimer) clearInterval(periodicTimer);
-        if (!video.paused && !video.ended && video.currentTime > 5) {
-          saveCurrentPlayback(video);
-        }
-      },
-      destroy: () => {
-        removeInPagePrompt();
-        if (periodicTimer) clearInterval(periodicTimer);
-        video.removeEventListener('play', onPlay);
-        video.removeEventListener('pause', onPause);
-        video.removeEventListener('ended', onEnded);
-        video.removeEventListener('loadedmetadata', checkAndShowPrompt);
-        video.removeEventListener('canplay', checkAndShowPrompt);
-      }
-    };
+  function scanAndAttach() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(attachToVideo);
   }
 
   // ─── SPA Navigation Lifecycle ─────────────────────────────────────────────
 
   function handleNavigationStart() {
     removeInPagePrompt();
-    if (activeVideoSession) {
-      activeVideoSession.flush();
-    }
+    document.querySelectorAll('video').forEach(v => {
+      if (!v.paused && v.currentTime > 2) {
+        saveCurrentPlayback(v);
+      }
+    });
   }
 
   function handleNavigationEnd() {
     currentCanonicalUrl = getCleanCanonicalUrl();
-    if (activeVideoSession) {
-      activeVideoSession.destroy();
-      activeVideoSession = null;
-    }
     scanAndAttach();
   }
 
@@ -845,24 +832,6 @@
     return result;
   };
 
-  // ─── Scanner & Observer ───────────────────────────────────────────────────
-
-  function scanAndAttach() {
-    const allVideos = Array.from(document.querySelectorAll('video')).filter(isPrimaryVideo);
-    if (allVideos.length === 0) return;
-
-    // Prioritize unmuted and actively playing video, or largest on screen
-    const primary = allVideos.find(v => !v.paused && !v.muted) ||
-                    allVideos.find(v => !v.paused) ||
-                    allVideos[0];
-
-    if (primary && (!activeVideoSession || activeVideoSession.video !== primary)) {
-      if (activeVideoSession) activeVideoSession.destroy();
-      activeVideoSession = createVideoSession(primary);
-      activeVideoSession.video = primary;
-    }
-  }
-
   const observer = new MutationObserver(() => {
     scanAndAttach();
   });
@@ -873,19 +842,23 @@
   });
 
   window.addEventListener('beforeunload', () => {
-    if (activeVideoSession) activeVideoSession.flush();
+    document.querySelectorAll('video').forEach(v => {
+      if (v.currentTime > 2) saveCurrentPlayback(v);
+    });
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden' && activeVideoSession) {
-      activeVideoSession.flush();
+    if (document.visibilityState === 'hidden') {
+      document.querySelectorAll('video').forEach(v => {
+        if (v.currentTime > 2) saveCurrentPlayback(v);
+      });
     }
   });
 
   // Initial Scan
   scanAndAttach();
-  setTimeout(scanAndAttach, 1500);
-  setTimeout(scanAndAttach, 4000);
+  setTimeout(scanAndAttach, 1000);
+  setTimeout(scanAndAttach, 3000);
 
   // ─── Internal Messaging (Popup Communication) ─────────────────────────────
 
