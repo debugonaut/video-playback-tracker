@@ -6,28 +6,34 @@
   'use strict';
 
   const MAX_ENTRIES = 50;
-  const MIN_TRACKABLE_DURATION = 60; // Ignore short clips < 60s by default
+  const MIN_TRACKABLE_DURATION = 5; // Minimum 5s duration
+
+  console.log('%c[Rewind v2.2] 🚀 Content Script Active on ' + window.location.href, 'background: #00ff66; color: #000; font-weight: bold; padding: 2px 8px; border-radius: 4px;');
 
   // ─── Settings & Global State ──────────────────────────────────────────────
   let localHistoryCache = [];
   let userSettings = {
     autoSeek: false,
-    trackShorts: false,
+    trackShorts: true,
     showInPagePrompt: true
   };
 
   // Synchronous canonical snapshot of current tab
   let currentCanonicalUrl = window.location.href;
-  let activeVideoSession = null;
 
   // Initialize history cache and settings
-  chrome.storage.local.get({ history: [], autoSeek: false, trackShorts: false, showInPagePrompt: true }, (data) => {
-    localHistoryCache = data.history || [];
-    userSettings.autoSeek = !!data.autoSeek;
-    userSettings.trackShorts = !!data.trackShorts;
-    userSettings.showInPagePrompt = data.showInPagePrompt !== false;
-    checkExplicitUrlResume();
-  });
+  try {
+    chrome.storage.local.get({ history: [], autoSeek: false, trackShorts: true, showInPagePrompt: true }, (data) => {
+      localHistoryCache = data.history || [];
+      userSettings.autoSeek = !!data.autoSeek;
+      userSettings.trackShorts = data.trackShorts !== false;
+      userSettings.showInPagePrompt = data.showInPagePrompt !== false;
+      console.log('[Rewind v2.2] 📦 Storage loaded. Stored videos count:', localHistoryCache.length);
+      checkExplicitUrlResume();
+    });
+  } catch (err) {
+    console.error('[Rewind v2.2] Storage initialization error:', err);
+  }
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local') {
@@ -254,20 +260,35 @@
   // ─── Storage Operations ───────────────────────────────────────────────────
 
   function saveCurrentPlayback(video, isCompleted = false) {
-    if (!video || !isPrimaryVideo(video)) return;
-    if (isFeedPreview(video)) return;
-    if (isAdActive(video)) return; // Never save ad playback
+    if (!video) {
+      console.warn('[Rewind v2.2] ⚠️ Save aborted: No video element provided');
+      return;
+    }
+    if (!isPrimaryVideo(video)) {
+      console.warn('[Rewind v2.2] ⚠️ Save aborted: Video element is not primary (dimensions < 60px)');
+      return;
+    }
+    if (isFeedPreview(video)) {
+      console.warn('[Rewind v2.2] ⚠️ Save aborted: Video identified as feed/hover preview');
+      return;
+    }
+    if (isAdActive(video)) {
+      console.warn('[Rewind v2.2] ⚠️ Save aborted: Commercial/Ad is active');
+      return;
+    }
 
     const timestamp = Math.floor(video.currentTime || 0);
     let duration = video.duration && isFinite(video.duration) ? Math.floor(video.duration) : null;
 
-    // Filter out short clips < 60s if setting disabled
     if (!userSettings.trackShorts && duration && duration < MIN_TRACKABLE_DURATION) {
+      console.warn(`[Rewind v2.2] ⚠️ Save aborted: duration ${duration}s < ${MIN_TRACKABLE_DURATION}s and trackShorts is disabled`);
       return;
     }
 
-    // Require at least 2s of watch time unless completed
-    if (timestamp < 2 && !isCompleted) return;
+    if (timestamp < 1 && !isCompleted) {
+      console.warn(`[Rewind v2.2] ⚠️ Save aborted: playhead at start (${timestamp}s < 1s)`);
+      return;
+    }
 
     if (duration > 86400) duration = null; // Cap live broadcasts > 24h
     const isLive = duration === null;
@@ -293,7 +314,7 @@
       note: ''
     };
 
-    console.log('[Rewind] 💾 Saving playback:', entry.title, `${entry.timestamp}s`, entry.url);
+    console.log('[Rewind v2.2] 💾 Saving playback:', entry.title, `${entry.timestamp}s`, entry.url);
 
     try {
       chrome.storage.local.get({ history: [] }, (data) => {
@@ -310,7 +331,7 @@
 
         localHistoryCache = history;
         chrome.storage.local.set({ history, lastEntry: entry }, () => {
-          console.log('[Rewind] ✅ Saved to storage! Count:', history.length);
+          console.log('[Rewind v2.2] ✅ Saved to storage! Count:', history.length);
         });
 
         // Notify background to update active badge
@@ -319,7 +340,7 @@
         } catch (e) {}
       });
     } catch (e) {
-      console.error('[Rewind] Storage error:', e);
+      console.error('[Rewind v2.2] Storage error:', e);
     }
   }
 
@@ -709,11 +730,20 @@
   const trackedVideos = new WeakSet();
 
   function attachToVideo(video) {
-    if (!video || trackedVideos.has(video)) return;
-    if (!isPrimaryVideo(video) || isFeedPreview(video)) return;
+    if (!video) return;
+    if (trackedVideos.has(video)) return;
+
+    if (!isPrimaryVideo(video)) {
+      console.log('[Rewind v2.2] ⏭ Skipped video element: Dimensions < 60px');
+      return;
+    }
+    if (isFeedPreview(video)) {
+      console.log('[Rewind v2.2] ⏭ Skipped video element: Feed preview player');
+      return;
+    }
 
     trackedVideos.add(video);
-    console.log('[Rewind] 🎥 Attached tracker to video element', video);
+    console.log('[Rewind v2.2] 🎥 Attached tracker to video element! Current time:', video.currentTime);
 
     let hasResumed = false;
     let hasPrompted = false;
@@ -735,8 +765,8 @@
     }
 
     video.addEventListener('play', () => {
+      console.log('[Rewind v2.2] ▶ Video play event at', video.currentTime);
       if (isAdActive(video) || isFeedPreview(video)) return;
-      console.log('[Rewind] ▶ Video play event');
 
       // Auto-seek check (if user enabled autoSeek)
       if (userSettings.autoSeek && !hasResumed && video.currentTime < 5) {
@@ -753,13 +783,13 @@
     });
 
     video.addEventListener('pause', () => {
-      console.log('[Rewind] ⏸ Video pause event at', video.currentTime);
+      console.log('[Rewind v2.2] ⏸ Video pause event fired at', video.currentTime);
       if (video.ended) return;
       saveCurrentPlayback(video);
     });
 
     video.addEventListener('ended', () => {
-      console.log('[Rewind] ⏹ Video ended event');
+      console.log('[Rewind v2.2] ⏹ Video ended event');
       if (isAdActive(video)) return;
       saveCurrentPlayback(video, true);
     });
@@ -770,7 +800,7 @@
       if (!throttleTimer) {
         throttleTimer = setTimeout(() => {
           throttleTimer = null;
-          if (!video.paused && !video.ended && video.currentTime > 2) {
+          if (!video.paused && !video.ended && video.currentTime > 1) {
             saveCurrentPlayback(video);
           }
         }, 15000);
@@ -787,6 +817,9 @@
 
   function scanAndAttach() {
     const videos = document.querySelectorAll('video');
+    if (videos.length > 0) {
+      console.log(`[Rewind v2.2] 🔍 Found ${videos.length} <video> element(s) on page`);
+    }
     videos.forEach(attachToVideo);
   }
 
