@@ -179,6 +179,14 @@
   }
 
   function getTitle() {
+    // 0. Level 4 Media Session API (Highest fidelity for modern audio/video engines)
+    try {
+      if (navigator.mediaSession && navigator.mediaSession.metadata && navigator.mediaSession.metadata.title) {
+        const msTitle = navigator.mediaSession.metadata.title.trim();
+        if (msTitle && !msTitle.toLowerCase().includes('unknown')) return msTitle;
+      }
+    } catch (e) {}
+
     // 1. YouTube
     if (window.location.hostname.includes('youtube.com')) {
       const ytTitle = document.querySelector('#container > h1 > yt-formatted-string') ||
@@ -211,6 +219,17 @@
   }
 
   function getThumbnail(canonicalUrl) {
+    // 0. Level 4 Media Session Artwork (Highest quality poster)
+    try {
+      if (navigator.mediaSession && navigator.mediaSession.metadata && navigator.mediaSession.metadata.artwork) {
+        const artworks = navigator.mediaSession.metadata.artwork;
+        if (Array.isArray(artworks) && artworks.length > 0) {
+          const best = artworks[artworks.length - 1];
+          if (best && best.src) return best.src;
+        }
+      }
+    } catch (e) {}
+
     // 1. YouTube Direct Poster
     const urlStr = canonicalUrl || window.location.href;
     if (urlStr.includes('youtube.com') || urlStr.includes('youtu.be')) {
@@ -291,10 +310,20 @@
         }
       }
 
-      // 4. Default: Current URL minus transient params / hashes
+      // 4. Default: Current URL minus transient params, tracking tags, and ephemeral session tokens
       const u = new URL(window.location.href);
       u.hash = '';
-      u.searchParams.delete('rewind-resume');
+      const ephemeralParams = [
+        'rewind-resume', 'token', 'expires', 'auth', 'signature', 'sig',
+        'session_id', 'sessionId', 'sid', 'utm_source', 'utm_medium',
+        'utm_campaign', 'utm_term', 'utm_content', 'fbclid', 'gclid'
+      ];
+      ephemeralParams.forEach(param => {
+        u.searchParams.delete(param);
+      });
+      if (!host.includes('youtube.com')) {
+        u.searchParams.delete('t');
+      }
       return u.href;
     } catch (e) {
       return window.location.href;
@@ -875,6 +904,26 @@
           }
         }, 15000);
       }
+    });
+
+    // Dynamic Source Change Detection (Cases 40, 41, 42)
+    video.addEventListener('loadstart', () => {
+      const currentSrc = video.currentSrc || video.src || '';
+      if (video._lastKnownSrc && video._lastKnownSrc !== currentSrc) {
+        console.log('[Rewind v2.2] 🔄 Video source dynamically replaced on existing element:', currentSrc);
+        if (!video.paused && video.currentTime > 2) {
+          saveCurrentPlayback(video);
+        }
+        video._rewindPrompted = false;
+        video._rewindResumed = false;
+      }
+      video._lastKnownSrc = currentSrc;
+      setTimeout(tryPrompt, 400);
+    });
+
+    video.addEventListener('emptied', () => {
+      video._rewindPrompted = false;
+      video._rewindResumed = false;
     });
 
     video.addEventListener('loadedmetadata', tryPrompt);
