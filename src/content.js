@@ -433,9 +433,9 @@
   }
 
   function showInPageResumePrompt(video, entry) {
-    if (!video || !entry || entry.timestamp <= 5) return;
+    if (!video || !entry || entry.timestamp < 2) return;
     if (userSettings.showInPagePrompt === false) return;
-    if (video.currentTime >= entry.timestamp) return;
+    if (video.currentTime >= entry.timestamp - 2) return;
 
     removeInPagePrompt();
 
@@ -746,39 +746,45 @@
     console.log('[Rewind v2.2] 🎥 Attached tracker to video element! Current time:', video.currentTime);
 
     let hasResumed = false;
-    let hasPrompted = false;
     let throttleTimer = null;
 
     function tryPrompt() {
-      if (hasPrompted || hasResumed) return;
-      if (userSettings.autoSeek) return;
-      if (userSettings.showInPagePrompt === false) return;
-      if (video.currentTime >= 5) return;
+      if (video._rewindPrompted || video._rewindResumed) return;
       if (isAdActive(video) || isFeedPreview(video)) return;
 
       const canonical = getCleanCanonicalUrl(video);
-      const match = localHistoryCache.find(e => checkUrlsMatch(e.url, canonical));
-      if (match && match.timestamp > 5) {
-        hasPrompted = true;
+      chrome.storage.local.get({ history: [], showInPagePrompt: true, autoSeek: false }, (data) => {
+        if (video._rewindPrompted || video._rewindResumed) return;
+        if (data.showInPagePrompt === false) return;
+
+        const history = data.history || [];
+        const match = history.find(e => checkUrlsMatch(e.url, canonical));
+        if (!match || match.timestamp < 2) return;
+
+        // Skip if video was fully watched or near end
+        if (match.completed) return;
+        if (match.duration && match.timestamp >= match.duration - 15) return;
+
+        // If video is already near or past the saved timestamp, no need to prompt
+        if (video.currentTime >= match.timestamp - 5) return;
+
+        // Auto-seek if user explicitly turned on autoSeek
+        if (data.autoSeek) {
+          video._rewindResumed = true;
+          performSeek(video, match.timestamp, true);
+          return;
+        }
+
+        // Show Google Flow In-Page Prompt
+        video._rewindPrompted = true;
+        console.log('[Rewind v2.2] 🎯 Showing Google Flow Resume Card for:', match.title, 'at', match.timestamp);
         showInPageResumePrompt(video, match);
-      }
+      });
     }
 
     video.addEventListener('play', () => {
       console.log('[Rewind v2.2] ▶ Video play event at', video.currentTime);
       if (isAdActive(video) || isFeedPreview(video)) return;
-
-      // Auto-seek check (if user enabled autoSeek)
-      if (userSettings.autoSeek && !hasResumed && video.currentTime < 5) {
-        const canonical = getCleanCanonicalUrl(video);
-        const match = localHistoryCache.find(e => checkUrlsMatch(e.url, canonical));
-        if (match && match.timestamp > 5 && !match.completed) {
-          hasResumed = true;
-          performSeek(video, match.timestamp, true);
-          return;
-        }
-      }
-
       tryPrompt();
     });
 
@@ -810,9 +816,9 @@
     video.addEventListener('loadedmetadata', tryPrompt);
     video.addEventListener('canplay', tryPrompt);
 
-    if (video.readyState >= 1) {
-      setTimeout(tryPrompt, 500);
-    }
+    setTimeout(tryPrompt, 400);
+    setTimeout(tryPrompt, 1200);
+    setTimeout(tryPrompt, 2500);
   }
 
   function scanAndAttach() {
@@ -836,7 +842,14 @@
 
   function handleNavigationEnd() {
     currentCanonicalUrl = getCleanCanonicalUrl();
+    removeInPagePrompt();
+    document.querySelectorAll('video').forEach(v => {
+      v._rewindPrompted = false;
+      v._rewindResumed = false;
+    });
     scanAndAttach();
+    setTimeout(scanAndAttach, 500);
+    setTimeout(scanAndAttach, 1500);
   }
 
   // 1. YouTube SPA Events

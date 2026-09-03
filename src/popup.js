@@ -19,6 +19,7 @@ const activeResumeBtn = $('activeResumeBtn');
 const activeResetBtn = $('activeResetBtn');
 
 // Hero Resume Banner
+const resumeSection = $('resumeSection');
 const resumeBanner = $('resumeBanner');
 const resumeTitle = $('resumeTitle');
 const resumeTime = $('resumeTime');
@@ -41,9 +42,8 @@ const manualUrl = $('manualUrl');
 const manualTime = $('manualTime');
 const saveManualBtn = $('saveManualBtn');
 
+// Auth / Profile DOM
 const closeBtn = $('closeBtn');
-
-// Auth & Settings DOM
 const authContent = $('authContent');
 const loginForm = $('loginForm');
 const profileView = $('profileView');
@@ -174,25 +174,23 @@ function detectActiveTabVideo() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs || tabs.length === 0) return;
     const activeTab = tabs[0];
-    if (!activeTab.id || !activeTab.url || activeTab.url.startsWith('chrome://') || activeTab.url.startsWith('edge://')) {
+    if (!activeTab.id || !activeTab.url || activeTab.url.startsWith('chrome://') || activeTab.url.startsWith('edge://') || activeTab.url.startsWith('about:')) {
       if (activeTabSection) activeTabSection.classList.add('hidden');
       return;
     }
 
+    const checkMatch = (urlToTest) => allEntries.find(e => checkUrlsMatch(e.url, urlToTest));
+    const directMatch = checkMatch(activeTab.url);
+
     chrome.tabs.sendMessage(activeTab.id, { type: 'GET_ACTIVE_VIDEO_INFO' }, (response) => {
-      if (chrome.runtime.lastError || !response || !response.hasVideo) {
-        if (activeTabSection) activeTabSection.classList.add('hidden');
-        return;
-      }
+      const matchedEntry = (response && response.hasVideo) ? checkMatch(response.url) : directMatch;
 
-      activeTabVideoInfo = response;
-      const matchedEntry = allEntries.find(e => checkUrlsMatch(e.url, response.url));
-
-      if (matchedEntry && matchedEntry.timestamp > 5) {
+      if (matchedEntry && matchedEntry.timestamp >= 2) {
         if (activeTabSection) activeTabSection.classList.remove('hidden');
-        if (activeTabTitle) activeTabTitle.textContent = matchedEntry.title || response.title || 'Current Video';
+        if (resumeSection) resumeSection.classList.add('hidden'); // Prioritize active tab Google Flow card
+        if (activeTabTitle) activeTabTitle.textContent = matchedEntry.title || (response && response.title) || 'Current Video';
         if (activeTabThumb) {
-          activeTabThumb.src = matchedEntry.thumbnail || response.thumbnail || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop';
+          activeTabThumb.src = matchedEntry.thumbnail || (response && response.thumbnail) || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop';
           activeTabThumb.onerror = () => {
             activeTabThumb.src = 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400&auto=format&fit=crop';
           };
@@ -261,6 +259,10 @@ function renderHistory() {
 
   if (hasEntries) {
     const top = filteredEntries[0];
+    const isShowingActiveCard = activeTabSection && !activeTabSection.classList.contains('hidden');
+    if (resumeSection) {
+      resumeSection.classList.toggle('hidden', isShowingActiveCard);
+    }
     resumeBanner.classList.remove('hidden');
     resumeTitle.textContent = top.title;
 
@@ -385,6 +387,7 @@ function renderHistory() {
       historyList.appendChild(li);
     });
   } else {
+    if (resumeSection) resumeSection.classList.add('hidden');
     resumeBanner.classList.add('hidden');
   }
   updateStats();
